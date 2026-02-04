@@ -4,6 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     initLoadingSequence();
+    initHamburgerMenu();
 });
 
 /**
@@ -364,3 +365,56 @@ document.addEventListener('DOMContentLoaded', () => {
         initPageEnterAnimation();
     }
 });
+
+/**
+ * Initialize Cyberpunk Hamburger Menu
+ */
+function initHamburgerMenu() {
+    const hamburgerBtn = document.getElementById('hamburger-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuClose = document.getElementById('menu-close');
+
+    if (!hamburgerBtn || !mobileMenu) return;
+
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'menu-overlay';
+    document.body.appendChild(overlay);
+
+    // Toggle menu on hamburger click
+    hamburgerBtn.addEventListener('click', () => {
+        hamburgerBtn.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        overlay.classList.toggle('active');
+
+        // Add glitch effect on open
+        if (mobileMenu.classList.contains('active')) {
+            mobileMenu.style.animation = 'menuGlitchIn 0.3s ease-out';
+        }
+    });
+
+    // Close menu on close button click
+    if (menuClose) {
+        menuClose.addEventListener('click', () => {
+            hamburgerBtn.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+
+    // Close menu on overlay click
+    overlay.addEventListener('click', () => {
+        hamburgerBtn.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            hamburgerBtn.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+    });
+}

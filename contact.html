@@ -22,15 +22,49 @@
     <!-- Navigation -->
     <nav class="nav-bar">
         <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
-        <div class="nav-tabs">
+        <div class="nav-tabs desktop-nav">
             <a href="about.html" class="nav-tab">WHO I AM</a>
             <a href="skills.html" class="nav-tab">SKILLS</a>
             <a href="security.html" class="nav-tab">SECURITY</a>
             <a href="contact.html" class="nav-tab active">CONTACT</a>
         </div>
-        <div class="nav-status">
-            <span class="status-indicator"></span>
-            <span class="status-text">ONLINE</span>
+        <div class="nav-right">
+            <div class="nav-status">
+                <span class="status-indicator"></span>
+                <span class="status-text">ONLINE</span>
+            </div>
+            <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+                <span class="hamburger-dot"></span>
+                <span class="hamburger-dot"></span>
+                <span class="hamburger-dot"></span>
+            </button>
+        </div>
+        <div class="mobile-menu" id="mobile-menu">
+            <div class="mobile-menu-header">
+                <span class="menu-tag">// NAVIGATION</span>
+                <button class="menu-close" id="menu-close">✕</button>
+            </div>
+            <div class="mobile-menu-links">
+                <a href="about.html" class="mobile-nav-link">
+                    <span class="link-index">01</span>
+                    <span class="link-text">WHO_I_AM</span>
+                </a>
+                <a href="skills.html" class="mobile-nav-link">
+                    <span class="link-index">02</span>
+                    <span class="link-text">SKILLS</span>
+                </a>
+                <a href="security.html" class="mobile-nav-link">
+                    <span class="link-index">03</span>
+                    <span class="link-text">SECURITY</span>
+                </a>
+                <a href="contact.html" class="mobile-nav-link">
+                    <span class="link-index">04</span>
+                    <span class="link-text">CONTACT</span>
+                </a>
+            </div>
+            <div class="mobile-menu-footer">
+                <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
+            </div>
         </div>
     </nav>
 
