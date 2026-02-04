@@ -387,9 +387,11 @@ function initHamburgerMenu() {
         mobileMenu.classList.toggle('active');
         overlay.classList.toggle('active');
 
-        // Add glitch effect on open
+        // Reset animation on re-open so it replays
         if (mobileMenu.classList.contains('active')) {
-            mobileMenu.style.animation = 'menuGlitchIn 0.3s ease-out';
+            mobileMenu.style.animation = 'none';
+            mobileMenu.offsetHeight; // trigger reflow
+            mobileMenu.style.animation = '';
         }
     });
 
