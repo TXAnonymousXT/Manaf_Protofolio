@@ -1575,6 +1575,8 @@ section {
     display: flex;
     flex-direction: column;
     padding: 30px 0;
+    position: relative;
+    z-index: 10;
 }
 
 .mobile-nav-link {
@@ -1587,6 +1589,8 @@ section {
     transition: var(--transition-normal);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    z-index: 10;
 }
 
 .mobile-nav-link::before {
@@ -1598,6 +1602,7 @@ section {
     height: 100%;
     background: linear-gradient(90deg, rgba(0, 240, 255, 0.1), transparent);
     transition: width 0.3s ease;
+    pointer-events: none;
 }
 
 .mobile-nav-link:hover::before {
@@ -1671,12 +1676,11 @@ section {
     left: 0;
     width: 100%;
     height: calc(100vh - 80px);
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
     transition: var(--transition-normal);
-    z-index: 998;
+    z-index: 9998;
 }
 
 .menu-overlay.active {
