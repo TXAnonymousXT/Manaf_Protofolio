@@ -6,105 +6,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Manaf Abduljabbar - Computer Engineering graduate specializing in networking, security, and web development.">
-    <title>MANAF ABDULJABBAR // Portfolio</title>
+    <title>MANAF // Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <!-- Loading Screen -->
+    <!-- LOADING SCREEN -->
     <div id="loading-screen" class="loading-screen">
         <div class="loading-container">
-            <div class="loading-text">INITIALIZING</div>
-            <div class="loading-bar">
-                <div class="loading-progress" id="loading-progress"></div>
+            <div class="glitch-logo" data-text="INITIALIZING">INITIALIZING</div>
+            <div class="boot-sequence">
+                <div class="boot-line" id="boot-1">[SYS] Establishing neural link...</div>
+                <div class="boot-line" id="boot-2">[NET] Connecting to network...</div>
+                <div class="boot-line" id="boot-3">[SEC] Security protocols active...</div>
+                <div class="boot-line" id="boot-4">[OK_] System ready_</div>
             </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div class="loading-percent">0%</div>
         </div>
+        <div class="scanlines"></div>
     </div>
 
-    <!-- Navigation -->
+    <!-- Navigation with Tabs -->
     <nav class="nav-bar">
-        <a href="index.html" class="nav-logo">
-            <img src="logo.png" alt="Logo">
-        </a>
-        <div class="nav-links">
-            <a href="about.html" class="nav-link">About</a>
-            <a href="skills.html" class="nav-link">Skills</a>
-            <a href="security.html" class="nav-link">Security</a>
-            <a href="contact.html" class="nav-link">Contact</a>
+        <div class="nav-logo glitch" data-text="NETRUNNER">
+            <a href="index.html"><img src="logo.png" alt="Logo" class="logo-img"></a>
         </div>
-        <button class="hamburger-menu" id="hamburger-menu">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
+        <div class="nav-tabs desktop-nav">
+            <a href="about.html" class="nav-tab">WHO I AM</a>
+            <a href="skills.html" class="nav-tab">SKILLS</a>
+            <a href="security.html" class="nav-tab">SECURITY</a>
+            <a href="contact.html" class="nav-tab">CONTACT</a>
+        </div>
+        <div class="nav-right">
+            <div class="nav-status">
+                <span class="status-indicator"></span>
+                <span class="status-text">ONLINE</span>
+            </div>
+            <!-- Cyberpunk Hamburger Menu -->
+            <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+                <span class="hamburger-dot"></span>
+                <span class="hamburger-dot"></span>
+                <span class="hamburger-dot"></span>
+            </button>
+        </div>
     </nav>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Menu Dropdown (outside nav-bar to avoid stacking context issues) -->
     <div class="mobile-menu" id="mobile-menu">
-        <a href="about.html" class="mobile-nav-link">About</a>
-        <a href="skills.html" class="mobile-nav-link">Skills</a>
-        <a href="security.html" class="mobile-nav-link">Security</a>
-        <a href="contact.html" class="mobile-nav-link">Contact</a>
+        <div class="mobile-menu-header">
+            <span class="menu-tag">// NAVIGATION</span>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="index.html" class="mobile-nav-link">
+                <span class="link-index">00</span>
+                <span class="link-text">HOME</span>
+            </a>
+            <a href="about.html" class="mobile-nav-link">
+                <span class="link-index">01</span>
+                <span class="link-text">WHO_I_AM</span>
+            </a>
+            <a href="skills.html" class="mobile-nav-link">
+                <span class="link-index">02</span>
+                <span class="link-text">SKILLS</span>
+            </a>
+            <a href="security.html" class="mobile-nav-link">
+                <span class="link-index">03</span>
+                <span class="link-text">SECURITY</span>
+            </a>
+            <a href="contact.html" class="mobile-nav-link">
+                <span class="link-index">04</span>
+                <span class="link-text">CONTACT</span>
+            </a>
+        </div>
+        <div class="mobile-menu-footer">
+            <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
+        </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-bg"></div>
-        <div class="hero-overlay"></div>
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="main-content hidden">
+        <div class="scanlines"></div>
+        <div class="grid-overlay"></div>
 
-        <div class="hero-content">
-            <div class="hero-tag">// Network Security Engineer</div>
-            <h1 class="hero-title glitch" data-text="MANAF ABDULJABBAR">
-                <span>MANAF</span> ABDULJABBAR
-            </h1>
-            <p class="hero-subtitle">I build. I secure. I solve.</p>
-            <div class="hero-cta">
-                <a href="contact.html" class="btn-primary">Get In Touch</a>
-                <a href="about.html" class="btn-secondary">View Profile</a>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-tag">// CLASS: ENGINEER | STATUS: ACTIVE</div>
+                <h1 class="hero-title glitch" data-text="Manaf Abduljabbar">Manaf Abduljabbar</h1>
+                <div class="hero-subtitle">
+                    <span class="typing-text">I build. I secure. I solve.</span>
+                    <span class="cursor">_</span>
+                </div>
             </div>
-        </div>
+            <div class="hero-decoration">
+                <div class="hex-pattern"></div>
+            </div>
+        </section>
 
-        <div class="scroll-indicator">
-            <span class="scroll-text">Scroll</span>
-            <div class="scroll-line"></div>
-        </div>
-    </section>
-
-    <!-- Quick Info Section -->
-    <section class="page-content">
-        <div class="page-header">
-            <div class="page-tag">// Quick Overview</div>
-            <h2 class="page-title">System Info</h2>
-        </div>
-
-        <div class="info-cards">
-            <div class="info-card">
-                <div class="info-label">Education</div>
-                <div class="info-value">B.Sc. Computer Engineering - Qatar University</div>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-text">
+                    <span class="footer-tag">// STAY CONNECTED</span>
+                    <div class="footer-message">More projects and updates coming soon...</div>
+                </div>
+                <div class="footer-divider"></div>
+                <div class="footer-copyright">
+                    <span>© 2026 NETRUNNER</span>
+                    <span class="footer-version">v1.0.0</span>
+                </div>
             </div>
-            <div class="info-card">
-                <div class="info-label">Specialization</div>
-                <div class="info-value">Networks &amp; Security</div>
-            </div>
-            <div class="info-card">
-                <div class="info-label">Location</div>
-                <div class="info-value">Qatar - Available Remote</div>
-            </div>
-            <div class="info-card">
-                <div class="info-label">Status</div>
-                <div class="info-value">Open for Opportunities</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p class="footer-text">
-                &copy; 2026 MANAF.SYS <span class="footer-version">v2.0</span>
-            </p>
-        </div>
-    </footer>
+        </footer>
+    </main>
 
     <script src="script.js"></script>
 </body>
