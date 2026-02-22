@@ -7,170 +7,88 @@
     <meta name="description"
         content="Contact Manaf Abduljabbar for networking, web development, UI/UX design, and more.">
     <title>CONTACT // MANAF</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap"
-        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="page-loaded">
-    <div class="scanlines"></div>
-    <div class="grid-overlay"></div>
-
+<body>
     <!-- Navigation -->
     <nav class="nav-bar">
-        <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
-        <div class="nav-tabs desktop-nav">
-            <a href="about.html" class="nav-tab">WHO I AM</a>
-            <a href="skills.html" class="nav-tab">SKILLS</a>
-            <a href="security.html" class="nav-tab">SECURITY</a>
-            <a href="contact.html" class="nav-tab active">CONTACT</a>
+        <a href="index.html" class="nav-logo">
+            <img src="logo.png" alt="Logo">
+        </a>
+        <div class="nav-links">
+            <a href="about.html" class="nav-link">About</a>
+            <a href="skills.html" class="nav-link">Skills</a>
+            <a href="security.html" class="nav-link">Security</a>
+            <a href="contact.html" class="nav-link active">Contact</a>
         </div>
-        <div class="nav-right">
-            <div class="nav-status">
-                <span class="status-indicator"></span>
-                <span class="status-text">ONLINE</span>
-            </div>
-            <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
-                <span class="hamburger-dot"></span>
-                <span class="hamburger-dot"></span>
-                <span class="hamburger-dot"></span>
-            </button>
-        </div>
+        <button class="hamburger-menu" id="hamburger-menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
     </nav>
 
-    <!-- Mobile Menu Dropdown (outside nav-bar to avoid stacking context issues) -->
+    <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
-        <div class="mobile-menu-header">
-            <span class="menu-tag">// NAVIGATION</span>
-        </div>
-        <div class="mobile-menu-links">
-            <a href="index.html" class="mobile-nav-link">
-                <span class="link-index">00</span>
-                <span class="link-text">HOME</span>
-            </a>
-            <a href="about.html" class="mobile-nav-link">
-                <span class="link-index">01</span>
-                <span class="link-text">WHO_I_AM</span>
-            </a>
-            <a href="skills.html" class="mobile-nav-link">
-                <span class="link-index">02</span>
-                <span class="link-text">SKILLS</span>
-            </a>
-            <a href="security.html" class="mobile-nav-link">
-                <span class="link-index">03</span>
-                <span class="link-text">SECURITY</span>
-            </a>
-            <a href="contact.html" class="mobile-nav-link">
-                <span class="link-index">04</span>
-                <span class="link-text">CONTACT</span>
-            </a>
-        </div>
-        <div class="mobile-menu-footer">
-            <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
-        </div>
+        <a href="index.html" class="mobile-nav-link">Home</a>
+        <a href="about.html" class="mobile-nav-link">About</a>
+        <a href="skills.html" class="mobile-nav-link">Skills</a>
+        <a href="security.html" class="mobile-nav-link">Security</a>
+        <a href="contact.html" class="mobile-nav-link">Contact</a>
     </div>
 
-    <!-- Page Header -->
-    <header class="page-header">
-        <div class="page-tag">// CONTACT ME</div>
-        <h1 class="page-title glitch" data-text="EstablishConnection()">EstablishConnection()</h1>
-    </header>
+    <!-- Page Content -->
+    <section class="page-content" style="padding-top: 8rem;">
+        <div class="page-header">
+            <div class="page-tag">// Contact</div>
+            <h2 class="page-title glitch" data-text="Connect">Connect</h2>
+        </div>
 
-    <!-- Contact Section -->
-    <section class="contact-section">
-        <div class="contact-content">
-            <div class="contact-intro">
-                <p class="intro-paragraph">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h3>Let's Work Together</h3>
+                <p>
                     Got a project that needs building? Require assistance with
-                    <span class="highlight">networking</span>, <span class="highlight">web development</span>,
-                    <span class="highlight">UI/UX design</span>, or <span class="highlight">video editing</span>?
+                    networking, web development, UI/UX design, or video editing?
                     Open for collaborations, contracts, and interesting opportunities.
-                    Initiate connection below.
+                </p>
+                <p>
+                    Based in <span class="highlight">Qatar</span>, available for remote work worldwide.
                 </p>
             </div>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🌐</div>
-                    <div class="service-name">Network Setup & Consulting</div>
+
+            <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                <input type="hidden" name="access_key" value="252671cf-c5c7-45b5-9380-358ac1a1e6c7">
+                <input type="hidden" name="subject" value="New Contact from Portfolio">
+
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="name" class="form-input" placeholder="Your name" required>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">💻</div>
-                    <div class="service-name">Web Development</div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-input" placeholder="your@email.com" required>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🎨</div>
-                    <div class="service-name">UI/UX Design</div>
+
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea name="message" class="form-input" placeholder="Tell me about your project..." rows="5"
+                        required></textarea>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🎬</div>
-                    <div class="service-name">Video Editing</div>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">✏</div>
-                    <div class="service-name">Graphic Design</div>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🔧</div>
-                    <div class="service-name">Technical Support</div>
-                </div>
-            </div>
-            <div class="contact-form-container">
-                <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-                    <!-- Web3Forms Access Key - Replace with your key from web3forms.com -->
-                    <input type="hidden" name="access_key" value="252671cf-c5c7-45b5-9380-358ac1a1e6c7">
-                    <input type="hidden" name="subject" value="New Contact from Portfolio">
-                    <input type="hidden" name="from_name" value="Portfolio Contact Form">
-                    <div class="form-group">
-                        <label for="name" class="form-label">// YOUR_NAME</label>
-                        <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email" class="form-label">// YOUR_EMAIL</label>
-                        <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="service" class="form-label">// SERVICE_NEEDED</label>
-                        <select id="service" name="service" class="form-input form-select">
-                            <option value="">Select a service...</option>
-                            <option value="network">Network Setup & Consulting</option>
-                            <option value="web">Web Development</option>
-                            <option value="uiux">UI/UX Design</option>
-                            <option value="video">Video Editing</option>
-                            <option value="graphic">Graphic Design</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="message" class="form-label">// YOUR_MESSAGE</label>
-                        <textarea id="message" name="message" class="form-input form-textarea"
-                            placeholder="Describe your project or inquiry..." rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="form-submit">
-                        <span class="submit-text">SEND_MESSAGE()</span>
-                        <span class="submit-icon">→</span>
-                    </button>
-                </form>
-                <div class="form-success hidden" id="form-success">
-                    <div class="success-icon">✓</div>
-                    <div class="success-text">Message transmitted successfully!</div>
-                </div>
-            </div>
+
+                <button type="submit" class="btn-primary">Send Message</button>
+            </form>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-divider"></div>
-            <div class="footer-copyright">
-                <span>© 2026 NETRUNNER</span>
-                <span class="footer-version">v1.0.0</span>
-            </div>
+            <p class="footer-text">
+                &copy; 2026 MANAF.SYS <span class="footer-version">v2.0</span>
+            </p>
         </div>
     </footer>
 
