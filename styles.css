@@ -443,7 +443,7 @@ section { position: relative; z-index: 10; padding: 9rem 0; }
 .section-num {
   font-family: 'Cinzel', serif;
   font-size: 5rem; font-weight: 900;
-  color: rgba(0,255,209,0.05);
+  color: rgba(0,255,209,0.18);
   line-height: 1; flex-shrink: 0;
 }
 .section-eyebrow {
