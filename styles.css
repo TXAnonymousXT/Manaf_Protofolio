@@ -117,22 +117,9 @@ nav.nav-bar {
   display: flex; align-items: center; gap: 1rem;
   text-decoration: none;
 }
-.logo-mark {
-  font-family: 'VT323', monospace;
-  font-size: 1.4rem;
-  color: var(--cyan);
-  text-shadow: 0 0 10px var(--cyan), 0 0 20px rgba(0,255,209,0.4);
-  letter-spacing: 0.05em;
-  line-height: 1;
-}
-.logo-mark span { color: var(--vellum-dim); opacity: 0.6; }
-.logo-sub {
-  font-family: 'Cinzel', serif;
-  font-size: 0.5rem;
-  letter-spacing: 0.4em;
-  color: var(--vellum-dim);
-  text-transform: uppercase;
-  line-height: 1;
+.logo-img {
+  height: 32px;
+  width: auto;
 }
 
 .nav-constellation {
