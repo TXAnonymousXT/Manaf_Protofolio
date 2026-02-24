@@ -1,143 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="About Manaf Abduljabbar - Computer Engineering graduate from Qatar University.">
-    <title>WHO I AM // MANAF</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="About Manaf Abduljabbar - Computer Engineering graduate from Qatar University.">
+<title>Identity — Manaf Abduljabbar</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Inconsolata:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
+<body>
 
-<body class="page-loaded">
-    <div class="scanlines"></div>
-    <div class="grid-overlay"></div>
+<!-- CURSOR -->
+<svg id="cursor" width="28" height="28" viewBox="0 0 28 28" style="transform:translate(-14px,-14px)">
+  <line x1="14" y1="1" x2="14" y2="7"  stroke="#00ffd1" stroke-width="1" opacity="0.9"/>
+  <line x1="14" y1="21" x2="14" y2="27" stroke="#00ffd1" stroke-width="1" opacity="0.9"/>
+  <line x1="1"  y1="14" x2="7"  y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9"/>
+  <line x1="21" y1="14" x2="27" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9"/>
+  <circle cx="14" cy="14" r="4" fill="none" stroke="#00ffd1" stroke-width="0.8" opacity="0.8"/>
+  <circle cx="14" cy="14" r="1.2" fill="#00ffd1"/>
+</svg>
+<svg id="cursor-ring" width="46" height="46" viewBox="0 0 46 46" style="transform:translate(-23px,-23px)">
+  <circle cx="23" cy="23" r="19" fill="none" stroke="rgba(0,255,209,0.18)" stroke-width="1" stroke-dasharray="3 5"/>
+</svg>
 
-    <!-- Navigation -->
-    <nav class="nav-bar">
-        <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
-        <div class="nav-tabs desktop-nav">
-            <a href="about.html" class="nav-tab active">WHO I AM</a>
-            <a href="skills.html" class="nav-tab">SKILLS</a>
-            <a href="security.html" class="nav-tab">SECURITY</a>
-            <a href="contact.html" class="nav-tab">CONTACT</a>
-        </div>
-        <div class="nav-right">
-            <div class="nav-status">
-                <span class="status-indicator"></span>
-                <span class="status-text">ONLINE</span>
-            </div>
-            <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
-                <span class="hamburger-dot"></span>
-                <span class="hamburger-dot"></span>
-                <span class="hamburger-dot"></span>
-            </button>
-        </div>
-    </nav>
+<!-- VOID CANVAS -->
+<canvas id="void-canvas"></canvas>
 
-    <!-- Mobile Menu Dropdown (outside nav-bar to avoid stacking context issues) -->
-    <div class="mobile-menu" id="mobile-menu">
-        <div class="mobile-menu-header">
-            <span class="menu-tag">// NAVIGATION</span>
-        </div>
-        <div class="mobile-menu-links">
-            <a href="index.html" class="mobile-nav-link">
-                <span class="link-index">00</span>
-                <span class="link-text">HOME</span>
-            </a>
-            <a href="about.html" class="mobile-nav-link">
-                <span class="link-index">01</span>
-                <span class="link-text">WHO_I_AM</span>
-            </a>
-            <a href="skills.html" class="mobile-nav-link">
-                <span class="link-index">02</span>
-                <span class="link-text">SKILLS</span>
-            </a>
-            <a href="security.html" class="mobile-nav-link">
-                <span class="link-index">03</span>
-                <span class="link-text">SECURITY</span>
-            </a>
-            <a href="contact.html" class="mobile-nav-link">
-                <span class="link-index">04</span>
-                <span class="link-text">CONTACT</span>
-            </a>
-        </div>
-        <div class="mobile-menu-footer">
-            <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
-        </div>
+<!-- NAV -->
+<nav class="nav-bar">
+  <a href="index.html" class="nav-logo">
+    <div>
+      <div class="logo-mark">MANAF <span>//</span></div>
+      <div class="logo-sub">Neural Void</div>
     </div>
+  </a>
+  <ul class="nav-constellation">
+    <li><div class="nav-node"></div><a href="index.html" class="nav-link">Home</a></li>
+    <li class="active"><div class="nav-node"></div><a href="about.html" class="nav-link">Identity</a></li>
+    <li><div class="nav-node"></div><a href="skills.html" class="nav-link">Skills</a></li>
+    <li><div class="nav-node"></div><a href="security.html" class="nav-link">Security</a></li>
+    <li><div class="nav-node"></div><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-status"><div class="status-pulse"></div>SYS.ONLINE</div>
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+      <span class="hamburger-dot"></span>
+      <span class="hamburger-dot"></span>
+      <span class="hamburger-dot"></span>
+    </button>
+  </div>
+</nav>
 
-    <!-- Page Header -->
-    <header class="page-header">
-        <div class="page-tag">// WHO I AM</div>
-        <h1 class="page-title glitch" data-text="System.User.Identity()">System.User.Identity()</h1>
-    </header>
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mobile-menu-header">
+    <span class="menu-tag">// NAVIGATION</span>
+  </div>
+  <div class="mobile-menu-links">
+    <a href="index.html" class="mobile-nav-link">
+      <span class="link-index">00</span>
+      <span class="link-text">HOME</span>
+    </a>
+    <a href="about.html" class="mobile-nav-link">
+      <span class="link-index">01</span>
+      <span class="link-text">IDENTITY</span>
+    </a>
+    <a href="skills.html" class="mobile-nav-link">
+      <span class="link-index">02</span>
+      <span class="link-text">SKILLS</span>
+    </a>
+    <a href="security.html" class="mobile-nav-link">
+      <span class="link-index">03</span>
+      <span class="link-text">SECURITY</span>
+    </a>
+    <a href="contact.html" class="mobile-nav-link">
+      <span class="link-index">04</span>
+      <span class="link-text">CONTACT</span>
+    </a>
+  </div>
+  <div class="mobile-menu-footer">
+    <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
+  </div>
+</div>
 
-    <!-- About Section -->
-    <section class="about-section">
-        <div class="about-content">
-            <div class="about-text">
-                <p class="intro-paragraph">
-                    <span class="highlight">Computer Engineering graduate</span> with a genuine curiosity for
-                    how systems communicate — and how to keep them secure. From configuring routers and
-                    switches to building secure network architectures, the fascination with connectivity
-                    runs deep. Hands-on experience across <span class="highlight">networking</span>,
-                    <span class="highlight">network security</span>, <span class="highlight">web development</span>,
-                    <span class="highlight">UI/UX design</span>, <span class="highlight">robotics</span>,
-                    <span class="highlight">video editing</span>, and <span class="highlight">graphic design</span>.
-                </p>
-                <p class="intro-paragraph">
-                    The digital world is vast, and there's always something new to explore. Whether it's
-                    diving into <span class="highlight">firewall configurations</span>, crafting
-                    <span class="highlight">responsive web interfaces</span>, or designing visuals that
-                    tell a story — every project is an opportunity to grow. Always learning. Always building.
-                    Always pushing forward.
-                </p>
-                <p class="intro-paragraph">
-                    The goal? Build a rock-solid foundation in <span class="highlight">networking</span> and
-                    <span class="highlight">network security</span> — mastering how systems connect,
-                    how data flows, and how to defend it. This isn't just a portfolio; it's a digital
-                    workshop where projects come alive, skills get sharpened, and the journey never stops.
-                    Welcome to the grind.
-                </p>
-            </div>
-            <div class="about-stats">
-                <div class="stat-card">
-                    <div class="stat-icon">◈</div>
-                    <div class="stat-label">Education</div>
-                    <div class="stat-value">Qatar University</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">◇</div>
-                    <div class="stat-label">Degree</div>
-                    <div class="stat-value">B.Sc. Computer Engineering</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⬡</div>
-                    <div class="stat-label">Focus</div>
-                    <div class="stat-value">Networks & Security</div>
-                </div>
-            </div>
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="section-inner">
+    <div class="section-num">01</div>
+    <div class="section-head-text">
+      <div class="section-eyebrow">// Object Identity</div>
+      <h1 class="section-title">Who I Am</h1>
+    </div>
+    <div class="section-rule"></div>
+  </div>
+</header>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-text reveal-left">
+        <p>A <span class="hl">Computer Engineering graduate</span> based in <span class="hl-cyan">Doha, Qatar</span> — with a genuine curiosity for how systems communicate and how to keep them secure. From configuring routers and switches to building secure network architectures, the fascination with connectivity runs deep.</p>
+        <p>Hands-on experience across <span class="hl">networking</span>, <span class="hl">network security</span>, <span class="hl">web development</span>, <span class="hl">UI/UX design</span>, <span class="hl">robotics</span>, <span class="hl">video editing</span>, and <span class="hl">graphic design</span>. Whether it's diving into firewall configurations or crafting responsive interfaces — every project is an opportunity to grow.</p>
+        <p>The goal? Build a rock-solid foundation in <span class="hl">networking</span> and <span class="hl">network security</span> — mastering how systems connect, how data flows, and how to defend it. The void is not empty — it is waiting to be mapped.</p>
+      </div>
+      <div class="about-stats reveal-right">
+        <div class="stat-box">
+          <div class="stat-num">QU</div>
+          <div class="stat-label">Qatar University</div>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-divider"></div>
-            <div class="footer-copyright">
-                <span>© 2026 NETRUNNER</span>
-                <span class="footer-version">v1.0.0</span>
-            </div>
+        <div class="stat-box">
+          <div class="stat-num">B.Sc</div>
+          <div class="stat-label">Computer Engineering</div>
         </div>
-    </footer>
+        <div class="stat-box">
+          <div class="stat-num">NET</div>
+          <div class="stat-label">Networks & Security</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">&infin;</div>
+          <div class="stat-label">Curiosity</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <script src="script.js"></script>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">&copy; 2026 <span class="nm">MANAF ABDULJABBAR</span> &middot; Neural Void</div>
+  <div class="footer-coords">RA 04h 32m &middot; Dec +25&deg; 42' &middot; Doha, Qatar</div>
+  <div class="footer-v">v2.0.0-neural-void</div>
+</footer>
+
+<script src="script.js"></script>
 </body>
-
 </html>
