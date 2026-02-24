@@ -9,9 +9,9 @@
   --warm-mid:    #181310;
   --surface:     #1c1814;
 
-  --vellum:      #c8b99a;
-  --vellum-dim:  #6b5d4a;
-  --vellum-ghost:#2a2420;
+  --vellum:      #e2d9c5;
+  --vellum-dim:  #a89b84;
+  --vellum-ghost:#4a3f34;
 
   --cyan:        #00ffd1;
   --cyan-dim:    #00b8a9;
@@ -123,7 +123,7 @@ nav.nav-bar {
 }
 
 .nav-constellation {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 0.4rem;
   list-style: none;
@@ -182,7 +182,7 @@ li.active .nav-link { color: var(--cyan); }
    HAMBURGER MENU (Mobile)
 ══════════════════════════════════════════ */
 .hamburger-menu {
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -747,8 +747,6 @@ footer {
 ══════════════════════════════════════════ */
 @media (max-width: 900px) {
   nav.nav-bar { padding: 1rem 2rem; }
-  .nav-constellation { display: none; }
-  .hamburger-menu { display: flex; }
 
   .section-inner { padding: 0 2rem; }
   section { padding: 5rem 0; }
