@@ -1,139 +1,131 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mycelial Network Portfolio</title>
+    <script type="module" crossorigin src="./assets/index-3PQjaL13.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-8XY-UAzh.css">
+    <style>
+      /* ═══ MORPHING ANIMATIONS ═══ */
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Manaf Abduljabbar - Computer Engineer specializing in networking, security, and web development.">
-    <title>MANAF ABDULJABBAR // Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
+      /* Morph Reveal — clip-path polygon reveal on scroll */
+      .morph-reveal {
+        clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+        transition: clip-path 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .morph-reveal.visible {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
 
-<body>
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-container">
-            <div class="loading-logo">INITIALIZING</div>
-            <div class="loading-bar-container">
-                <div class="loading-bar"></div>
-            </div>
-        </div>
-    </div>
+      /* Morph Glitch — chromatic aberration on elements */
+      @keyframes morphGlitchCyan {
+        0%, 85%, 100% { opacity: 0; transform: translate(0, 0); }
+        87% { opacity: 0.7; transform: translate(-3px, 1px); }
+        89% { opacity: 0; }
+        91% { opacity: 0.5; transform: translate(2px, -1px); }
+        93% { opacity: 0; }
+      }
+      @keyframes morphGlitchRed {
+        0%, 86%, 100% { opacity: 0; transform: translate(0, 0); }
+        88% { opacity: 0.7; transform: translate(3px, -1px); }
+        90% { opacity: 0; }
+        92% { opacity: 0.5; transform: translate(-2px, 1px); }
+        94% { opacity: 0; }
+      }
 
-    <!-- Page Background -->
-    <div class="page-bg page-bg-home"></div>
+      /* Morph Blob — border-radius organic shape shift on hover */
+      .spore-sac {
+        transition: border-radius 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
+      }
+      .spore-sac:hover {
+        border-radius: 4px 20px 4px 20px !important;
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 0 30px rgba(0, 255, 209, 0.15), 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
 
-    <!-- Cinematic Effects -->
-    <div class="vignette"></div>
-    <div class="film-grain"></div>
+      /* Morph Glow — rotating conic gradient border on hover */
+      @property --glow-angle {
+        syntax: '<angle>';
+        initial-value: 0deg;
+        inherits: false;
+      }
+      @keyframes rotateGlow {
+        to { --glow-angle: 360deg; }
+      }
 
-    <!-- Particles Background -->
-    <div class="particles-container" id="particles"></div>
-    <div class="scanlines"></div>
+      /* Morph Stagger — enhanced reveal animations */
+      .reveal-item {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+        transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .reveal-item.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
 
-    <!-- Page Transition -->
-    <div class="page-transition" id="page-transition"></div>
+      /* Chromatic glitch on headings */
+      h1, h2 {
+        position: relative;
+      }
+      h1::before, h2::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: inherit;
+        color: #00ffd1;
+        z-index: -1;
+        animation: morphGlitchCyan 8s ease-in-out infinite;
+        pointer-events: none;
+      }
 
-    <!-- Navigation -->
-    <nav class="nav-bar">
-        <a href="index.html" class="nav-logo">
-            <img src="logo.png" alt="Logo">
-        </a>
+      /* Page transition wipe */
+      .page-transition-wipe {
+        position: fixed;
+        inset: 0;
+        z-index: 10002;
+        background: #04070f;
+        clip-path: circle(0% at 50% 50%);
+        transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+      }
+      .page-transition-wipe.active {
+        clip-path: circle(150% at 50% 50%);
+      }
 
-        <!-- Right Side Tabs -->
-        <div class="nav-right">
-            <div class="nav-tabs">
-                <a href="index.html" class="nav-tab active">Home</a>
-                <a href="about.html" class="nav-tab">About</a>
-                <a href="skills.html" class="nav-tab">Skills</a>
-                <a href="security.html" class="nav-tab">Security</a>
-                <a href="contact.html" class="nav-tab">Contact</a>
-            </div>
+      /* Smooth button morph */
+      button, a {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+      button:hover, a:hover {
+        transform: translateY(-2px);
+      }
 
-            <button class="hamburger-menu" id="hamburger-menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-        </div>
-    </nav>
+      /* Canvas glow pulse */
+      canvas {
+        filter: contrast(1.05) brightness(1.02);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Morphing animation: IntersectionObserver for reveal-items
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const observer = new IntersectionObserver(entries => {
+            entries.forEach((e, i) => {
+              if (e.isIntersecting) {
+                setTimeout(() => e.target.classList.add('visible'), i * 80);
+                observer.unobserve(e.target);
+              }
+            });
+          }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobile-menu">
-        <a href="index.html" class="mobile-nav-link">Home</a>
-        <a href="about.html" class="mobile-nav-link">About</a>
-        <a href="skills.html" class="mobile-nav-link">Skills</a>
-        <a href="security.html" class="mobile-nav-link">Security</a>
-        <a href="contact.html" class="mobile-nav-link">Contact</a>
-    </div>
-
-    <!-- Blurry Overlay -->
-    <div class="menu-overlay" id="menu-overlay"></div>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-overlay"></div>
-
-        <div class="hero-content">
-            <!-- Computer Engineer Tag -->
-            <div class="hero-tag">// Computer Engineer</div>
-
-            <!-- Name - CENTERED -->
-            <h1 class="hero-title morph-glitch" data-text="MANAF ABDULJABBAR">
-                <span>MANAF</span> ABDULJABBAR
-            </h1>
-
-            <p class="hero-subtitle">I build. I secure. I solve.</p>
-
-            <div class="hero-cta">
-                <a href="contact.html" class="btn-primary">Get In Touch</a>
-                <a href="about.html" class="btn-secondary">View Profile</a>
-            </div>
-        </div>
-
-        <div class="scroll-indicator">
-            <span class="scroll-text">Scroll</span>
-            <div class="scroll-line"></div>
-        </div>
-    </section>
-
-    <!-- Quick Info Section -->
-    <section class="page-content">
-        <div class="page-header">
-            <div class="page-tag">// Quick Overview</div>
-            <h2 class="page-title">System Info</h2>
-        </div>
-
-        <div class="info-cards morph-stagger">
-            <div class="info-card morph-blob morph-hover">
-                <div class="info-label">Education</div>
-                <div class="info-value">B.Sc. Computer Engineering</div>
-            </div>
-            <div class="info-card morph-blob morph-hover">
-                <div class="info-label">University</div>
-                <div class="info-value">Qatar University</div>
-            </div>
-            <div class="info-card morph-blob morph-hover">
-                <div class="info-label">Specialization</div>
-                <div class="info-value">Networks & Security</div>
-            </div>
-            <div class="info-card morph-blob morph-hover">
-                <div class="info-label">Location</div>
-                <div class="info-value">Qatar - Available Remote</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p class="footer-text">
-                &copy; 2026 MANAF.SYS <span class="footer-version">v2.0</span>
-            </p>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
-
+          document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el));
+        }, 500);
+      });
+    </script>
+  </body>
 </html>
