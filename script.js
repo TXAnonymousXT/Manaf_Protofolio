@@ -56,146 +56,164 @@ function initCursor() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   VOID CANVAS — Stars + Cartographic Grid + Mycelial Network
+   VOID CANVAS — Kimi-style Floating Spore Particles + Connections
+   Matches the Mycelial Network organic bubble aesthetic
 ══════════════════════════════════════════════════════════════ */
 function initVoidCanvas() {
   const vc = document.getElementById('void-canvas');
   if (!vc) return;
-  const vctx = vc.getContext('2d');
-  let stars = [], mycelNodes = [], mycelTime = 0;
+  const ctx = vc.getContext('2d');
+
+  // Mouse tracking for particle interaction
+  let mouseX = -999, mouseY = -999;
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+  // Spore particle pool
+  const MAX_SPORES = 150;
+  let spores = [];
+
+  // Color palette matching Kimi design
+  const SPORE_COLORS = [
+    { color: '#00ffd1', weight: 0.45 },  // biolum-cyan (dominant)
+    { color: '#00b8a9', weight: 0.20 },  // biolum-teal
+    { color: '#ffb700', weight: 0.15 },  // nutrient-gold
+    { color: '#ff2a2a', weight: 0.08 },  // parasite-crimson
+    { color: '#d4c5b0', weight: 0.12 },  // hyphae
+  ];
+
+  function pickColor() {
+    let r = Math.random(), cumulative = 0;
+    for (const c of SPORE_COLORS) {
+      cumulative += c.weight;
+      if (r <= cumulative) return c.color;
+    }
+    return '#00ffd1';
+  }
+
+  function createSpore(x, y) {
+    return {
+      x: x !== undefined ? x : Math.random() * vc.width,
+      y: y !== undefined ? y : Math.random() * vc.height,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      size: Math.random() * 3 + 1,
+      color: pickColor(),
+      life: 1,
+      decay: 0.0008 + Math.random() * 0.0012,
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.02 + Math.random() * 0.03
+    };
+  }
 
   function resizeVC() {
     vc.width = window.innerWidth;
     vc.height = window.innerHeight;
-    buildStars();
-    buildMycelium();
+    // Rebuild spores on resize
+    spores = [];
+    for (let i = 0; i < MAX_SPORES; i++) spores.push(createSpore());
   }
 
-  function buildStars() {
-    const n = Math.floor(vc.width * vc.height / 1600);
-    stars = Array.from({ length: n }, () => ({
-      x: Math.random() * vc.width, y: Math.random() * vc.height,
-      r: Math.random() * 1.3, a: Math.random(),
-      flicker: Math.random() * Math.PI * 2,
-      fs: 0.004 + Math.random() * 0.018,
-      col: Math.random() < 0.1 ? '#e8a838' : Math.random() < 0.1 ? '#4da8da' : '#f0ece4'
-    }));
-  }
+  function draw() {
+    // Trail effect: semi-transparent dark overlay (Kimi-style ghosting)
+    ctx.fillStyle = 'rgba(13, 10, 8, 0.08)';
+    ctx.fillRect(0, 0, vc.width, vc.height);
 
-  function buildMycelium() {
-    const n = Math.max(Math.floor(vc.width * vc.height / 22000), 14);
-    mycelNodes = Array.from({ length: n }, () => ({
-      x: Math.random() * vc.width, y: Math.random() * vc.height,
-      vx: (Math.random() - 0.5) * 0.18, vy: (Math.random() - 0.5) * 0.18,
-      r: 1.5 + Math.random() * 2, pulse: Math.random() * Math.PI * 2,
-      type: Math.random() < 0.08 ? 'gold' : Math.random() < 0.06 ? 'crimson' : 'cyan'
-    }));
-  }
-
-  function drawVoid() {
-    vctx.clearRect(0, 0, vc.width, vc.height);
-    mycelTime += 0.003;
-
-    // Cartographic grid (breathing)
-    const cols = 10, rows = 7;
-    for (let i = 0; i <= cols; i++) {
-      const x = (vc.width / cols) * i;
-      vctx.beginPath();
-      for (let y2 = 0; y2 <= vc.height; y2 += 3) {
-        const wx = x + Math.sin(y2 * 0.006 + mycelTime * 0.4 + i * 0.5) * 1.5;
-        y2 === 0 ? vctx.moveTo(wx, y2) : vctx.lineTo(wx, y2);
-      }
-      vctx.strokeStyle = 'rgba(200,185,154,0.035)'; vctx.lineWidth = 0.8; vctx.stroke();
-    }
-    for (let j = 0; j <= rows; j++) {
-      const y = (vc.height / rows) * j;
-      vctx.beginPath();
-      for (let x2 = 0; x2 <= vc.width; x2 += 3) {
-        const wy = y + Math.sin(x2 * 0.006 + mycelTime * 0.3 + j * 0.5) * 1.5;
-        x2 === 0 ? vctx.moveTo(x2, wy) : vctx.lineTo(x2, wy);
-      }
-      vctx.strokeStyle = 'rgba(200,185,154,0.025)'; vctx.lineWidth = 0.8; vctx.stroke();
+    // Spawn new spores to maintain count
+    while (spores.length < MAX_SPORES) {
+      // Spawn from edges for organic feel
+      const edge = Math.random();
+      let sx, sy;
+      if (edge < 0.25) { sx = 0; sy = Math.random() * vc.height; }
+      else if (edge < 0.5) { sx = vc.width; sy = Math.random() * vc.height; }
+      else if (edge < 0.75) { sx = Math.random() * vc.width; sy = 0; }
+      else { sx = Math.random() * vc.width; sy = vc.height; }
+      spores.push(createSpore(sx, sy));
     }
 
-    // Update mycelium nodes
-    mycelNodes.forEach(n => {
-      n.x += n.vx; n.y += n.vy; n.pulse += 0.018;
-      if (n.x < 0 || n.x > vc.width) n.vx *= -1;
-      if (n.y < 0 || n.y > vc.height) n.vy *= -1;
-    });
+    // Update + draw spores
+    for (let i = spores.length - 1; i >= 0; i--) {
+      const s = spores[i];
 
-    // Mycelium connections
-    const cmap = { 'cyan': '#00ffd1', 'gold': '#e8a838', 'crimson': '#ff2a2a' };
-    for (let i = 0; i < mycelNodes.length; i++) {
-      for (let j = i + 1; j < mycelNodes.length; j++) {
-        const a = mycelNodes[i], b = mycelNodes[j];
-        const dx = b.x - a.x, dy = b.y - a.y, dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 190) {
-          const alpha = (1 - dist / 190) * 0.35;
-          const col = a.type === 'cyan' && b.type === 'cyan' ? '#00ffd1' : '#c8b99a';
-          vctx.beginPath();
-          vctx.moveTo(a.x, a.y);
-          const mx2 = (a.x + b.x) / 2 + Math.sin(mycelTime + i) * 12;
-          const my2 = (a.y + b.y) / 2 + Math.cos(mycelTime + j) * 12;
-          vctx.quadraticCurveTo(mx2, my2, b.x, b.y);
-          vctx.strokeStyle = col; vctx.globalAlpha = alpha; vctx.lineWidth = 0.6; vctx.stroke();
+      // Mouse interaction: gentle repulsion
+      const dmx = s.x - mouseX, dmy = s.y - mouseY;
+      const mouseDist = Math.sqrt(dmx * dmx + dmy * dmy);
+      if (mouseDist < 120 && mouseDist > 0) {
+        const force = (120 - mouseDist) / 120 * 0.4;
+        s.vx += (dmx / mouseDist) * force;
+        s.vy += (dmy / mouseDist) * force;
+      }
+
+      // Gentle drift with slight organic wobble
+      s.pulse += s.pulseSpeed;
+      s.x += s.vx + Math.sin(s.pulse) * 0.15;
+      s.y += s.vy + Math.cos(s.pulse * 0.7) * 0.15;
+
+      // Friction to slow down after mouse push
+      s.vx *= 0.995;
+      s.vy *= 0.995;
+
+      // Wrap around at edges
+      if (s.x < -10) s.x = vc.width + 10;
+      if (s.x > vc.width + 10) s.x = -10;
+      if (s.y < -10) s.y = vc.height + 10;
+      if (s.y > vc.height + 10) s.y = -10;
+
+      s.life -= s.decay;
+
+      // Remove dead spores
+      if (s.life <= 0) { spores.splice(i, 1); continue; }
+
+      // Draw spore with glow (shadowBlur like Kimi)
+      const alpha = s.life * (0.6 + Math.sin(s.pulse) * 0.2);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = s.color;
+      ctx.fillStyle = s.color;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Outer glow halo
+      ctx.globalAlpha = alpha * 0.08;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size * 5, 0, Math.PI * 2);
+      const grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size * 5);
+      grd.addColorStop(0, s.color);
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd;
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Connection lines between nearby spores (hyphae threads)
+    ctx.save();
+    ctx.strokeStyle = 'rgba(212, 197, 176, 0.1)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < spores.length; i++) {
+      for (let j = i + 1; j < spores.length; j++) {
+        const a = spores[i], b = spores[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          const alpha = (1 - dist / 100) * 0.15 * Math.min(a.life, b.life);
+          ctx.globalAlpha = alpha;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
         }
       }
     }
-    vctx.globalAlpha = 1;
+    ctx.restore();
 
-    // Mycelium nodes
-    mycelNodes.forEach(n => {
-      const col = cmap[n.type];
-      const p = Math.sin(n.pulse) * 0.35 + 0.65;
-      vctx.globalAlpha = p * 0.7;
-      vctx.beginPath(); vctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      vctx.fillStyle = col; vctx.fill();
-      vctx.globalAlpha = p * 0.12;
-      vctx.beginPath(); vctx.arc(n.x, n.y, n.r * 4, 0, Math.PI * 2);
-      vctx.fillStyle = col; vctx.fill();
-    });
-    vctx.globalAlpha = 1;
-
-    // Stars (on top)
-    stars.forEach(s => {
-      s.flicker += s.fs;
-      const alpha = s.a * (0.55 + 0.45 * Math.sin(s.flicker));
-      vctx.beginPath(); vctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      vctx.fillStyle = s.col; vctx.globalAlpha = alpha; vctx.fill();
-      if (s.r > 0.85) {
-        const hex = s.col.replace('#', '');
-        const rr = parseInt(hex.substring(0, 2), 16);
-        const gg = parseInt(hex.substring(2, 4), 16);
-        const bb = parseInt(hex.substring(4, 6), 16);
-        vctx.beginPath(); vctx.arc(s.x, s.y, s.r * 3.5, 0, Math.PI * 2);
-        const grd = vctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 3.5);
-        grd.addColorStop(0, `rgba(${rr},${gg},${bb},${alpha * 0.25})`);
-        grd.addColorStop(1, 'rgba(0,0,0,0)');
-        vctx.fillStyle = grd; vctx.fill();
-      }
-    });
-    vctx.globalAlpha = 1;
-
-    // Compass rose (subtle, bottom-right)
-    const cx = vc.width - 70, cy = vc.height - 70, cr = 35;
-    vctx.globalAlpha = 0.07;
-    for (let d = 0; d < 8; d++) {
-      const ang = (d * Math.PI / 4) + mycelTime * 0.04;
-      const len = d % 2 === 0 ? cr : cr * 0.55;
-      vctx.beginPath(); vctx.moveTo(cx, cy); vctx.lineTo(cx + Math.cos(ang) * len, cy + Math.sin(ang) * len);
-      vctx.strokeStyle = '#c8b99a'; vctx.lineWidth = d % 2 === 0 ? 1.2 : 0.7; vctx.stroke();
-    }
-    vctx.beginPath(); vctx.arc(cx, cy, 2.5, 0, Math.PI * 2);
-    vctx.fillStyle = '#c8b99a'; vctx.fill();
-    vctx.globalAlpha = 1;
-
-    requestAnimationFrame(drawVoid);
+    requestAnimationFrame(draw);
   }
 
   window.addEventListener('resize', resizeVC);
   resizeVC();
-  drawVoid();
+  draw();
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -227,7 +245,7 @@ function initBigBang() {
     if (!bbStart) bbStart = ts;
     const el = (ts - bbStart) / 1000;
     bbctx.clearRect(0, 0, bbc.width, bbc.height);
-    bbctx.fillStyle = '#04070f'; bbctx.fillRect(0, 0, bbc.width, bbc.height);
+    bbctx.fillStyle = '#0d0a08'; bbctx.fillRect(0, 0, bbc.width, bbc.height);
 
     // Flash
     if (el < 0.35) {
@@ -450,6 +468,9 @@ function initLoadingScreen() {
   const barFill = loader.querySelector('.loading-bar-fill');
   const loadText = loader.querySelector('.loading-text');
 
+  // Check if this is the index page (has Big Bang = slow intro)
+  const isIndex = !!document.getElementById('bigbang');
+
   const messages = [
     'Initializing substrate...',
     'Mapping mycelial network...',
@@ -461,30 +482,44 @@ function initLoadingScreen() {
   let progress = 0;
   let msgIdx = 0;
 
-  function tick() {
-    progress += Math.random() * 18 + 5;
-    if (progress > 100) progress = 100;
+  if (isIndex) {
+    // SLOW loading for index — full cinematic intro
+    function tick() {
+      progress += Math.random() * 18 + 5;
+      if (progress > 100) progress = 100;
 
-    if (barFill) barFill.style.width = progress + '%';
+      if (barFill) barFill.style.width = progress + '%';
 
-    if (progress > (msgIdx + 1) * 20 && msgIdx < messages.length - 1) {
-      msgIdx++;
-      if (loadText) loadText.textContent = messages[msgIdx];
+      if (progress > (msgIdx + 1) * 20 && msgIdx < messages.length - 1) {
+        msgIdx++;
+        if (loadText) loadText.textContent = messages[msgIdx];
+      }
+
+      if (progress < 100) {
+        setTimeout(tick, 120 + Math.random() * 180);
+      } else {
+        setTimeout(() => {
+          loader.classList.add('hidden');
+          setTimeout(() => { loader.remove(); }, 800);
+        }, 400);
+      }
     }
+    if (loadText) loadText.textContent = messages[0];
+    setTimeout(tick, 200);
+  } else {
+    // FAST loading for subpages — quick flash then go
+    if (loadText) loadText.textContent = 'Loading...';
+    if (barFill) barFill.style.transition = 'width 0.3s ease';
 
-    if (progress < 100) {
-      setTimeout(tick, 120 + Math.random() * 180);
-    } else {
-      setTimeout(() => {
-        loader.classList.add('hidden');
-        // Remove from DOM after transition
-        setTimeout(() => { loader.remove(); }, 800);
-      }, 400);
-    }
+    setTimeout(() => {
+      if (barFill) barFill.style.width = '100%';
+    }, 50);
+
+    setTimeout(() => {
+      loader.classList.add('hidden');
+      setTimeout(() => { loader.remove(); }, 800);
+    }, 400);
   }
-
-  if (loadText) loadText.textContent = messages[0];
-  setTimeout(tick, 200);
 }
 
 /* ══════════════════════════════════════════════════════════════
