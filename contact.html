@@ -1,192 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Contact Manaf Abduljabbar for networking, web development, UI/UX design, and more.">
-<title>Contact — Manaf Abduljabbar</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Inconsolata:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact Manaf Abduljabbar for networking, web development, UI/UX design, and more.">
+  <title>Contact — Manaf Abduljabbar</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Inconsolata:wght@300;400;500;700&family=VT323&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<!-- CURSOR -->
-<svg id="cursor" width="28" height="28" viewBox="0 0 28 28" style="transform:translate(-14px,-14px)">
-  <line x1="14" y1="1" x2="14" y2="7"  stroke="#00ffd1" stroke-width="1" opacity="0.9"/>
-  <line x1="14" y1="21" x2="14" y2="27" stroke="#00ffd1" stroke-width="1" opacity="0.9"/>
-  <line x1="1"  y1="14" x2="7"  y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9"/>
-  <line x1="21" y1="14" x2="27" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9"/>
-  <circle cx="14" cy="14" r="4" fill="none" stroke="#00ffd1" stroke-width="0.8" opacity="0.8"/>
-  <circle cx="14" cy="14" r="1.2" fill="#00ffd1"/>
-</svg>
-<svg id="cursor-ring" width="46" height="46" viewBox="0 0 46 46" style="transform:translate(-23px,-23px)">
-  <circle cx="23" cy="23" r="19" fill="none" stroke="rgba(0,255,209,0.18)" stroke-width="1" stroke-dasharray="3 5"/>
-</svg>
+  <!-- PAGE BACKGROUND -->
+  <div class="page-bg page-bg-contact"></div>
 
-<!-- VOID CANVAS -->
-<canvas id="void-canvas"></canvas>
+  <!-- CINEMATIC OVERLAYS -->
+  <div class="vignette"></div>
+  <div class="film-grain"></div>
+  <div class="scanlines"></div>
 
-<!-- NAV -->
-<nav class="nav-bar">
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
-  <ul class="nav-constellation">
-    <li><div class="nav-node"></div><a href="index.html" class="nav-link">Home</a></li>
-    <li><div class="nav-node"></div><a href="about.html" class="nav-link">Identity</a></li>
-    <li><div class="nav-node"></div><a href="skills.html" class="nav-link">Skills</a></li>
-    <li><div class="nav-node"></div><a href="security.html" class="nav-link">Security</a></li>
-    <li class="active"><div class="nav-node"></div><a href="contact.html" class="nav-link">Contact</a></li>
-  </ul>
-  <div class="nav-right">
-    <div class="nav-status"><div class="status-pulse"></div>SYS.ONLINE</div>
-    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
-      <span class="hamburger-dot"></span>
-      <span class="hamburger-dot"></span>
-      <span class="hamburger-dot"></span>
-    </button>
-  </div>
-</nav>
+  <!-- PAGE TRANSITION -->
+  <div class="page-transition" id="page-transition"></div>
 
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobile-menu">
-  <div class="mobile-menu-header">
-    <span class="menu-tag">// NAVIGATION</span>
-  </div>
-  <div class="mobile-menu-links">
-    <a href="index.html" class="mobile-nav-link">
-      <span class="link-index">00</span>
-      <span class="link-text">HOME</span>
-    </a>
-    <a href="about.html" class="mobile-nav-link">
-      <span class="link-index">01</span>
-      <span class="link-text">IDENTITY</span>
-    </a>
-    <a href="skills.html" class="mobile-nav-link">
-      <span class="link-index">02</span>
-      <span class="link-text">SKILLS</span>
-    </a>
-    <a href="security.html" class="mobile-nav-link">
-      <span class="link-index">03</span>
-      <span class="link-text">SECURITY</span>
-    </a>
-    <a href="contact.html" class="mobile-nav-link">
-      <span class="link-index">04</span>
-      <span class="link-text">CONTACT</span>
-    </a>
-  </div>
-  <div class="mobile-menu-footer">
-    <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
-  </div>
-</div>
+  <!-- CURSOR -->
+  <svg id="cursor" width="28" height="28" viewBox="0 0 28 28" style="transform:translate(-14px,-14px)">
+    <line x1="14" y1="1" x2="14" y2="7" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
+    <line x1="14" y1="21" x2="14" y2="27" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
+    <line x1="1" y1="14" x2="7" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
+    <line x1="21" y1="14" x2="27" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
+    <circle cx="14" cy="14" r="4" fill="none" stroke="#00ffd1" stroke-width="0.8" opacity="0.8" />
+    <circle cx="14" cy="14" r="1.2" fill="#00ffd1" />
+  </svg>
+  <svg id="cursor-ring" width="46" height="46" viewBox="0 0 46 46" style="transform:translate(-23px,-23px)">
+    <circle cx="23" cy="23" r="19" fill="none" stroke="rgba(0,255,209,0.18)" stroke-width="1" stroke-dasharray="3 5" />
+  </svg>
 
-<!-- PAGE HEADER -->
-<header class="page-header">
-  <div class="section-inner">
-    <div class="section-num">04</div>
-    <div class="section-head-text">
-      <div class="section-eyebrow">// Transmission Open</div>
-      <h1 class="section-title">Establish Link</h1>
+  <!-- VOID CANVAS -->
+  <canvas id="void-canvas"></canvas>
+
+  <!-- NAV -->
+  <nav class="nav-bar">
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
+    <ul class="nav-constellation">
+      <li>
+        <div class="nav-node"></div><a href="index.html" class="nav-link">Home</a>
+      </li>
+      <li>
+        <div class="nav-node"></div><a href="about.html" class="nav-link">Identity</a>
+      </li>
+      <li>
+        <div class="nav-node"></div><a href="skills.html" class="nav-link">Skills</a>
+      </li>
+      <li>
+        <div class="nav-node"></div><a href="security.html" class="nav-link">Security</a>
+      </li>
+      <li class="active">
+        <div class="nav-node"></div><a href="contact.html" class="nav-link">Contact</a>
+      </li>
+    </ul>
+    <div class="nav-right">
+      <div class="nav-status">
+        <div class="status-pulse"></div>SYS.ONLINE
+      </div>
+      <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+        <span class="hamburger-dot"></span>
+        <span class="hamburger-dot"></span>
+        <span class="hamburger-dot"></span>
+      </button>
     </div>
-    <div class="section-rule"></div>
-  </div>
-</header>
+  </nav>
 
-<!-- CONTACT -->
-<section id="contact">
-  <div class="section-inner">
-    <div class="contact-center reveal">
-      <div class="contact-pre">Transmission Open // Awaiting Signal</div>
-      <p class="contact-sub">Got a project that needs building? Open for collaborations, contracts, and interesting opportunities. Send a transmission and let's chart new territory together.</p>
-
-      <div class="contact-links">
-        <a href="mailto:man.abduljabbar@gmail.com" class="contact-card">
-          <span class="contact-icon">&#x2709;&#xFE0F;</span>
-          <span class="contact-label">Email</span>
-        </a>
-        <a href="https://qa.linkedin.com/in/manaf101" target="_blank" rel="noopener noreferrer" class="contact-card">
-          <span class="contact-icon">&#x1F517;</span>
-          <span class="contact-label">LinkedIn</span>
-        </a>
-      </div>
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-header">
+      <span class="menu-tag">// NAVIGATION</span>
     </div>
-
-    <!-- Services -->
-    <div class="services-grid reveal">
-      <div class="service-card">
-        <div class="service-icon">&#x1F310;</div>
-        <div class="service-name">Network Setup & Consulting</div>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">&#x1F4BB;</div>
-        <div class="service-name">Web Development</div>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">&#x1F3A8;</div>
-        <div class="service-name">UI/UX Design</div>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">&#x1F3AC;</div>
-        <div class="service-name">Video Editing</div>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">&#x270F;&#xFE0F;</div>
-        <div class="service-name">Graphic Design</div>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">&#x1F527;</div>
-        <div class="service-name">Technical Support</div>
-      </div>
+    <div class="mobile-menu-links">
+      <a href="index.html" class="mobile-nav-link">
+        <span class="link-index">00</span>
+        <span class="link-text">HOME</span>
+      </a>
+      <a href="about.html" class="mobile-nav-link">
+        <span class="link-index">01</span>
+        <span class="link-text">IDENTITY</span>
+      </a>
+      <a href="skills.html" class="mobile-nav-link">
+        <span class="link-index">02</span>
+        <span class="link-text">SKILLS</span>
+      </a>
+      <a href="security.html" class="mobile-nav-link">
+        <span class="link-index">03</span>
+        <span class="link-text">SECURITY</span>
+      </a>
+      <a href="contact.html" class="mobile-nav-link">
+        <span class="link-index">04</span>
+        <span class="link-text">CONTACT</span>
+      </a>
     </div>
-
-    <!-- Contact Form -->
-    <div class="contact-form-container reveal">
-      <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="252671cf-c5c7-45b5-9380-358ac1a1e6c7">
-        <input type="hidden" name="subject" value="New Contact from Portfolio">
-        <input type="hidden" name="from_name" value="Portfolio Contact Form">
-        <div class="form-group">
-          <label for="name" class="form-label">// Your Name</label>
-          <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name" required>
-        </div>
-        <div class="form-group">
-          <label for="email" class="form-label">// Your Email</label>
-          <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
-        </div>
-        <div class="form-group">
-          <label for="service" class="form-label">// Service Needed</label>
-          <select id="service" name="service" class="form-input form-select">
-            <option value="">Select a service...</option>
-            <option value="network">Network Setup & Consulting</option>
-            <option value="web">Web Development</option>
-            <option value="uiux">UI/UX Design</option>
-            <option value="video">Video Editing</option>
-            <option value="graphic">Graphic Design</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="message" class="form-label">// Your Message</label>
-          <textarea id="message" name="message" class="form-input form-textarea" placeholder="Describe your project or inquiry..." rows="5" required></textarea>
-        </div>
-        <button type="submit" class="form-submit">
-          <span class="submit-text">TRANSMIT</span>
-          <span class="submit-icon">&rarr;</span>
-        </button>
-      </form>
-      <div class="form-success hidden" id="form-success">
-        <div class="success-icon">&#x2713;</div>
-        <div class="success-text">Transmission received successfully!</div>
-      </div>
+    <div class="mobile-menu-footer">
+      <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
     </div>
   </div>
-</section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-left">&copy; 2026 <span class="nm">MANAF ABDULJABBAR</span> &middot; Neural Void</div>
-  <div class="footer-coords">RA 04h 32m &middot; Dec +25&deg; 42' &middot; Doha, Qatar</div>
-  <div class="footer-v">v2.0.0-neural-void</div>
-</footer>
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="section-inner">
+      <div class="section-num">04</div>
+      <div class="section-head-text">
+        <div class="section-eyebrow">// Transmission Open</div>
+        <h1 class="section-title morph-glitch morph-chromatic" data-text="Establish Link">Establish Link</h1>
+      </div>
+      <div class="section-rule"></div>
+    </div>
+  </header>
 
-<script src="script.js"></script>
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-inner">
+      <div class="contact-center morph-reveal">
+        <div class="contact-pre">Transmission Open // Awaiting Signal</div>
+        <p class="contact-sub">Got a project that needs building? Open for collaborations, contracts, and interesting
+          opportunities. Send a transmission and let's chart new territory together.</p>
+
+        <div class="contact-links morph-stagger">
+          <a href="mailto:man.abduljabbar@gmail.com" class="contact-card morph-blob morph-hover morph-glow">
+            <span class="contact-icon">&#x2709;&#xFE0F;</span>
+            <span class="contact-label">Email</span>
+          </a>
+          <a href="https://qa.linkedin.com/in/manaf101" target="_blank" rel="noopener noreferrer"
+            class="contact-card morph-blob morph-hover morph-glow">
+            <span class="contact-icon">&#x1F517;</span>
+            <span class="contact-label">LinkedIn</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div class="services-grid morph-stagger morph-reveal">
+        <div class="service-card morph-hover">
+          <div class="service-icon">&#x1F310;</div>
+          <div class="service-name">Network Setup &amp; Consulting</div>
+        </div>
+        <div class="service-card morph-hover">
+          <div class="service-icon">&#x1F4BB;</div>
+          <div class="service-name">Web Development</div>
+        </div>
+        <div class="service-card morph-hover">
+          <div class="service-icon">&#x1F3A8;</div>
+          <div class="service-name">UI/UX Design</div>
+        </div>
+        <div class="service-card morph-hover">
+          <div class="service-icon">&#x1F3AC;</div>
+          <div class="service-name">Video Editing</div>
+        </div>
+        <div class="service-card morph-hover">
+          <div class="service-icon">&#x270F;&#xFE0F;</div>
+          <div class="service-name">Graphic Design</div>
+        </div>
+        <div class="service-card morph-hover">
+          <div class="service-icon">&#x1F527;</div>
+          <div class="service-name">Technical Support</div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form-container morph-reveal">
+        <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="252671cf-c5c7-45b5-9380-358ac1a1e6c7">
+          <input type="hidden" name="subject" value="New Contact from Portfolio">
+          <input type="hidden" name="from_name" value="Portfolio Contact Form">
+          <div class="form-group">
+            <label for="name" class="form-label">// Your Name</label>
+            <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name" required>
+          </div>
+          <div class="form-group">
+            <label for="email" class="form-label">// Your Email</label>
+            <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="service" class="form-label">// Service Needed</label>
+            <select id="service" name="service" class="form-input form-select">
+              <option value="">Select a service...</option>
+              <option value="network">Network Setup &amp; Consulting</option>
+              <option value="web">Web Development</option>
+              <option value="uiux">UI/UX Design</option>
+              <option value="video">Video Editing</option>
+              <option value="graphic">Graphic Design</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message" class="form-label">// Your Message</label>
+            <textarea id="message" name="message" class="form-input form-textarea"
+              placeholder="Describe your project or inquiry..." rows="5" required></textarea>
+          </div>
+          <button type="submit" class="form-submit">
+            <span class="submit-text">TRANSMIT</span>
+            <span class="submit-icon">&rarr;</span>
+          </button>
+        </form>
+        <div class="form-success hidden" id="form-success">
+          <div class="success-icon">&#x2713;</div>
+          <div class="success-text">Transmission received successfully!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">&copy; 2026 <span class="nm">MANAF ABDULJABBAR</span> &middot; Neural Void</div>
+    <div class="footer-coords">RA 04h 32m &middot; Dec +25&deg; 42' &middot; Doha, Qatar</div>
+    <div class="footer-v">v2.0.0-neural-void</div>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
+
 </html>

@@ -4,14 +4,17 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initLoadingScreen();
   initCursor();
   initVoidCanvas();
   initBigBang();
   initHeroCanvases();
   initScrollReveal();
+  initMorphAnimations();
   initSmoothScroll();
   initHamburgerMenu();
   initContactForm();
+  initPageTransitions();
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -465,6 +468,94 @@ function initContactForm() {
       }
     } catch (err) {
       // Silent fail — form falls back to default action
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════════════════════════════ */
+function initLoadingScreen() {
+  const ls = document.getElementById('loading-screen');
+  if (!ls) return;
+
+  // Fade out after bar animation completes
+  setTimeout(() => {
+    ls.classList.add('fade-out');
+    setTimeout(() => { ls.style.display = 'none'; }, 1000);
+  }, 2400);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MORPH ANIMATIONS — Clip-path reveals + Staggered entrances
+══════════════════════════════════════════════════════════════ */
+function initMorphAnimations() {
+  // Morph reveal observer (clip-path morph on scroll)
+  const morphIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        morphIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.morph-reveal').forEach(el => morphIO.observe(el));
+
+  // Morph stagger observer
+  const staggerIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        staggerIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
+
+  document.querySelectorAll('.morph-stagger').forEach(el => staggerIO.observe(el));
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PAGE TRANSITIONS — Circle morph wipe between pages
+══════════════════════════════════════════════════════════════ */
+function initPageTransitions() {
+  const transition = document.getElementById('page-transition');
+  if (!transition) return;
+
+  // Intercept internal nav links for morphing page transition
+  document.querySelectorAll('a[href$=".html"]').forEach(link => {
+    // Skip external links
+    if (link.hostname && link.hostname !== window.location.hostname) return;
+
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href');
+      // Don't transition to current page
+      if (href === window.location.pathname.split('/').pop()) return;
+
+      e.preventDefault();
+      transition.classList.add('active');
+
+      setTimeout(() => {
+        window.location.href = href;
+      }, 600);
+    });
+  });
+
+  // Reverse transition on page load (shrink circle out)
+  if (sessionStorage.getItem('pageTransition')) {
+    transition.classList.add('active');
+    transition.style.transition = 'none';
+    requestAnimationFrame(() => {
+      transition.style.transition = '';
+      transition.classList.remove('active');
+    });
+    sessionStorage.removeItem('pageTransition');
+  }
+
+  // Mark that we're transitioning
+  window.addEventListener('beforeunload', () => {
+    if (transition.classList.contains('active')) {
+      sessionStorage.setItem('pageTransition', '1');
     }
   });
 }
