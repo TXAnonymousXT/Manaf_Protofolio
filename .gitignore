@@ -1,0 +1,9 @@
+# Reference files (not part of portfolio)
+kimi_extracted/
+kimi_fresh/
+prototype-3d/
+prototype-cinematic/
+
+# IDE / tool
+.claude/
+.vscode/
