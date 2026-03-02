@@ -17,39 +17,31 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ══════════════════════════════════════════════════════════════
-   CURSOR
+   CURSOR — Trailing glow dot
 ══════════════════════════════════════════════════════════════ */
 function initCursor() {
-  const cur = document.getElementById('cursor');
-  const curRing = document.getElementById('cursor-ring');
-  if (!cur || !curRing) return;
+  const glow = document.getElementById('cursor-glow');
+  if (!glow) return;
 
-  let mx = 0, my = 0, rx = 0, ry = 0;
+  let mx = 0, my = 0, gx = 0, gy = 0;
 
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
-    cur.style.left = mx + 'px';
-    cur.style.top = my + 'px';
   });
 
-  (function animRing() {
-    rx += (mx - rx) * 0.1;
-    ry += (my - ry) * 0.1;
-    curRing.style.left = rx + 'px';
-    curRing.style.top = ry + 'px';
-    requestAnimationFrame(animRing);
+  // Smooth trailing glow follows with easing
+  (function animGlow() {
+    gx += (mx - gx) * 0.15;
+    gy += (my - gy) * 0.15;
+    glow.style.left = gx + 'px';
+    glow.style.top = gy + 'px';
+    requestAnimationFrame(animGlow);
   })();
 
-  // Scale cursor on interactive elements
-  document.querySelectorAll('a, button, .project-card, .skill-row, .stat-box, .contact-card, .service-card, .sec-panel').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cur.style.transform = 'translate(-14px,-14px) scale(1.6)';
-      curRing.style.opacity = '0.4';
-    });
-    el.addEventListener('mouseleave', () => {
-      cur.style.transform = 'translate(-14px,-14px) scale(1)';
-      curRing.style.opacity = '1';
-    });
+  // Expand glow on interactive elements
+  document.querySelectorAll('a, button, .skill-row, .stat-box, .contact-card, .service-card, .sec-panel, .hamburger-menu').forEach(el => {
+    el.addEventListener('mouseenter', () => glow.classList.add('hover'));
+    el.addEventListener('mouseleave', () => glow.classList.remove('hover'));
   });
 }
 

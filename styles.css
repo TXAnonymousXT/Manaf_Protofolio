@@ -38,7 +38,7 @@ body {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 16px;
   overflow-x: hidden;
-  cursor: none;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='32' viewBox='0 0 28 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2300ffd1'/%3E%3Cstop offset='100%25' stop-color='%2300b8a9'/%3E%3C/linearGradient%3E%3Cfilter id='s'%3E%3CfeDropShadow dx='0' dy='1' stdDeviation='1' flood-color='%2300ffd1' flood-opacity='0.5'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M2 1 L2 24 L8 18 L14 28 L18 26 L12 16 L20 16 Z' fill='url(%23g)' stroke='%23005544' stroke-width='1' filter='url(%23s)' stroke-linejoin='round'/%3E%3Cpath d='M5 6 L5 18' stroke='rgba(255,255,255,0.4)' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 2 1, auto;
   min-height: 100vh;
 }
 /* Organic noise texture overlay (from Kimi) */
@@ -60,14 +60,29 @@ body::before {
 ::selection { background: var(--cyan-dim); color: var(--void); }
 
 /* ══════════════════════════════════════════
-   CUSTOM CURSOR — TELESCOPE CROSSHAIR
+   CUSTOM CURSOR — Glowing Cyber Pointer
 ══════════════════════════════════════════ */
-#cursor, #cursor-ring {
+/* Trailing glow dot that follows the mouse */
+#cursor-glow {
   position: fixed;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,255,209,0.35) 0%, transparent 70%);
   pointer-events: none;
   z-index: 9999;
-  top: 0; left: 0;
-  transition: transform 0.15s ease;
+  transform: translate(-9px, -9px);
+  transition: width 0.3s, height 0.3s, opacity 0.3s;
+  mix-blend-mode: screen;
+}
+#cursor-glow.hover {
+  width: 40px; height: 40px;
+  transform: translate(-20px, -20px);
+  background: radial-gradient(circle, rgba(0,255,209,0.2) 0%, rgba(0,255,209,0.05) 50%, transparent 70%);
+}
+
+/* Pointer cursor for clickable elements */
+a, button, .skill-row, .stat-box, .contact-card, .service-card, .sec-panel, .hamburger-menu {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='32' viewBox='0 0 28 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb700'/%3E%3Cstop offset='100%25' stop-color='%23e8a838'/%3E%3C/linearGradient%3E%3Cfilter id='s'%3E%3CfeDropShadow dx='0' dy='1' stdDeviation='1' flood-color='%23ffb700' flood-opacity='0.5'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M2 1 L2 24 L8 18 L14 28 L18 26 L12 16 L20 16 Z' fill='url(%23g)' stroke='%23664400' stroke-width='1' filter='url(%23s)' stroke-linejoin='round'/%3E%3Cpath d='M5 6 L5 18' stroke='rgba(255,255,255,0.5)' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 2 1, pointer;
 }
 
 /* ══════════════════════════════════════════
@@ -200,7 +215,6 @@ li.active .nav-link { color: var(--cyan); }
   background: transparent;
   border: 1px solid rgba(200,185,154,0.15);
   border-radius: 2px;
-  cursor: none;
   padding: 0;
   transition: all 0.3s;
   z-index: 600;
@@ -576,10 +590,16 @@ section { position: relative; z-index: 10; padding: 9rem 0; }
 }
 .sec-panel:hover { border-color: rgba(255,42,42,0.35); box-shadow: 0 0 40px rgba(255,42,42,0.08); transform: translateY(-4px); animation: infect 2s ease-out infinite; }
 .sec-badge {
-  position: absolute; top: -0.55rem; left: 2rem;
+  position: absolute; top: -0.75rem; left: 2rem;
   font-size: 0.65rem; letter-spacing: 0.3em;
-  color: var(--crimson); background: var(--void);
-  padding: 0 0.6rem; text-transform: uppercase;
+  color: var(--crimson);
+  background: rgba(26,20,16,0.85);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  padding: 0.25rem 0.9rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255,42,42,0.2);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 8px rgba(255,42,42,0.08);
+  text-transform: uppercase;
 }
 .sec-title { font-family: 'VT323', monospace; font-size: 1.05rem; letter-spacing: 0.2em; color: var(--crimson); text-transform: uppercase; margin-bottom: 1.5rem; }
 
