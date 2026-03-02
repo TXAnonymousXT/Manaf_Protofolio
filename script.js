@@ -56,8 +56,8 @@ function initCursor() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   VOID CANVAS — Kimi-style Floating Spore Particles + Connections
-   Matches the Mycelial Network organic bubble aesthetic
+   VOID CANVAS — Kimi-style Tiny Floating Dots + Connection Lines
+   Clean, subtle particles — NO blobs, NO smearing
 ══════════════════════════════════════════════════════════════ */
 function initVoidCanvas() {
   const vc = document.getElementById('void-canvas');
@@ -68,12 +68,12 @@ function initVoidCanvas() {
   let mouseX = -999, mouseY = -999;
   document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
 
-  // Spore particle pool
-  const MAX_SPORES = 150;
-  let spores = [];
+  // Particle pool
+  const MAX_PARTICLES = 120;
+  let particles = [];
 
   // Color palette matching Kimi design
-  const SPORE_COLORS = [
+  const COLORS = [
     { color: '#00ffd1', weight: 0.45 },  // biolum-cyan (dominant)
     { color: '#00b8a9', weight: 0.20 },  // biolum-teal
     { color: '#ffb700', weight: 0.15 },  // nutrient-gold
@@ -83,122 +83,91 @@ function initVoidCanvas() {
 
   function pickColor() {
     let r = Math.random(), cumulative = 0;
-    for (const c of SPORE_COLORS) {
+    for (const c of COLORS) {
       cumulative += c.weight;
       if (r <= cumulative) return c.color;
     }
     return '#00ffd1';
   }
 
-  function createSpore(x, y) {
+  function createParticle(x, y) {
     return {
       x: x !== undefined ? x : Math.random() * vc.width,
       y: y !== undefined ? y : Math.random() * vc.height,
-      vx: (Math.random() - 0.5) * 0.8,
-      vy: (Math.random() - 0.5) * 0.8,
-      size: Math.random() * 3 + 1,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      size: Math.random() * 1.2 + 0.4,   // tiny: 0.4 – 1.6 px
       color: pickColor(),
-      life: 1,
-      decay: 0.0008 + Math.random() * 0.0012,
+      alpha: Math.random() * 0.5 + 0.3,  // 0.3 – 0.8
       pulse: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.02 + Math.random() * 0.03
+      pulseSpeed: 0.01 + Math.random() * 0.02
     };
   }
 
   function resizeVC() {
     vc.width = window.innerWidth;
     vc.height = window.innerHeight;
-    // Rebuild spores on resize
-    spores = [];
-    for (let i = 0; i < MAX_SPORES; i++) spores.push(createSpore());
+    particles = [];
+    for (let i = 0; i < MAX_PARTICLES; i++) particles.push(createParticle());
   }
 
   function draw() {
-    // Trail effect: semi-transparent dark overlay (Kimi-style ghosting)
-    ctx.fillStyle = 'rgba(13, 10, 8, 0.08)';
-    ctx.fillRect(0, 0, vc.width, vc.height);
+    // Full clear every frame — no trail, no smearing, no blobs
+    ctx.clearRect(0, 0, vc.width, vc.height);
 
-    // Spawn new spores to maintain count
-    while (spores.length < MAX_SPORES) {
-      // Spawn from edges for organic feel
-      const edge = Math.random();
-      let sx, sy;
-      if (edge < 0.25) { sx = 0; sy = Math.random() * vc.height; }
-      else if (edge < 0.5) { sx = vc.width; sy = Math.random() * vc.height; }
-      else if (edge < 0.75) { sx = Math.random() * vc.width; sy = 0; }
-      else { sx = Math.random() * vc.width; sy = vc.height; }
-      spores.push(createSpore(sx, sy));
-    }
-
-    // Update + draw spores
-    for (let i = spores.length - 1; i >= 0; i--) {
-      const s = spores[i];
+    // Update + draw particles
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
 
       // Mouse interaction: gentle repulsion
-      const dmx = s.x - mouseX, dmy = s.y - mouseY;
+      const dmx = p.x - mouseX, dmy = p.y - mouseY;
       const mouseDist = Math.sqrt(dmx * dmx + dmy * dmy);
-      if (mouseDist < 120 && mouseDist > 0) {
-        const force = (120 - mouseDist) / 120 * 0.4;
-        s.vx += (dmx / mouseDist) * force;
-        s.vy += (dmy / mouseDist) * force;
+      if (mouseDist < 100 && mouseDist > 0) {
+        const force = (100 - mouseDist) / 100 * 0.15;
+        p.vx += (dmx / mouseDist) * force;
+        p.vy += (dmy / mouseDist) * force;
       }
 
       // Gentle drift with slight organic wobble
-      s.pulse += s.pulseSpeed;
-      s.x += s.vx + Math.sin(s.pulse) * 0.15;
-      s.y += s.vy + Math.cos(s.pulse * 0.7) * 0.15;
+      p.pulse += p.pulseSpeed;
+      p.x += p.vx + Math.sin(p.pulse) * 0.1;
+      p.y += p.vy + Math.cos(p.pulse * 0.7) * 0.1;
 
-      // Friction to slow down after mouse push
-      s.vx *= 0.995;
-      s.vy *= 0.995;
+      // Friction
+      p.vx *= 0.99;
+      p.vy *= 0.99;
 
       // Wrap around at edges
-      if (s.x < -10) s.x = vc.width + 10;
-      if (s.x > vc.width + 10) s.x = -10;
-      if (s.y < -10) s.y = vc.height + 10;
-      if (s.y > vc.height + 10) s.y = -10;
+      if (p.x < -5) p.x = vc.width + 5;
+      if (p.x > vc.width + 5) p.x = -5;
+      if (p.y < -5) p.y = vc.height + 5;
+      if (p.y > vc.height + 5) p.y = -5;
 
-      s.life -= s.decay;
-
-      // Remove dead spores
-      if (s.life <= 0) { spores.splice(i, 1); continue; }
-
-      // Draw spore with glow (shadowBlur like Kimi)
-      const alpha = s.life * (0.6 + Math.sin(s.pulse) * 0.2);
+      // Draw tiny dot with small soft glow
+      const a = p.alpha * (0.7 + Math.sin(p.pulse) * 0.3);
       ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.shadowBlur = 12;
-      ctx.shadowColor = s.color;
-      ctx.fillStyle = s.color;
+      ctx.globalAlpha = a;
+      ctx.shadowBlur = 4;
+      ctx.shadowColor = p.color;
+      ctx.fillStyle = p.color;
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
-
-      // Outer glow halo
-      ctx.globalAlpha = alpha * 0.08;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size * 5, 0, Math.PI * 2);
-      const grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size * 5);
-      grd.addColorStop(0, s.color);
-      grd.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = grd;
-      ctx.fill();
     }
-    ctx.globalAlpha = 1;
 
-    // Connection lines between nearby spores (hyphae threads)
+    // Connection lines between nearby particles (hyphae threads)
     ctx.save();
-    ctx.strokeStyle = 'rgba(212, 197, 176, 0.1)';
-    ctx.lineWidth = 0.5;
-    for (let i = 0; i < spores.length; i++) {
-      for (let j = i + 1; j < spores.length; j++) {
-        const a = spores[i], b = spores[j];
+    ctx.lineWidth = 0.4;
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const a = particles[i], b = particles[j];
         const dx = a.x - b.x, dy = a.y - b.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 100) {
-          const alpha = (1 - dist / 100) * 0.15 * Math.min(a.life, b.life);
-          ctx.globalAlpha = alpha;
+        if (dist < 80) {
+          const lineAlpha = (1 - dist / 80) * 0.12;
+          ctx.globalAlpha = lineAlpha;
+          ctx.strokeStyle = 'rgba(212, 197, 176, 0.5)';
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
