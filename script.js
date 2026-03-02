@@ -143,17 +143,13 @@ function initVoidCanvas() {
       if (p.y < -5) p.y = vc.height + 5;
       if (p.y > vc.height + 5) p.y = -5;
 
-      // Draw tiny dot with small soft glow
+      // Draw plain tiny dot — no glow, no shadow, no halo
       const a = p.alpha * (0.7 + Math.sin(p.pulse) * 0.3);
-      ctx.save();
       ctx.globalAlpha = a;
-      ctx.shadowBlur = 4;
-      ctx.shadowColor = p.color;
       ctx.fillStyle = p.color;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
-      ctx.restore();
     }
 
     // Connection lines between nearby particles (hyphae threads)
@@ -264,78 +260,27 @@ function initHeroCanvases() {
   resizeHero();
   window.addEventListener('resize', resizeHero);
 
-  // Hero mycelium nodes
-  let heroNodes = Array.from({ length: 25 }, () => ({
-    x: Math.random() * hm.width, y: Math.random() * hm.height,
-    vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2,
-    r: 2 + Math.random() * 3, pulse: Math.random() * Math.PI * 2,
-    type: Math.random() < 0.7 ? 'cyan' : Math.random() < 0.5 ? 'gold' : 'aurora'
-  }));
-
-  let hTime = 0, hmx = window.innerWidth / 2, hmy = window.innerHeight / 2;
-  const heroEl = document.getElementById('hero');
-  if (heroEl) heroEl.addEventListener('mousemove', e => { hmx = e.clientX; hmy = e.clientY; });
-
-  const hcols = { 'cyan': '#00ffd1', 'gold': '#e8a838', 'aurora': '#38e8a8' };
-
-  // Floating particles
-  let heroPars = Array.from({ length: 70 }, () => ({
-    x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
-    vx: (Math.random() - 0.5) * 0.25, vy: -0.15 - Math.random() * 0.35,
-    r: Math.random() * 1.4, a: Math.random() * 0.5 + 0.1,
-    col: Math.random() < 0.4 ? '#00ffd1' : Math.random() < 0.25 ? '#e8a838' : '#f0ece4'
+  // Simple floating dots for hero area — plain tiny particles, nothing fancy
+  let heroPars = Array.from({ length: 50 }, () => ({
+    x: Math.random() * hp.width, y: Math.random() * hp.height,
+    vx: (Math.random() - 0.5) * 0.2, vy: -0.1 - Math.random() * 0.25,
+    r: Math.random() * 1 + 0.3,
+    a: Math.random() * 0.4 + 0.15,
+    col: Math.random() < 0.5 ? '#00ffd1' : Math.random() < 0.3 ? '#e8a838' : '#f0ece4'
   }));
 
   function drawHero() {
     hmctx.clearRect(0, 0, hm.width, hm.height);
     hpctx.clearRect(0, 0, hp.width, hp.height);
-    hTime += 0.005;
 
-    heroNodes.forEach(n => {
-      n.x += n.vx; n.y += n.vy; n.pulse += 0.022;
-      if (n.x < 0 || n.x > hm.width) n.vx *= -1;
-      if (n.y < 0 || n.y > hm.height) n.vy *= -1;
-      const dx = hmx - n.x, dy = hmy - n.y, d = Math.sqrt(dx * dx + dy * dy);
-      if (d < 200) { n.x += dx / d * 0.3; n.y += dy / d * 0.3; }
-    });
-
-    // Connections
-    for (let i = 0; i < heroNodes.length; i++) {
-      for (let j = i + 1; j < heroNodes.length; j++) {
-        const a = heroNodes[i], b = heroNodes[j];
-        const dx = b.x - a.x, dy = b.y - a.y, dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 160) {
-          const alpha = (1 - dist / 160) * 0.5;
-          hmctx.beginPath(); hmctx.moveTo(a.x, a.y);
-          const mx2 = (a.x + b.x) / 2 + Math.sin(hTime + i) * 18;
-          const my2 = (a.y + b.y) / 2 + Math.cos(hTime + j) * 18;
-          hmctx.quadraticCurveTo(mx2, my2, b.x, b.y);
-          hmctx.strokeStyle = '#00ffd1'; hmctx.globalAlpha = alpha; hmctx.lineWidth = 0.8; hmctx.stroke();
-        }
-      }
-    }
-    hmctx.globalAlpha = 1;
-
-    // Draw nodes
-    heroNodes.forEach(n => {
-      const col = hcols[n.type];
-      const p = Math.sin(n.pulse) * 0.4 + 0.6;
-      hmctx.globalAlpha = p * 0.85;
-      hmctx.beginPath(); hmctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); hmctx.fillStyle = col; hmctx.fill();
-      hmctx.globalAlpha = p * 0.15;
-      hmctx.beginPath(); hmctx.arc(n.x, n.y, n.r * 5, 0, Math.PI * 2); hmctx.fillStyle = col; hmctx.fill();
-    });
-    hmctx.globalAlpha = 1;
-
-    // Floating particles
+    // Just plain tiny dots floating upward
     heroPars.forEach(p => {
       p.x += p.vx; p.y += p.vy;
       if (p.y < -5) { p.y = hp.height + 5; p.x = Math.random() * hp.width; }
       if (p.x < -5) p.x = hp.width + 5; if (p.x > hp.width + 5) p.x = -5;
-      const ddx = p.x - hmx, ddy = p.y - hmy, dd = Math.sqrt(ddx * ddx + ddy * ddy);
-      if (dd < 80) { p.x += ddx / dd * 0.6; p.y += ddy / dd * 0.6; }
-      hpctx.beginPath(); hpctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      hpctx.fillStyle = p.col; hpctx.globalAlpha = p.a * 0.45; hpctx.fill();
+      hpctx.globalAlpha = p.a;
+      hpctx.fillStyle = p.col;
+      hpctx.beginPath(); hpctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); hpctx.fill();
     });
     hpctx.globalAlpha = 1;
 
