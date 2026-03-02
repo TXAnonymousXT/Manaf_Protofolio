@@ -1,15 +1,13 @@
 /**
  * MYCELIAL NETWORK — Portfolio Interactions
- * Loading, Cursor, Void Canvas, Big Bang, Hero Canvases, Scroll Reveals,
+ * Loading, Cursor, Big Bang, Scroll Reveals,
  * Morphing Animations, Page Transitions, Hamburger Menu, Contact Form
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initLoadingScreen();
   initCursor();
-  initVoidCanvas();
   initBigBang();
-  initHeroCanvases();
   initScrollReveal();
   initMorphAnimations();
   initPageTransitions();
@@ -55,131 +53,7 @@ function initCursor() {
   });
 }
 
-/* ══════════════════════════════════════════════════════════════
-   VOID CANVAS — Kimi-style Tiny Floating Dots + Connection Lines
-   Clean, subtle particles — NO blobs, NO smearing
-══════════════════════════════════════════════════════════════ */
-function initVoidCanvas() {
-  const vc = document.getElementById('void-canvas');
-  if (!vc) return;
-  const ctx = vc.getContext('2d');
-
-  // Mouse tracking for particle interaction
-  let mouseX = -999, mouseY = -999;
-  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-
-  // Particle pool
-  const MAX_PARTICLES = 120;
-  let particles = [];
-
-  // Color palette matching Kimi design
-  const COLORS = [
-    { color: '#00ffd1', weight: 0.45 },  // biolum-cyan (dominant)
-    { color: '#00b8a9', weight: 0.20 },  // biolum-teal
-    { color: '#ffb700', weight: 0.15 },  // nutrient-gold
-    { color: '#ff2a2a', weight: 0.08 },  // parasite-crimson
-    { color: '#d4c5b0', weight: 0.12 },  // hyphae
-  ];
-
-  function pickColor() {
-    let r = Math.random(), cumulative = 0;
-    for (const c of COLORS) {
-      cumulative += c.weight;
-      if (r <= cumulative) return c.color;
-    }
-    return '#00ffd1';
-  }
-
-  function createParticle(x, y) {
-    return {
-      x: x !== undefined ? x : Math.random() * vc.width,
-      y: y !== undefined ? y : Math.random() * vc.height,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      size: Math.random() * 1.2 + 0.4,   // tiny: 0.4 – 1.6 px
-      color: pickColor(),
-      alpha: Math.random() * 0.5 + 0.3,  // 0.3 – 0.8
-      pulse: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.01 + Math.random() * 0.02
-    };
-  }
-
-  function resizeVC() {
-    vc.width = window.innerWidth;
-    vc.height = window.innerHeight;
-    particles = [];
-    for (let i = 0; i < MAX_PARTICLES; i++) particles.push(createParticle());
-  }
-
-  function draw() {
-    // Full clear every frame — no trail, no smearing, no blobs
-    ctx.clearRect(0, 0, vc.width, vc.height);
-
-    // Update + draw particles
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-
-      // Mouse interaction: gentle repulsion
-      const dmx = p.x - mouseX, dmy = p.y - mouseY;
-      const mouseDist = Math.sqrt(dmx * dmx + dmy * dmy);
-      if (mouseDist < 100 && mouseDist > 0) {
-        const force = (100 - mouseDist) / 100 * 0.15;
-        p.vx += (dmx / mouseDist) * force;
-        p.vy += (dmy / mouseDist) * force;
-      }
-
-      // Gentle drift with slight organic wobble
-      p.pulse += p.pulseSpeed;
-      p.x += p.vx + Math.sin(p.pulse) * 0.1;
-      p.y += p.vy + Math.cos(p.pulse * 0.7) * 0.1;
-
-      // Friction
-      p.vx *= 0.99;
-      p.vy *= 0.99;
-
-      // Wrap around at edges
-      if (p.x < -5) p.x = vc.width + 5;
-      if (p.x > vc.width + 5) p.x = -5;
-      if (p.y < -5) p.y = vc.height + 5;
-      if (p.y > vc.height + 5) p.y = -5;
-
-      // Draw plain tiny dot — no glow, no shadow, no halo
-      const a = p.alpha * (0.7 + Math.sin(p.pulse) * 0.3);
-      ctx.globalAlpha = a;
-      ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Connection lines between nearby particles (hyphae threads)
-    ctx.save();
-    ctx.lineWidth = 0.4;
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const a = particles[i], b = particles[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 80) {
-          const lineAlpha = (1 - dist / 80) * 0.12;
-          ctx.globalAlpha = lineAlpha;
-          ctx.strokeStyle = 'rgba(212, 197, 176, 0.5)';
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-      }
-    }
-    ctx.restore();
-
-    requestAnimationFrame(draw);
-  }
-
-  window.addEventListener('resize', resizeVC);
-  resizeVC();
-  draw();
-}
+/* Void canvas removed — plain background from CSS only */
 
 /* ══════════════════════════════════════════════════════════════
    BIG BANG + BOOT SEQUENCE (index.html only)
@@ -242,52 +116,7 @@ function initBigBang() {
   requestAnimationFrame(animBB);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   HERO CANVASES — Mycelium + Particles (index.html only)
-══════════════════════════════════════════════════════════════ */
-function initHeroCanvases() {
-  const hm = document.getElementById('hero-mycelial');
-  const hp = document.getElementById('hero-particles');
-  if (!hm || !hp) return;
-
-  const hmctx = hm.getContext('2d');
-  const hpctx = hp.getContext('2d');
-
-  function resizeHero() {
-    hm.width = hp.width = window.innerWidth;
-    hm.height = hp.height = window.innerHeight;
-  }
-  resizeHero();
-  window.addEventListener('resize', resizeHero);
-
-  // Simple floating dots for hero area — plain tiny particles, nothing fancy
-  let heroPars = Array.from({ length: 50 }, () => ({
-    x: Math.random() * hp.width, y: Math.random() * hp.height,
-    vx: (Math.random() - 0.5) * 0.2, vy: -0.1 - Math.random() * 0.25,
-    r: Math.random() * 1 + 0.3,
-    a: Math.random() * 0.4 + 0.15,
-    col: Math.random() < 0.5 ? '#00ffd1' : Math.random() < 0.3 ? '#e8a838' : '#f0ece4'
-  }));
-
-  function drawHero() {
-    hmctx.clearRect(0, 0, hm.width, hm.height);
-    hpctx.clearRect(0, 0, hp.width, hp.height);
-
-    // Just plain tiny dots floating upward
-    heroPars.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.y < -5) { p.y = hp.height + 5; p.x = Math.random() * hp.width; }
-      if (p.x < -5) p.x = hp.width + 5; if (p.x > hp.width + 5) p.x = -5;
-      hpctx.globalAlpha = p.a;
-      hpctx.fillStyle = p.col;
-      hpctx.beginPath(); hpctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); hpctx.fill();
-    });
-    hpctx.globalAlpha = 1;
-
-    requestAnimationFrame(drawHero);
-  }
-  drawHero();
-}
+/* Hero canvases removed — plain background */
 
 /* ══════════════════════════════════════════════════════════════
    SCROLL REVEAL + SKILL BAR ANIMATION
