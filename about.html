@@ -2,168 +2,121 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="About Manaf Abduljabbar - Computer Engineer from Qatar University.">
-  <title>Identity — Manaf Abduljabbar</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Inconsolata:wght@300;400;500;700&family=VT323&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="About Manaf Abduljabbar - Computer Engineer from Qatar University.">
+    <title>ABOUT // MANAF</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+    <!-- Page Background -->
+    <div class="page-bg page-bg-about"></div>
 
-  <!-- PAGE BACKGROUND -->
-  <div class="page-bg page-bg-about"></div>
+    <!-- Cinematic Effects -->
+    <div class="vignette"></div>
+    <div class="film-grain"></div>
 
-  <!-- CINEMATIC OVERLAYS -->
-  <div class="vignette"></div>
-  <div class="film-grain"></div>
-  <div class="scanlines"></div>
+    <!-- Particles Background -->
+    <div class="particles-container" id="particles"></div>
+    <div class="scanlines"></div>
 
-  <!-- PAGE TRANSITION -->
-  <div class="page-transition" id="page-transition"></div>
+    <!-- Page Transition -->
+    <div class="page-transition" id="page-transition"></div>
 
-  <!-- CURSOR -->
-  <svg id="cursor" width="28" height="28" viewBox="0 0 28 28" style="transform:translate(-14px,-14px)">
-    <line x1="14" y1="1" x2="14" y2="7" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="14" y1="21" x2="14" y2="27" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="1" y1="14" x2="7" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="21" y1="14" x2="27" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <circle cx="14" cy="14" r="4" fill="none" stroke="#00ffd1" stroke-width="0.8" opacity="0.8" />
-    <circle cx="14" cy="14" r="1.2" fill="#00ffd1" />
-  </svg>
-  <svg id="cursor-ring" width="46" height="46" viewBox="0 0 46 46" style="transform:translate(-23px,-23px)">
-    <circle cx="23" cy="23" r="19" fill="none" stroke="rgba(0,255,209,0.18)" stroke-width="1" stroke-dasharray="3 5" />
-  </svg>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-logo">
+            <img src="logo.png" alt="Logo">
+        </a>
 
-  <!-- VOID CANVAS -->
-  <canvas id="void-canvas"></canvas>
+        <div class="nav-right">
+            <div class="nav-tabs">
+                <a href="index.html" class="nav-tab">Home</a>
+                <a href="about.html" class="nav-tab active">About</a>
+                <a href="skills.html" class="nav-tab">Skills</a>
+                <a href="security.html" class="nav-tab">Security</a>
+                <a href="contact.html" class="nav-tab">Contact</a>
+            </div>
 
-  <!-- NAV -->
-  <nav class="nav-bar">
-    <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
-    <ul class="nav-constellation">
-      <li>
-        <div class="nav-node"></div><a href="index.html" class="nav-link">Home</a>
-      </li>
-      <li class="active">
-        <div class="nav-node"></div><a href="about.html" class="nav-link">Identity</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="skills.html" class="nav-link">Skills</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="security.html" class="nav-link">Security</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="contact.html" class="nav-link">Contact</a>
-      </li>
-    </ul>
-    <div class="nav-right">
-      <div class="nav-status">
-        <div class="status-pulse"></div>SYS.ONLINE
-      </div>
-      <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
-        <span class="hamburger-dot"></span>
-        <span class="hamburger-dot"></span>
-        <span class="hamburger-dot"></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" id="mobile-menu">
-    <div class="mobile-menu-header">
-      <span class="menu-tag">// NAVIGATION</span>
-    </div>
-    <div class="mobile-menu-links">
-      <a href="index.html" class="mobile-nav-link">
-        <span class="link-index">00</span>
-        <span class="link-text">HOME</span>
-      </a>
-      <a href="about.html" class="mobile-nav-link">
-        <span class="link-index">01</span>
-        <span class="link-text">IDENTITY</span>
-      </a>
-      <a href="skills.html" class="mobile-nav-link">
-        <span class="link-index">02</span>
-        <span class="link-text">SKILLS</span>
-      </a>
-      <a href="security.html" class="mobile-nav-link">
-        <span class="link-index">03</span>
-        <span class="link-text">SECURITY</span>
-      </a>
-      <a href="contact.html" class="mobile-nav-link">
-        <span class="link-index">04</span>
-        <span class="link-text">CONTACT</span>
-      </a>
-    </div>
-    <div class="mobile-menu-footer">
-      <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
-    </div>
-  </div>
-
-  <!-- PAGE HEADER -->
-  <header class="page-header">
-    <div class="section-inner">
-      <div class="section-num">01</div>
-      <div class="section-head-text">
-        <div class="section-eyebrow">// Object Identity</div>
-        <h1 class="section-title morph-glitch morph-chromatic" data-text="Who I Am">Who I Am</h1>
-      </div>
-      <div class="section-rule"></div>
-    </div>
-  </header>
-
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="section-inner">
-      <div class="about-grid">
-        <div class="about-text morph-reveal">
-          <p>A <span class="hl">Computer Engineer</span> based in <span class="hl-cyan">Doha, Qatar</span> — with a
-            genuine curiosity for how systems communicate and how to keep them secure. From configuring routers and
-            switches to building secure network architectures, the fascination with connectivity runs deep.</p>
-          <p>Hands-on experience across <span class="hl">networking</span>, <span class="hl">network security</span>,
-            <span class="hl">web development</span>, <span class="hl">UI/UX design</span>, <span
-              class="hl">robotics</span>, <span class="hl">video editing</span>, and <span class="hl">graphic
-              design</span>. Whether it's diving into firewall configurations or crafting responsive interfaces — every
-            project is an opportunity to grow.</p>
-          <p>The goal? Build a rock-solid foundation in <span class="hl">networking</span> and <span class="hl">network
-              security</span> — mastering how systems connect, how data flows, and how to defend it. The void is not
-            empty — it is waiting to be mapped.</p>
+            <button class="hamburger-menu" id="hamburger-menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
         </div>
-        <div class="about-stats morph-stagger">
-          <div class="stat-box morph-blob morph-hover morph-glow">
-            <div class="stat-num">QU</div>
-            <div class="stat-label">Qatar University</div>
-          </div>
-          <div class="stat-box morph-blob morph-hover morph-glow">
-            <div class="stat-num">B.Sc</div>
-            <div class="stat-label">Computer Engineering</div>
-          </div>
-          <div class="stat-box morph-blob morph-hover morph-glow">
-            <div class="stat-num">NET</div>
-            <div class="stat-label">Networks &amp; Security</div>
-          </div>
-          <div class="stat-box morph-blob morph-hover morph-glow">
-            <div class="stat-num">&infin;</div>
-            <div class="stat-label">Curiosity</div>
-          </div>
-        </div>
-      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="index.html" class="mobile-nav-link">Home</a>
+        <a href="about.html" class="mobile-nav-link">About</a>
+        <a href="skills.html" class="mobile-nav-link">Skills</a>
+        <a href="security.html" class="mobile-nav-link">Security</a>
+        <a href="contact.html" class="mobile-nav-link">Contact</a>
     </div>
-  </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-left">&copy; 2026 <span class="nm">MANAF ABDULJABBAR</span> &middot; Neural Void</div>
-    <div class="footer-coords">RA 04h 32m &middot; Dec +25&deg; 42' &middot; Doha, Qatar</div>
-    <div class="footer-v">v2.0.0-neural-void</div>
-  </footer>
+    <!-- Blurry Overlay -->
+    <div class="menu-overlay" id="menu-overlay"></div>
 
-  <script src="script.js"></script>
+    <!-- Page Content -->
+    <section class="page-content" style="padding-top: 10rem;">
+        <div class="page-header">
+            <div class="page-tag">// Who I Am</div>
+            <h2 class="page-title">Identity</h2>
+        </div>
+
+        <div class="contact-grid">
+            <div class="contact-info morph-reveal">
+                <p>
+                    <span class="highlight">Computer Engineer</span> with a genuine curiosity for
+                    how systems communicate — and how to keep them secure. From configuring routers and
+                    switches to building secure network architectures, the fascination with connectivity
+                    runs deep.
+                </p>
+                <p>
+                    Hands-on experience across <span class="highlight">networking</span>,
+                    <span class="highlight">network security</span>, <span class="highlight">web development</span>,
+                    <span class="highlight">UI/UX design</span>, <span class="highlight">robotics</span>,
+                    <span class="highlight">video editing</span>, and <span class="highlight">graphic design</span>.
+                </p>
+                <p>
+                    The digital world is vast, and there's always something new to explore. Always learning.
+                    Always building. Always pushing forward.
+                </p>
+            </div>
+
+            <div class="info-cards morph-stagger">
+                <div class="info-card morph-blob morph-hover morph-glow">
+                    <div class="info-label">Education</div>
+                    <div class="info-value">Qatar University</div>
+                </div>
+                <div class="info-card morph-blob morph-hover morph-glow">
+                    <div class="info-label">Degree</div>
+                    <div class="info-value">B.Sc. Computer Engineering</div>
+                </div>
+                <div class="info-card morph-blob morph-hover morph-glow">
+                    <div class="info-label">Focus</div>
+                    <div class="info-value">Networks & Security</div>
+                </div>
+                <div class="info-card morph-blob morph-hover morph-glow">
+                    <div class="info-label">Location</div>
+                    <div class="info-value">Qatar</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                &copy; 2026 MANAF.SYS <span class="footer-version">v2.0</span>
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 
 </html>

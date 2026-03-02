@@ -2,174 +2,138 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="Manaf Abduljabbar - Computer Engineer specializing in networking, security, and web development.">
-  <title>Manaf Abduljabbar — Neural Void</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Inconsolata:wght@300;400;500;700&family=VT323&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manaf Abduljabbar - Computer Engineer specializing in networking, security, and web development.">
+    <title>MANAF ABDULJABBAR // Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-
-  <!-- LOADING SCREEN -->
-  <div id="loading-screen" class="loading-screen">
-    <div class="loading-container">
-      <div class="loading-logo">NEURAL VOID</div>
-      <div class="loading-bar-container">
-        <div class="loading-bar"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BIG BANG -->
-  <div id="bigbang">
-    <canvas id="bigbang-canvas"></canvas>
-    <div id="boot-text">
-      <span class="bline">[SYS] Establishing neural link...</span>
-      <span class="bline">[NET] Connecting to void matrix...</span>
-      <span class="bline">[SEC] Security protocols active...</span>
-      <span class="bline">[OK_] System ready_</span>
-    </div>
-  </div>
-
-  <!-- PAGE BACKGROUND -->
-  <div class="page-bg page-bg-home"></div>
-
-  <!-- CINEMATIC OVERLAYS -->
-  <div class="vignette"></div>
-  <div class="film-grain"></div>
-  <div class="scanlines"></div>
-
-  <!-- PAGE TRANSITION -->
-  <div class="page-transition" id="page-transition"></div>
-
-  <!-- CURSOR -->
-  <svg id="cursor" width="28" height="28" viewBox="0 0 28 28" style="transform:translate(-14px,-14px)">
-    <line x1="14" y1="1" x2="14" y2="7" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="14" y1="21" x2="14" y2="27" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="1" y1="14" x2="7" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="21" y1="14" x2="27" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <circle cx="14" cy="14" r="4" fill="none" stroke="#00ffd1" stroke-width="0.8" opacity="0.8" />
-    <circle cx="14" cy="14" r="1.2" fill="#00ffd1" />
-  </svg>
-  <svg id="cursor-ring" width="46" height="46" viewBox="0 0 46 46" style="transform:translate(-23px,-23px)">
-    <circle cx="23" cy="23" r="19" fill="none" stroke="rgba(0,255,209,0.18)" stroke-width="1" stroke-dasharray="3 5" />
-  </svg>
-
-  <!-- VOID CANVAS (stars + grid + mycelium) -->
-  <canvas id="void-canvas"></canvas>
-
-  <!-- NAV -->
-  <nav class="nav-bar">
-    <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
-    <ul class="nav-constellation">
-      <li class="active">
-        <div class="nav-node"></div><a href="index.html" class="nav-link">Home</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="about.html" class="nav-link">Identity</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="skills.html" class="nav-link">Skills</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="security.html" class="nav-link">Security</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="contact.html" class="nav-link">Contact</a>
-      </li>
-    </ul>
-    <div class="nav-right">
-      <div class="nav-status">
-        <div class="status-pulse"></div>SYS.ONLINE
-      </div>
-      <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
-        <span class="hamburger-dot"></span>
-        <span class="hamburger-dot"></span>
-        <span class="hamburger-dot"></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" id="mobile-menu">
-    <div class="mobile-menu-header">
-      <span class="menu-tag">// NAVIGATION</span>
-    </div>
-    <div class="mobile-menu-links">
-      <a href="index.html" class="mobile-nav-link">
-        <span class="link-index">00</span>
-        <span class="link-text">HOME</span>
-      </a>
-      <a href="about.html" class="mobile-nav-link">
-        <span class="link-index">01</span>
-        <span class="link-text">IDENTITY</span>
-      </a>
-      <a href="skills.html" class="mobile-nav-link">
-        <span class="link-index">02</span>
-        <span class="link-text">SKILLS</span>
-      </a>
-      <a href="security.html" class="mobile-nav-link">
-        <span class="link-index">03</span>
-        <span class="link-text">SECURITY</span>
-      </a>
-      <a href="contact.html" class="mobile-nav-link">
-        <span class="link-index">04</span>
-        <span class="link-text">CONTACT</span>
-      </a>
-    </div>
-    <div class="mobile-menu-footer">
-      <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
-    </div>
-  </div>
-
-  <!-- HERO -->
-  <section id="hero">
-    <canvas id="hero-mycelial"></canvas>
-    <canvas id="hero-particles"></canvas>
-
-    <!-- SVG Morphing Shape -->
-    <div class="morph-shape-container">
-      <svg viewBox="0 0 400 400">
-        <path class="morph-path"
-          d="M 200,50 C 300,0 400,100 350,200 C 300,300 200,350 150,250 C 100,150 100,100 200,50" />
-      </svg>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-container">
+            <div class="loading-logo">INITIALIZING</div>
+            <div class="loading-bar-container">
+                <div class="loading-bar"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="hero-content">
-      <div class="hero-catalog">Object Catalog // MJA-001 // Class: Engineer // Status: Active</div>
-      <h1 class="hero-name morph-glitch morph-chromatic" data-text="Manaf Abduljabbar">Manaf Abduljabbar</h1>
-      <p class="hero-class-line">Systems Engineer &nbsp;&middot;&nbsp; Security Architect &nbsp;&middot;&nbsp; Network
-        Specialist</p>
-      <p class="hero-tagline">I build. I secure. I solve.<span class="cursor-blink"></span></p>
-      <div class="hero-sys">
-        <span><span class="s">SYS.STATUS:</span> <span class="v">ONLINE</span></span>
-        <span><span class="s">NODE:</span> <span class="v">ENGINEER</span></span>
-        <span><span class="s">v2.0.0</span></span>
-      </div>
-      <div class="hero-ctas">
-        <a href="skills.html" class="btn btn-primary">View Skills</a>
-        <a href="contact.html" class="btn btn-ghost">Establish Link</a>
-      </div>
-    </div>
-    <div class="hero-scroll">
-      <span class="scroll-text">Scroll to explore</span>
-      <div class="scroll-line"></div>
-    </div>
-  </section>
+    <!-- Page Background -->
+    <div class="page-bg page-bg-home"></div>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-left">&copy; 2026 <span class="nm">MANAF ABDULJABBAR</span> &middot; Neural Void</div>
-    <div class="footer-coords">RA 04h 32m &middot; Dec +25&deg; 42' &middot; Doha, Qatar</div>
-    <div class="footer-v">v2.0.0-neural-void</div>
-  </footer>
+    <!-- Cinematic Effects -->
+    <div class="vignette"></div>
+    <div class="film-grain"></div>
 
-  <script src="script.js"></script>
+    <!-- Particles Background -->
+    <div class="particles-container" id="particles"></div>
+    <div class="scanlines"></div>
+
+    <!-- Page Transition -->
+    <div class="page-transition" id="page-transition"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-logo">
+            <img src="logo.png" alt="Logo">
+        </a>
+
+        <!-- Right Side Tabs -->
+        <div class="nav-right">
+            <div class="nav-tabs">
+                <a href="index.html" class="nav-tab active">Home</a>
+                <a href="about.html" class="nav-tab">About</a>
+                <a href="skills.html" class="nav-tab">Skills</a>
+                <a href="security.html" class="nav-tab">Security</a>
+                <a href="contact.html" class="nav-tab">Contact</a>
+            </div>
+
+            <button class="hamburger-menu" id="hamburger-menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="index.html" class="mobile-nav-link">Home</a>
+        <a href="about.html" class="mobile-nav-link">About</a>
+        <a href="skills.html" class="mobile-nav-link">Skills</a>
+        <a href="security.html" class="mobile-nav-link">Security</a>
+        <a href="contact.html" class="mobile-nav-link">Contact</a>
+    </div>
+
+    <!-- Blurry Overlay -->
+    <div class="menu-overlay" id="menu-overlay"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <!-- Computer Engineer Tag -->
+            <div class="hero-tag">// Computer Engineer</div>
+
+            <!-- Name - CENTERED -->
+            <h1 class="hero-title morph-glitch" data-text="MANAF ABDULJABBAR">
+                <span>MANAF</span> ABDULJABBAR
+            </h1>
+
+            <p class="hero-subtitle">I build. I secure. I solve.</p>
+
+            <div class="hero-cta">
+                <a href="contact.html" class="btn-primary">Get In Touch</a>
+                <a href="about.html" class="btn-secondary">View Profile</a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span class="scroll-text">Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Quick Info Section -->
+    <section class="page-content">
+        <div class="page-header">
+            <div class="page-tag">// Quick Overview</div>
+            <h2 class="page-title">System Info</h2>
+        </div>
+
+        <div class="info-cards morph-stagger">
+            <div class="info-card morph-blob morph-hover">
+                <div class="info-label">Education</div>
+                <div class="info-value">B.Sc. Computer Engineering</div>
+            </div>
+            <div class="info-card morph-blob morph-hover">
+                <div class="info-label">University</div>
+                <div class="info-value">Qatar University</div>
+            </div>
+            <div class="info-card morph-blob morph-hover">
+                <div class="info-label">Specialization</div>
+                <div class="info-value">Networks & Security</div>
+            </div>
+            <div class="info-card morph-blob morph-hover">
+                <div class="info-label">Location</div>
+                <div class="info-value">Qatar - Available Remote</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                &copy; 2026 MANAF.SYS <span class="footer-version">v2.0</span>
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 
 </html>

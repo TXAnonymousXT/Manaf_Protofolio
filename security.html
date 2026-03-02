@@ -2,200 +2,119 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="Security - Manaf Abduljabbar's dedication to networking, network security, and offensive security.">
-  <title>Security — Manaf Abduljabbar</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Inconsolata:wght@300;400;500;700&family=VT323&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Security - Manaf Abduljabbar's dedication to networking, network security, and offensive security.">
+    <title>SECURITY // MANAF</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+    <!-- Page Background -->
+    <div class="page-bg page-bg-security"></div>
 
-  <!-- PAGE BACKGROUND -->
-  <div class="page-bg page-bg-security"></div>
+    <!-- Cinematic Effects -->
+    <div class="vignette"></div>
+    <div class="film-grain"></div>
 
-  <!-- CINEMATIC OVERLAYS -->
-  <div class="vignette"></div>
-  <div class="film-grain"></div>
-  <div class="scanlines"></div>
+    <!-- Particles Background -->
+    <div class="particles-container" id="particles"></div>
+    <div class="scanlines"></div>
 
-  <!-- PAGE TRANSITION -->
-  <div class="page-transition" id="page-transition"></div>
+    <!-- Page Transition -->
+    <div class="page-transition" id="page-transition"></div>
 
-  <!-- CURSOR -->
-  <svg id="cursor" width="28" height="28" viewBox="0 0 28 28" style="transform:translate(-14px,-14px)">
-    <line x1="14" y1="1" x2="14" y2="7" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="14" y1="21" x2="14" y2="27" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="1" y1="14" x2="7" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <line x1="21" y1="14" x2="27" y2="14" stroke="#00ffd1" stroke-width="1" opacity="0.9" />
-    <circle cx="14" cy="14" r="4" fill="none" stroke="#00ffd1" stroke-width="0.8" opacity="0.8" />
-    <circle cx="14" cy="14" r="1.2" fill="#00ffd1" />
-  </svg>
-  <svg id="cursor-ring" width="46" height="46" viewBox="0 0 46 46" style="transform:translate(-23px,-23px)">
-    <circle cx="23" cy="23" r="19" fill="none" stroke="rgba(0,255,209,0.18)" stroke-width="1" stroke-dasharray="3 5" />
-  </svg>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-logo">
+            <img src="logo.png" alt="Logo">
+        </a>
 
-  <!-- VOID CANVAS -->
-  <canvas id="void-canvas"></canvas>
-
-  <!-- NAV -->
-  <nav class="nav-bar">
-    <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
-    <ul class="nav-constellation">
-      <li>
-        <div class="nav-node"></div><a href="index.html" class="nav-link">Home</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="about.html" class="nav-link">Identity</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="skills.html" class="nav-link">Skills</a>
-      </li>
-      <li class="active">
-        <div class="nav-node"></div><a href="security.html" class="nav-link">Security</a>
-      </li>
-      <li>
-        <div class="nav-node"></div><a href="contact.html" class="nav-link">Contact</a>
-      </li>
-    </ul>
-    <div class="nav-right">
-      <div class="nav-status">
-        <div class="status-pulse"></div>SYS.ONLINE
-      </div>
-      <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
-        <span class="hamburger-dot"></span>
-        <span class="hamburger-dot"></span>
-        <span class="hamburger-dot"></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" id="mobile-menu">
-    <div class="mobile-menu-header">
-      <span class="menu-tag">// NAVIGATION</span>
-    </div>
-    <div class="mobile-menu-links">
-      <a href="index.html" class="mobile-nav-link">
-        <span class="link-index">00</span>
-        <span class="link-text">HOME</span>
-      </a>
-      <a href="about.html" class="mobile-nav-link">
-        <span class="link-index">01</span>
-        <span class="link-text">IDENTITY</span>
-      </a>
-      <a href="skills.html" class="mobile-nav-link">
-        <span class="link-index">02</span>
-        <span class="link-text">SKILLS</span>
-      </a>
-      <a href="security.html" class="mobile-nav-link">
-        <span class="link-index">03</span>
-        <span class="link-text">SECURITY</span>
-      </a>
-      <a href="contact.html" class="mobile-nav-link">
-        <span class="link-index">04</span>
-        <span class="link-text">CONTACT</span>
-      </a>
-    </div>
-    <div class="mobile-menu-footer">
-      <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
-    </div>
-  </div>
-
-  <!-- PAGE HEADER -->
-  <header class="page-header">
-    <div class="section-inner">
-      <div class="section-num">03</div>
-      <div class="section-head-text">
-        <div class="section-eyebrow">// Threat Topology</div>
-        <h1 class="section-title morph-glitch morph-chromatic" data-text="Security Ops">Security Ops</h1>
-      </div>
-      <div class="section-rule"></div>
-    </div>
-  </header>
-
-  <!-- SECURITY -->
-  <section id="security">
-    <div class="section-inner">
-      <div class="about-text morph-reveal" style="margin-bottom:4rem; max-width:700px;">
-        <p>Security isn't just a skill — it's a <span class="hl">mindset</span>. My dedication to <span
-            class="hl-cyan">networking</span>, <span class="hl-cyan">network security</span>, and <span
-            class="hl-cyan">offensive security</span> stems from a fascination with understanding systems deeply enough
-          to protect them — or test their defenses.</p>
-      </div>
-
-      <div class="security-wrapper morph-stagger">
-        <div class="sec-panel morph-blob morph-hover morph-glow">
-          <div class="sec-badge">Clearance: Active</div>
-          <div class="sec-title">Network Infrastructure</div>
-          <div class="terminal">
-            <div><span class="t-cmd">[INIT]</span> Network Architecture Framework</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Routing &amp; switching protocols &middot; active</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Data flow analysis &middot; mapped</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Network topology &middot; documented</div>
-            <div class="t-dim">— — — — — — — — — — — — — —</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Infrastructure: <span
-                style="color:var(--aurora)">OPERATIONAL</span></div>
-          </div>
-        </div>
-        <div class="sec-panel morph-blob morph-hover morph-glow">
-          <div class="sec-badge">Clearance: Active</div>
-          <div class="sec-title">Network Defense</div>
-          <div class="terminal">
-            <div><span class="t-cmd">[INIT]</span> Enterprise IDS/IPS Framework</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Firewall configurations &middot; armed</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Intrusion detection &middot; active</div>
-            <div><span class="t-warn">[MON]</span> Traffic analysis &middot; live</div>
-            <div class="t-dim">— — — — — — — — — — — — — —</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Defense posture: <span
-                style="color:var(--aurora)">ACTIVE</span></div>
-          </div>
-        </div>
-        <div class="sec-panel morph-blob morph-hover morph-glow">
-          <div class="sec-badge">Clearance: Active</div>
-          <div class="sec-title">Offensive Security</div>
-          <div class="terminal">
-            <div><span class="t-cmd">[RECON]</span> Penetration Testing Suite</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Vulnerability assessment &middot; loaded</div>
-            <div><span class="t-warn">[DEV]</span> Exploit development &middot; learning</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Ethical hacking &middot; active</div>
-            <div class="t-dim">— — — — — — — — — — — — — —</div>
-            <div><span class="t-warn">[DEV]</span> Status: <span style="color:var(--gold)">DEVELOPING</span></div>
-          </div>
-        </div>
-        <div class="sec-panel morph-blob morph-hover morph-glow">
-          <div class="sec-badge">Clearance: Active</div>
-          <div class="sec-title">Defensive Security</div>
-          <div class="terminal">
-            <div><span class="t-cmd">[HARDEN]</span> System Hardening Protocol</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Incident response &middot; prepared</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Threat hunting &middot; active</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Security monitoring &middot; deployed</div>
-            <div class="t-dim">— — — — — — — — — — — — — —</div>
-            <div><span class="t-ok">[OK]</span>&nbsp;&nbsp;Integrity: <span style="color:var(--aurora)">VERIFIED</span>
+        <div class="nav-right">
+            <div class="nav-tabs">
+                <a href="index.html" class="nav-tab">Home</a>
+                <a href="about.html" class="nav-tab">About</a>
+                <a href="skills.html" class="nav-tab">Skills</a>
+                <a href="security.html" class="nav-tab active">Security</a>
+                <a href="contact.html" class="nav-tab">Contact</a>
             </div>
-          </div>
+
+            <button class="hamburger-menu" id="hamburger-menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
         </div>
-      </div>
+    </nav>
 
-      <div class="security-quote morph-reveal">
-        <blockquote>"To secure a system, you must first understand how it can be broken."</blockquote>
-      </div>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="index.html" class="mobile-nav-link">Home</a>
+        <a href="about.html" class="mobile-nav-link">About</a>
+        <a href="skills.html" class="mobile-nav-link">Skills</a>
+        <a href="security.html" class="mobile-nav-link">Security</a>
+        <a href="contact.html" class="mobile-nav-link">Contact</a>
     </div>
-  </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-left">&copy; 2026 <span class="nm">MANAF ABDULJABBAR</span> &middot; Neural Void</div>
-    <div class="footer-coords">RA 04h 32m &middot; Dec +25&deg; 42' &middot; Doha, Qatar</div>
-    <div class="footer-v">v2.0.0-neural-void</div>
-  </footer>
+    <!-- Blurry Overlay -->
+    <div class="menu-overlay" id="menu-overlay"></div>
 
-  <script src="script.js"></script>
+    <!-- Page Content -->
+    <section class="page-content" style="padding-top: 10rem;">
+        <div class="page-header">
+            <div class="page-tag">// Security Focus</div>
+            <h2 class="page-title">Mindset</h2>
+        </div>
+
+        <div class="security-grid morph-stagger">
+            <div class="security-card morph-blob morph-hover morph-glow">
+                <div class="security-icon">🌐</div>
+                <h3 class="security-title">Network Infrastructure</h3>
+                <p class="security-desc">
+                    Understanding how data flows through networks — routing, switching, protocols, and architecture.
+                    Building reliable and efficient network systems forms the foundation of everything.
+                </p>
+            </div>
+
+            <div class="security-card morph-blob morph-hover morph-glow">
+                <div class="security-icon">🔒</div>
+                <h3 class="security-title">Network Security</h3>
+                <p class="security-desc">
+                    Firewalls, intrusion detection, secure configurations, and traffic analysis.
+                    Protecting networks from threats and ensuring data integrity.
+                </p>
+            </div>
+
+            <div class="security-card morph-blob morph-hover morph-glow">
+                <div class="security-icon">⚔️</div>
+                <h3 class="security-title">Offensive Security</h3>
+                <p class="security-desc">
+                    Thinking like an attacker to become a better defender. Penetration testing,
+                    vulnerability assessment, and ethical hacking.
+                </p>
+            </div>
+
+            <div class="security-card morph-blob morph-hover morph-glow">
+                <div class="security-icon">🛡️</div>
+                <h3 class="security-title">Defensive Security</h3>
+                <p class="security-desc">
+                    Hardening systems before threats arrive. Incident response, threat hunting, and
+                    security monitoring.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                &copy; 2026 MANAF.SYS <span class="footer-version">v2.0</span>
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 
 </html>
