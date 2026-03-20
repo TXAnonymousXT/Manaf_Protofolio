@@ -3,119 +3,600 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Manaf Abduljabbar - Computer Engineer specializing in networking, security, and web development.">
-<title>Manaf Abduljabbar — Mycelial Network</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<meta name="description" content="Manaf Abduljabbar - Computer Engineer specializing in networking, security, and web development. Building secure systems, one connection at a time.">
+<meta name="keywords" content="Manaf Abduljabbar, Computer Engineer, Network Engineer, Security Architect, Web Developer, Qatar University, Doha Qatar, Cybersecurity, Portfolio">
+<meta name="author" content="Manaf Abduljabbar">
+<meta name="theme-color" content="#e2e2e2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Manaf Abduljabbar | Systems Engineer &amp; Security Architect</title>
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="canonical" href="https://txanonymousxt.github.io/Manaf_Protofolio/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Manaf Abduljabbar | Systems Engineer &amp; Security Architect">
+<meta property="og:description" content="Computer Engineer specializing in networking, security, and web development.">
+<meta property="og:image" content="logo.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@manaf101">
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
-<!-- LOADING SCREEN -->
-<div class="loading-screen">
-  <div class="loading-logo">MYCELIAL.SYS</div>
-  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
-  <div class="loading-text">Initializing substrate...</div>
+<!-- FLOATING NODES BACKGROUND -->
+<div id="floating-nodes" class="floating-nodes-container">
+  <svg id="node-lines" class="node-lines-svg"></svg>
 </div>
 
-<!-- PAGE TRANSITION -->
-<div class="page-transition"></div>
-
-<!-- BIG BANG -->
-<div id="bigbang">
-  <canvas id="bigbang-canvas"></canvas>
-  <div id="boot-text">
-    <span class="bline">[SYS] Initializing substrate...</span>
-    <span class="bline">[NET] Mapping mycelial network...</span>
-    <span class="bline">[SEC] Bioluminescence calibrated...</span>
-    <span class="bline">[OK_] Neural links established_</span>
+<!-- FLOATING NAV -->
+<nav id="floating-nav" class="floating-nav" style="top:24px;left:50%;transform:translateX(-50%)">
+  <!-- Collapsed view (hidden by default) -->
+  <div id="nav-collapsed" class="nav-collapsed" style="display:none">
+    <div class="nav-dot dot-red"></div>
+    <div class="nav-dot dot-dark"></div>
+    <div class="nav-dot dot-red"></div>
   </div>
-</div>
-
-<!-- CURSOR GLOW -->
-<div id="cursor-glow"></div>
-
-<!-- NAV -->
-<nav class="nav-bar">
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="Logo" class="logo-img"></a>
-  <ul class="nav-constellation">
-    <li class="active"><div class="nav-node"></div><a href="index.html" class="nav-link">Home</a></li>
-    <li><div class="nav-node"></div><a href="about.html" class="nav-link">Identity</a></li>
-    <li><div class="nav-node"></div><a href="skills.html" class="nav-link">Skills</a></li>
-    <li><div class="nav-node"></div><a href="security.html" class="nav-link">Security</a></li>
-    <li><div class="nav-node"></div><a href="contact.html" class="nav-link">Contact</a></li>
-  </ul>
-  <div class="nav-right">
-    <div class="nav-status"><div class="status-pulse"></div>SYS.ONLINE</div>
-    <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
-      <span class="hamburger-dot"></span>
-      <span class="hamburger-dot"></span>
-      <span class="hamburger-dot"></span>
+  <!-- Expanded view -->
+  <div id="nav-expanded" class="nav-expanded">
+    <div class="nav-drag-handle" id="nav-drag-handle">
+      <span></span><span></span><span></span>
+    </div>
+    <a href="#home" class="nav-logo">
+      <img src="logo.png" alt="Logo" class="nav-logo-img" width="36" height="36" style="width:36px;height:36px;border-radius:8px;object-fit:contain;">
+    </a>
+    <a href="#home" class="nav-link active" data-section="home">Home</a>
+    <a href="#about" class="nav-link" data-section="about">About</a>
+    <a href="#skills" class="nav-link" data-section="skills">Skills</a>
+    <a href="#security" class="nav-link" data-section="security">Security</a>
+    <a href="#contact" class="nav-link" data-section="contact">Contact</a>
+    <a href="#contact" class="nav-cta">Hire Me</a>
+    <button id="nav-collapse-btn" class="nav-collapse-btn" title="Collapse menu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
   </div>
 </nav>
 
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobile-menu">
-  <div class="mobile-menu-header">
-    <span class="menu-tag">// NAVIGATION</span>
-  </div>
-  <div class="mobile-menu-links">
-    <a href="index.html" class="mobile-nav-link">
-      <span class="link-index">00</span>
-      <span class="link-text">HOME</span>
-    </a>
-    <a href="about.html" class="mobile-nav-link">
-      <span class="link-index">01</span>
-      <span class="link-text">IDENTITY</span>
-    </a>
-    <a href="skills.html" class="mobile-nav-link">
-      <span class="link-index">02</span>
-      <span class="link-text">SKILLS</span>
-    </a>
-    <a href="security.html" class="mobile-nav-link">
-      <span class="link-index">03</span>
-      <span class="link-text">SECURITY</span>
-    </a>
-    <a href="contact.html" class="mobile-nav-link">
-      <span class="link-index">04</span>
-      <span class="link-text">CONTACT</span>
-    </a>
-  </div>
-  <div class="mobile-menu-footer">
-    <span class="menu-status">SYS.STATUS: <span class="status-online">ONLINE</span></span>
-  </div>
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress" class="scroll-progress">
+  <div class="sp-dot" data-index="0" data-label="Home"></div>
+  <div class="sp-dot" data-index="1" data-label="About"></div>
+  <div class="sp-dot" data-index="2" data-label="Skills"></div>
+  <div class="sp-dot" data-index="3" data-label="Security"></div>
+  <div class="sp-dot" data-index="4" data-label="Contact"></div>
 </div>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-content">
-    <div class="hero-catalog">Object Catalog // MJA-001 // Class: Engineer // Status: Active</div>
-    <h1 class="hero-name">Manaf Abduljabbar</h1>
-    <p class="hero-class-line">Systems Engineer &nbsp;&middot;&nbsp; Security Architect &nbsp;&middot;&nbsp; Network Specialist</p>
-    <p class="hero-tagline">I build. I secure. I solve.<span class="cursor-blink"></span></p>
-    <div class="hero-sys">
-      <span><span class="s">SYS.STATUS:</span> <span class="v">ONLINE</span></span>
-      <span><span class="s">NODE:</span> <span class="v">ENGINEER</span></span>
-      <span><span class="s">v2.0.0</span></span>
+<!-- MAIN SNAP CONTAINER -->
+<main id="snap-container" class="snap-container">
+
+  <!-- ========== HOME ========== -->
+  <section id="home" class="snap-section section-home">
+    <div class="section-inner hero-grid">
+      <!-- Left Content -->
+      <div class="hero-left anim-fade-left">
+        <!-- Status Badge -->
+        <div class="status-badge">
+          <span class="ping-dot">
+            <span class="ping-ring"></span>
+            <span class="ping-core"></span>
+          </span>
+          <span>Available for Opportunities</span>
+        </div>
+
+        <!-- Name -->
+        <p class="hero-greeting">Hello, I'm</p>
+        <h1 class="hero-name">
+          <span class="name-dark">Manaf</span><br>
+          <span class="name-accent">Abduljabbar</span>
+        </h1>
+
+        <!-- Title Pills -->
+        <div class="hero-titles">
+          <div class="title-pill dark">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+            <span>Network Engineer</span>
+          </div>
+          <div class="title-pill accent">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Security Architect</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <p class="hero-desc">Engineering secure, scalable network infrastructures and building robust security architectures that protect critical systems from evolving threats.</p>
+
+        <!-- CTA Buttons -->
+        <div class="hero-ctas">
+          <a href="#skills" class="btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            View My Work
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="#contact" class="btn-outline">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CV
+          </a>
+        </div>
+
+        <!-- Social Links -->
+        <div class="hero-socials">
+          <a href="https://github.com/txanonymousxt" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          </a>
+          <a href="https://qa.linkedin.com/in/manaf101" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="mailto:man.abduljabbar@gmail.com" class="social-icon" aria-label="Email">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </a>
+          <div class="hero-location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Doha, Qatar</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Content - 3D Terminal -->
+      <div class="hero-right anim-fade-right">
+        <div class="card-3d terminal-card">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="td-red"></span>
+              <span class="td-gray"></span>
+              <span class="td-dark"></span>
+            </div>
+            <div class="terminal-info">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              <span>secure_connection</span>
+            </div>
+          </div>
+          <div class="terminal-body">
+            <div class="term-prompt">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              <span>manaf@engineer:~$</span>
+            </div>
+            <div class="term-cmd"><span class="term-dollar">$</span> cat profile.json</div>
+            <pre class="term-output">{
+  "identity": {
+    "name": "Manaf Abduljabbar",
+    "role": "Network Engineer",
+    "specialization": "Security Architecture"
+  },
+  "location": "Doha, Qatar",
+  "status": "AVAILABLE",
+  "skills": [
+    "network_security",
+    "infrastructure",
+    "firewall_management",
+    "routing_protocols"
+  ],
+  "clearance": "ENGINEER_LEVEL"
+}</pre>
+            <div class="term-cursor-line"><span class="term-dollar">$</span><span class="terminal-cursor">_</span></div>
+          </div>
+        </div>
+        <!-- Floating Shield -->
+        <div class="floating-shield">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+      </div>
     </div>
-    <div class="hero-ctas">
-      <a href="skills.html" class="btn btn-primary morph-hover">View Skills</a>
-      <a href="contact.html" class="btn btn-ghost morph-hover">Establish Link</a>
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+      <span class="scroll-pill">Scroll to explore</span>
+      <svg class="scroll-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat-item anim-fade-up">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <div class="stat-value" data-count="99.9">99.9%</div>
+        <div class="stat-label">Uptime Target</div>
+      </div>
+      <div class="stat-item anim-fade-up">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="stat-value">50+</div>
+        <div class="stat-label">Projects Secured</div>
+      </div>
+      <div class="stat-item anim-fade-up">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        <div class="stat-value">24/7</div>
+        <div class="stat-label">Monitoring</div>
+      </div>
+      <div class="stat-item anim-fade-up">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        <div class="stat-value">3+</div>
+        <div class="stat-label">Certifications</div>
+      </div>
     </div>
   </div>
-  <div class="hero-scroll">
-    <span class="scroll-text">Scroll to explore</span>
-    <div class="scroll-line"></div>
-  </div>
-</section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-left">&copy; 2026 <span class="nm">MANAF ABDULJABBAR</span> &middot; Mycelial Network</div>
-  <div class="footer-coords">RA 04h 32m &middot; Dec +25&deg; 42' &middot; Doha, Qatar</div>
-  <div class="footer-v">v2.0.0-mycelial</div>
-</footer>
+  <!-- ========== ABOUT ========== -->
+  <section id="about" class="snap-section section-about">
+    <div class="section-inner">
+      <!-- Section Header -->
+      <div class="section-header anim-fade-up">
+        <div class="section-num"><span>01</span></div>
+        <h2>About Me</h2>
+        <div class="section-line"></div>
+      </div>
 
-<script src="script.js"></script>
+      <div class="about-grid">
+        <!-- Main Bio -->
+        <div class="about-bio card-3d anim-fade-left">
+          <div class="glass-card bio-card">
+            <p>I'm a <strong>Computer Engineer</strong> based in <span class="text-accent">Doha, Qatar</span>, specializing in network infrastructure and security architecture. My passion lies in building robust, secure systems that protect organizations from evolving cyber threats.</p>
+            <p>From configuring enterprise network topologies to implementing defense-in-depth security strategies, I engineer systems that are both resilient and efficient.</p>
+            <p>Currently pursuing my B.Sc. in Computer Engineering at Qatar University while continuously expanding my expertise through certifications and hands-on projects.</p>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="about-stats anim-fade-right">
+          <div class="card-3d mini-stat-card">
+            <div class="glass-card stat-card-inner">
+              <div class="stat-icon-box accent-bg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/></svg>
+              </div>
+              <div><p class="stat-label-sm">Education</p><p class="stat-value-sm">Qatar University</p></div>
+            </div>
+          </div>
+          <div class="card-3d mini-stat-card">
+            <div class="glass-card stat-card-inner">
+              <div class="stat-icon-box accent-bg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+              </div>
+              <div><p class="stat-label-sm">Experience</p><p class="stat-value-sm">2+ Years</p></div>
+            </div>
+          </div>
+          <div class="card-3d mini-stat-card">
+            <div class="glass-card stat-card-inner">
+              <div class="stat-icon-box accent-bg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div><p class="stat-label-sm">Location</p><p class="stat-value-sm">Doha, Qatar</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experience & Certifications -->
+      <div class="about-bottom-grid">
+        <!-- Experience -->
+        <div class="anim-fade-left">
+          <h3 class="sub-heading">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Experience
+          </h3>
+          <div class="exp-list">
+            <div class="card-3d">
+              <div class="glass-card exp-card">
+                <div class="exp-icon dark-bg">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/></svg>
+                </div>
+                <div>
+                  <p class="exp-type">EDUCATION</p>
+                  <p class="exp-title">B.Sc. Computer Engineering</p>
+                  <p class="exp-company">Qatar University &middot; 2020 &mdash; Present</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-3d">
+              <div class="glass-card exp-card">
+                <div class="exp-icon dark-bg">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+                </div>
+                <div>
+                  <p class="exp-type">WORK</p>
+                  <p class="exp-title">Freelance Network Engineer</p>
+                  <p class="exp-company">Self-Employed &middot; 2022 &mdash; Present</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="anim-fade-right">
+          <h3 class="sub-heading">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            Certifications
+          </h3>
+          <div class="cert-list">
+            <div class="card-3d">
+              <div class="glass-card cert-card">
+                <div class="cert-top"><div><p class="cert-name">Network Security Fundamentals</p><p class="cert-issuer">Cisco</p></div><span class="cert-pct">75%</span></div>
+                <div class="progress-track"><div class="progress-fill" data-width="75"></div></div>
+              </div>
+            </div>
+            <div class="card-3d">
+              <div class="glass-card cert-card">
+                <div class="cert-top"><div><p class="cert-name">CCNA</p><p class="cert-issuer">Cisco</p></div><span class="cert-pct">45%</span></div>
+                <div class="progress-track"><div class="progress-fill" data-width="45"></div></div>
+              </div>
+            </div>
+            <div class="card-3d">
+              <div class="glass-card cert-card">
+                <div class="cert-top"><div><p class="cert-name">CompTIA Security+</p><p class="cert-issuer">CompTIA</p></div><span class="cert-pct">60%</span></div>
+                <div class="progress-track"><div class="progress-fill" data-width="60"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SKILLS ========== -->
+  <section id="skills" class="snap-section section-skills">
+    <div class="section-inner">
+      <div class="section-header anim-fade-up">
+        <div class="section-num"><span>02</span></div>
+        <h2>Skills &amp; Expertise</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="skills-grid">
+        <!-- Networking -->
+        <div class="card-3d anim-fade-up">
+          <div class="glass-card skill-card">
+            <div class="skill-icon-wrap accent-icon-bg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+            </div>
+            <h3>Networking</h3>
+            <div class="skill-bar"><div class="skill-bar-fill" data-width="85" style="background:#df0139"></div></div>
+            <span class="skill-pct">85%</span>
+          </div>
+        </div>
+        <!-- Security -->
+        <div class="card-3d anim-fade-up">
+          <div class="glass-card skill-card">
+            <div class="skill-icon-wrap dark-icon-bg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e1e27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Security</h3>
+            <div class="skill-bar"><div class="skill-bar-fill" data-width="80" style="background:#1e1e27"></div></div>
+            <span class="skill-pct">80%</span>
+          </div>
+        </div>
+        <!-- Web Dev -->
+        <div class="card-3d anim-fade-up">
+          <div class="glass-card skill-card">
+            <div class="skill-icon-wrap accent-icon-bg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <h3>Web Dev</h3>
+            <div class="skill-bar"><div class="skill-bar-fill" data-width="75" style="background:#df0139"></div></div>
+            <span class="skill-pct">75%</span>
+          </div>
+        </div>
+        <!-- UI/UX -->
+        <div class="card-3d anim-fade-up">
+          <div class="glass-card skill-card">
+            <div class="skill-icon-wrap dark-icon-bg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e1e27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17.5 10.5a2.5 2.5 0 110-5"/><circle cx="8.5" cy="7.5" r="2.5"/><path d="M4.5 11.5a2.5 2.5 0 110-5"/><path d="M16 22l-4-10-4 10"/><path d="M12 12l-6 10"/><path d="M12 12l6 10"/></svg>
+            </div>
+            <h3>UI/UX</h3>
+            <div class="skill-bar"><div class="skill-bar-fill" data-width="70" style="background:#1e1e27"></div></div>
+            <span class="skill-pct">70%</span>
+          </div>
+        </div>
+        <!-- Robotics -->
+        <div class="card-3d anim-fade-up">
+          <div class="glass-card skill-card">
+            <div class="skill-icon-wrap accent-icon-bg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+            </div>
+            <h3>Robotics</h3>
+            <div class="skill-bar"><div class="skill-bar-fill" data-width="65" style="background:#df0139"></div></div>
+            <span class="skill-pct">65%</span>
+          </div>
+        </div>
+        <!-- Cloud -->
+        <div class="card-3d anim-fade-up">
+          <div class="glass-card skill-card">
+            <div class="skill-icon-wrap dark-icon-bg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e1e27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+            </div>
+            <h3>Cloud</h3>
+            <div class="skill-bar"><div class="skill-bar-fill" data-width="60" style="background:#1e1e27"></div></div>
+            <span class="skill-pct">60%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECURITY ========== -->
+  <section id="security" class="snap-section section-security">
+    <div class="section-inner">
+      <div class="section-header anim-fade-up">
+        <div class="section-num"><span>03</span></div>
+        <h2>Security Operations</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="security-grid">
+        <!-- Network Infrastructure -->
+        <div class="card-3d anim-fade-up">
+          <div class="security-card">
+            <div class="sec-card-header">
+              <div class="sec-card-dots"><span></span><span></span><span></span></div>
+              <span class="sec-card-title">network_infrastructure.sh</span>
+            </div>
+            <div class="sec-card-body">
+              <p class="sec-line"><span class="sec-comment"># Network Infrastructure</span></p>
+              <p class="sec-line"><span class="sec-kw">STATUS:</span> <span class="sec-val">OPERATIONAL</span></p>
+              <p class="sec-line"><span class="sec-kw">PROTOCOLS:</span> BGP, OSPF, EIGRP</p>
+              <p class="sec-line"><span class="sec-kw">DEVICES:</span> Cisco, Juniper, MikroTik</p>
+              <p class="sec-line"><span class="sec-kw">UPTIME:</span> <span class="sec-val">99.9%</span></p>
+              <div class="sec-tags"><span>VLAN</span><span>QoS</span><span>ACL</span><span>NAT</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Network Defense -->
+        <div class="card-3d anim-fade-up">
+          <div class="security-card">
+            <div class="sec-card-header">
+              <div class="sec-card-dots"><span></span><span></span><span></span></div>
+              <span class="sec-card-title">network_defense.sh</span>
+            </div>
+            <div class="sec-card-body">
+              <p class="sec-line"><span class="sec-comment"># Network Defense Systems</span></p>
+              <p class="sec-line"><span class="sec-kw">FIREWALL:</span> <span class="sec-val">ACTIVE</span></p>
+              <p class="sec-line"><span class="sec-kw">IDS/IPS:</span> Snort, Suricata</p>
+              <p class="sec-line"><span class="sec-kw">SIEM:</span> Splunk, ELK Stack</p>
+              <p class="sec-line"><span class="sec-kw">THREATS_BLOCKED:</span> <span class="sec-val">10K+</span></p>
+              <div class="sec-tags"><span>WAF</span><span>DLP</span><span>VPN</span><span>Zero Trust</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Offensive Security -->
+        <div class="card-3d anim-fade-up">
+          <div class="security-card">
+            <div class="sec-card-header">
+              <div class="sec-card-dots"><span></span><span></span><span></span></div>
+              <span class="sec-card-title">offensive_security.sh</span>
+            </div>
+            <div class="sec-card-body">
+              <p class="sec-line"><span class="sec-comment"># Offensive Security</span></p>
+              <p class="sec-line"><span class="sec-kw">PENTEST:</span> <span class="sec-val">CERTIFIED</span></p>
+              <p class="sec-line"><span class="sec-kw">TOOLS:</span> Metasploit, Burp Suite</p>
+              <p class="sec-line"><span class="sec-kw">RECON:</span> Nmap, OSINT, Shodan</p>
+              <p class="sec-line"><span class="sec-kw">VULNS_FOUND:</span> <span class="sec-val">200+</span></p>
+              <div class="sec-tags"><span>CTF</span><span>Red Team</span><span>Social Eng</span><span>WiFi</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Defensive Security -->
+        <div class="card-3d anim-fade-up">
+          <div class="security-card">
+            <div class="sec-card-header">
+              <div class="sec-card-dots"><span></span><span></span><span></span></div>
+              <span class="sec-card-title">defensive_security.sh</span>
+            </div>
+            <div class="sec-card-body">
+              <p class="sec-line"><span class="sec-comment"># Defensive Security</span></p>
+              <p class="sec-line"><span class="sec-kw">SOC:</span> <span class="sec-val">MONITORING</span></p>
+              <p class="sec-line"><span class="sec-kw">IR:</span> Incident Response Plan</p>
+              <p class="sec-line"><span class="sec-kw">COMPLIANCE:</span> ISO 27001, NIST</p>
+              <p class="sec-line"><span class="sec-kw">PATCHED:</span> <span class="sec-val">500+ systems</span></p>
+              <div class="sec-tags"><span>Blue Team</span><span>Forensics</span><span>Hardening</span><span>Audit</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT ========== -->
+  <section id="contact" class="snap-section section-contact">
+    <div class="section-inner">
+      <div class="section-header anim-fade-up">
+        <div class="section-num accent-num"><span>04</span></div>
+        <h2 class="text-white">Get In Touch</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="contact-grid">
+        <!-- Contact Info -->
+        <div class="contact-info anim-fade-left">
+          <h3>Let's Build Something Secure</h3>
+          <p>Ready to discuss your network infrastructure or security needs? I'm available for freelance projects, consultations, and full-time opportunities.</p>
+
+          <div class="contact-cards">
+            <a href="mailto:man.abduljabbar@gmail.com" class="contact-card-link">
+              <div class="contact-card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div><p class="cc-label">Email</p><p class="cc-value">man.abduljabbar@gmail.com</p></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cc-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="https://qa.linkedin.com/in/manaf101" target="_blank" rel="noopener noreferrer" class="contact-card-link">
+              <div class="contact-card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              </div>
+              <div><p class="cc-label">LinkedIn</p><p class="cc-value">linkedin://manaf101</p></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cc-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="https://github.com/txanonymousxt" target="_blank" rel="noopener noreferrer" class="contact-card-link">
+              <div class="contact-card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+              </div>
+              <div><p class="cc-label">GitHub</p><p class="cc-value">github://txanonymousxt</p></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cc-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+
+          <div class="contact-location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Doha, Qatar</span>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-wrap anim-fade-right">
+          <div class="card-3d">
+            <div class="contact-form-card">
+              <!-- Success State -->
+              <div id="form-success" class="form-success" style="display:none">
+                <div class="success-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h4>Message Sent!</h4>
+                <p>I'll get back to you soon.</p>
+              </div>
+              <!-- Form -->
+              <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                <input type="hidden" name="access_key" value="252671cf-c5c7-45b5-9380-358ac1a1e6c7">
+                <input type="hidden" name="subject" value="New Contact from Portfolio">
+                <div class="form-group">
+                  <label>YOUR NAME</label>
+                  <input type="text" name="name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                  <label>YOUR EMAIL</label>
+                  <input type="email" name="email" placeholder="john@example.com" required>
+                </div>
+                <div class="form-group">
+                  <label>YOUR MESSAGE</label>
+                  <textarea name="message" placeholder="Tell me about your project..." rows="3" required></textarea>
+                </div>
+                <button type="submit" class="form-submit">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Send Message
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>MA://SECURE</span>
+        </div>
+        <p class="footer-copy">&copy; 2026 Manaf Abduljabbar. All rights reserved.</p>
+        <div class="footer-status">
+          <span class="ping-dot sm">
+            <span class="ping-ring"></span>
+            <span class="ping-core"></span>
+          </span>
+          All Systems Operational
+        </div>
+      </div>
+    </footer>
+  </section>
+
+</main>
+
+<script src="script.js?v=2"></script>
 </body>
 </html>
