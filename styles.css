@@ -150,13 +150,20 @@ body {
   padding: 4px;
   margin-right: 8px;
   border-radius: 12px;
-  background: var(--dark);
+  background: transparent;
   text-decoration: none;
 }
 .nav-logo-img {
   width: 36px; height: 36px;
-  border-radius: 8px;
+  border-radius: 0;
   object-fit: contain;
+  background: transparent;
+}
+.footer-logo-img {
+  width: 28px; height: 28px;
+  border-radius: 0;
+  object-fit: contain;
+  background: transparent;
 }
 
 /* Nav links */
@@ -691,10 +698,12 @@ body {
 .exp-company { font-size: 0.75rem; color: var(--muted); }
 
 .cert-card { padding: 16px; border-radius: 16px; }
-.cert-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.cert-top { display: flex; justify-content: space-between; align-items: center; }
 .cert-name { font-weight: 600; color: var(--dark); font-size: 0.875rem; }
 .cert-issuer { font-size: 0.75rem; color: var(--muted); }
-.cert-pct { color: var(--accent); font-weight: 700; font-size: 0.875rem; }
+.cert-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+.cert-completed { background: rgba(16,185,129,0.12); color: #059669; }
+.cert-in-progress { background: rgba(223,1,57,0.1); color: var(--accent); }
 .progress-track {
   height: 8px; background: var(--bg);
   border-radius: 999px; overflow: hidden;
