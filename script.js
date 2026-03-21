@@ -133,13 +133,27 @@ function initFloatingNav() {
   if (snapC) snapC.addEventListener("scroll", updateActiveSection, { passive: true });
   window.addEventListener("scroll", updateActiveSection, { passive: true });
 
+  // Smooth scroll helper — works with both snap-container and normal scroll
+  function scrollToSection(id) {
+    const target = document.getElementById(id);
+    if (!target) return;
+    const snapC = document.querySelector(".snap-container");
+    if (snapC && snapC.scrollHeight > snapC.clientHeight) {
+      // Snap container is the scrollable element
+      const containerTop = snapC.getBoundingClientRect().top;
+      const targetTop = target.getBoundingClientRect().top;
+      snapC.scrollTo({ top: snapC.scrollTop + (targetTop - containerTop), behavior: "smooth" });
+    } else {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
   // Smooth scroll on nav link click
   navLinks.forEach(link => {
     link.addEventListener("click", e => {
       if (hasMoved) { e.preventDefault(); return; }
       e.preventDefault();
-      const target = document.getElementById(link.dataset.section);
-      if (target) target.scrollIntoView({ behavior: "smooth" });
+      scrollToSection(link.dataset.section);
     });
   });
 
@@ -148,7 +162,7 @@ function initFloatingNav() {
     cta.addEventListener("click", e => {
       if (hasMoved) { e.preventDefault(); return; }
       e.preventDefault();
-      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+      scrollToSection("contact");
     });
   });
 
@@ -243,6 +257,7 @@ function initFloatingNav() {
   function onDragEnd() {
     isDragging = false;
     nav.style.cursor = "";
+    setTimeout(() => { hasMoved = false; }, 50);
   }
 
   // Mouse events
@@ -283,11 +298,19 @@ function initMobileMenu() {
     link.addEventListener("click", e => {
       e.preventDefault();
       const section = link.dataset.section || "contact";
-      const target = document.getElementById(section);
       hamburger.classList.remove("open");
       mobileMenu.classList.remove("open");
       document.body.style.overflow = "";
-      if (target) target.scrollIntoView({ behavior: "smooth" });
+      const target = document.getElementById(section);
+      if (!target) return;
+      const snapC = document.querySelector(".snap-container");
+      if (snapC && snapC.scrollHeight > snapC.clientHeight) {
+        const containerTop = snapC.getBoundingClientRect().top;
+        const targetTop = target.getBoundingClientRect().top;
+        snapC.scrollTo({ top: snapC.scrollTop + (targetTop - containerTop), behavior: "smooth" });
+      } else {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
     });
   });
 }
