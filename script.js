@@ -7,6 +7,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   initFloatingNodes();
   initFloatingNav();
+  initMobileMenu();
   initCard3D();
   initScrollProgress();
   initScrollAnimations();
@@ -260,6 +261,35 @@ function initFloatingNav() {
     onDragMove(t.clientX, t.clientY);
   }, { passive: true });
   window.addEventListener("touchend", onDragEnd);
+}
+
+/* ══════════════════════════════════════
+   MOBILE MENU
+══════════════════════════════════════ */
+function initMobileMenu() {
+  const hamburger = document.getElementById("nav-hamburger");
+  const mobileMenu = document.getElementById("mobile-menu");
+  if (!hamburger || !mobileMenu) return;
+
+  const links = mobileMenu.querySelectorAll(".mobile-menu-link, .mobile-menu-cta");
+
+  hamburger.addEventListener("click", () => {
+    hamburger.classList.toggle("open");
+    mobileMenu.classList.toggle("open");
+    document.body.style.overflow = mobileMenu.classList.contains("open") ? "hidden" : "";
+  });
+
+  links.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      const section = link.dataset.section || "contact";
+      const target = document.getElementById(section);
+      hamburger.classList.remove("open");
+      mobileMenu.classList.remove("open");
+      document.body.style.overflow = "";
+      if (target) target.scrollIntoView({ behavior: "smooth" });
+    });
+  });
 }
 
 /* ══════════════════════════════════════

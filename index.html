@@ -19,7 +19,7 @@
 <meta property="og:image" content="logo.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@manaf101">
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
 
@@ -42,7 +42,7 @@
       <span></span><span></span><span></span>
     </div>
     <a href="#home" class="nav-logo">
-      <img src="logo.png" alt="Logo" class="nav-logo-img" width="36" height="36">
+      <div class="nav-logo-img" role="img" aria-label="Logo" oncontextmenu="return false" ondragstart="return false"></div>
     </a>
     <a href="#home" class="nav-link active" data-section="home">Home</a>
     <a href="#about" class="nav-link" data-section="about">About</a>
@@ -50,11 +50,26 @@
     <a href="#security" class="nav-link" data-section="security">Security</a>
     <a href="#contact" class="nav-link" data-section="contact">Contact</a>
     <a href="#contact" class="nav-cta">Hire Me</a>
+    <button id="nav-hamburger" class="nav-hamburger" title="Open menu" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
     <button id="nav-collapse-btn" class="nav-collapse-btn" title="Collapse menu">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
   </div>
 </nav>
+
+<!-- MOBILE MENU -->
+<div id="mobile-menu" class="mobile-menu">
+  <div class="mobile-menu-inner">
+    <a href="#home" class="mobile-menu-link" data-section="home">Home</a>
+    <a href="#about" class="mobile-menu-link" data-section="about">About</a>
+    <a href="#skills" class="mobile-menu-link" data-section="skills">Skills</a>
+    <a href="#security" class="mobile-menu-link" data-section="security">Security</a>
+    <a href="#contact" class="mobile-menu-link" data-section="contact">Contact</a>
+    <a href="#contact" class="mobile-menu-cta">Hire Me</a>
+  </div>
+</div>
 
 <!-- SCROLL PROGRESS -->
 <div id="scroll-progress" class="scroll-progress">
@@ -598,7 +613,7 @@
     <footer class="site-footer">
       <div class="footer-inner">
         <div class="footer-brand">
-          <img src="logo.png" alt="Logo" class="footer-logo-img" width="28" height="28">
+          <div class="footer-logo-img" role="img" aria-label="Logo" oncontextmenu="return false" ondragstart="return false"></div>
           <span>MA://SECURE</span>
         </div>
         <p class="footer-copy">&copy; 2026 Manaf Abduljabbar. All rights reserved.</p>
@@ -615,6 +630,6 @@
 
 </main>
 
-<script src="script.js?v=4"></script>
+<script src="script.js?v=5"></script>
 </body>
 </html>
