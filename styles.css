@@ -1084,6 +1084,14 @@ body {
   .hero-grid { min-height: auto; gap: 32px; }
   .hero-name { font-size: clamp(2.2rem, 10vw, 3.5rem); }
   .status-badge { font-size: 0.75rem; padding: 6px 12px; margin-top: 16px; }
+  .scroll-indicator {
+    position: relative;
+    bottom: auto; left: auto;
+    transform: none;
+    margin-top: 32px;
+    width: 100%;
+    justify-content: center;
+  }
   .hero-greeting { font-size: clamp(0.9rem, 3vw, 1.1rem); }
   .hero-desc { font-size: clamp(0.9rem, 3vw, 1.1rem); }
   .hero-ctas { flex-direction: column; align-items: stretch; }
