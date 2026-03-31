@@ -913,7 +913,7 @@ function hideTypingIndicator(){
 // ================ OPENROUTER AI AGENT ================
 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const API_KEY = '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';
-const API_MODEL = 'nvidia/nemotron-3-nano-30b-a3b:free';
+const API_MODEL = 'qwen/qwen3.6-plus-preview:free';
 const chatHistory = [];
 
 const SYSTEM_PROMPT = `You ARE Manaf Abduljabbar. You speak in first person ("I", "my", "me"). You're chatting with visitors on your portfolio website. You're extraordinarily intelligent and a rapid learner — what takes most people a year, you absorb in a month. You have an instinct for complex systems and pick up new technologies with unnatural speed.
