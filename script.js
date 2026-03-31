@@ -910,9 +910,10 @@ function hideTypingIndicator(){
   if(t)t.remove();
 }
 
-// ================ OLLAMA AI AGENT ================
-const OLLAMA_URL = 'http://localhost:11434/api/chat';
-const OLLAMA_MODEL = 'llama3.1:8b';
+// ================ GROQ AI AGENT ================
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_KEY = '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';
+const GROQ_MODEL = 'llama-3.1-8b-instant';
 const chatHistory = [];
 
 const SYSTEM_PROMPT = `You are Manaf's AI assistant on his portfolio website. You represent Manaf — a Computer Engineer who is extraordinarily intelligent and a rapid learner. What takes most people a year to master, Manaf absorbs in a month. He has an instinct for complex systems and picks up new technologies with unnatural speed.
@@ -967,13 +968,16 @@ async function agentReply(userMsg) {
   ];
 
   try {
-    const res = await fetch(OLLAMA_URL, {
+    const res = await fetch(GROQ_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: OLLAMA_MODEL, messages, stream: true })
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + GROQ_KEY
+      },
+      body: JSON.stringify({ model: GROQ_MODEL, messages, stream: true })
     });
 
-    if (!res.ok) throw new Error('Ollama returned ' + res.status);
+    if (!res.ok) throw new Error('Groq returned ' + res.status);
 
     hideTypingIndicator();
     const bubble = addStreamingChatMsg();
@@ -991,25 +995,18 @@ async function agentReply(userMsg) {
       const lines = buffer.split('\n');
       buffer = lines.pop();
       for (const line of lines) {
-        if (!line.trim()) continue;
+        const trimmed = line.trim();
+        if (!trimmed || trimmed === 'data: [DONE]') continue;
+        const data = trimmed.startsWith('data: ') ? trimmed.slice(6) : trimmed;
         try {
-          const json = JSON.parse(line);
-          if (json.message && json.message.content) {
-            fullText += json.message.content;
+          const json = JSON.parse(data);
+          const delta = json.choices && json.choices[0] && json.choices[0].delta;
+          if (delta && delta.content) {
+            fullText += delta.content;
             bubble.update(fullText);
           }
         } catch (e) { /* skip malformed lines */ }
       }
-    }
-    // Process any remaining buffer
-    if (buffer.trim()) {
-      try {
-        const json = JSON.parse(buffer);
-        if (json.message && json.message.content) {
-          fullText += json.message.content;
-          bubble.update(fullText);
-        }
-      } catch (e) { /* skip */ }
     }
 
     chatHistory.push({ role: 'assistant', content: fullText });
