@@ -627,7 +627,7 @@ function getContent(id){
           </div>
         </div>
         <div class="chat-suggestions" id="chat-suggestions">
-          <button class="chat-suggestion" onclick="sendQuickQ('What are Manaf\'s main skills?')">💡 Skills & expertise</button>
+          <button class="chat-suggestion" onclick="sendQuickQ(&quot;What are Manaf's main skills?&quot;)">💡 Skills & expertise</button>
           <button class="chat-suggestion" onclick="sendQuickQ('Tell me about his projects')">🚀 Projects</button>
           <button class="chat-suggestion" onclick="sendQuickQ('What is his work experience?')">💼 Experience</button>
           <button class="chat-suggestion" onclick="sendQuickQ('How can I contact Manaf?')">📧 Contact info</button>
