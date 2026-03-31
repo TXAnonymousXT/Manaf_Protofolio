@@ -1,11 +1,21 @@
-// ================ SVG ICONS ================
-const ICONS = {
-  about:`<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-  projects:`<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>`,
-  skills:`<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-  security:`<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-  terminal:`<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
-  contact:`<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+// ================ 3D ICON ASSETS ================
+const ICON_IMAGES = {
+  about: 'icons/about.png',
+  projects: 'icons/projects.png',
+  skills: 'icons/skills.png',
+  security: 'icons/security.png',
+  terminal: 'icons/terminal.png',
+  contact: 'icons/contact.png',
+};
+
+// SVG icons for start menu / small contexts
+const ICONS_SVG = {
+  about:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  projects:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>`,
+  skills:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  security:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  terminal:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
+  contact:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
 };
 
 const APPS = [
@@ -20,14 +30,14 @@ const APPS = [
 // ================ STATE ================
 const S = { windows:[], nextZ:200, focused:null, startOpen:false, winCtr:0, drag:null };
 
-// ================ PERSONALIZED NETWORK TOPOLOGY BACKGROUND ================
+// ================ CINEMATIC BACKGROUND ================
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-resizeCanvas();window.addEventListener('resize',resizeCanvas);
+resizeCanvas();window.addEventListener('resize',()=>{resizeCanvas();initBackground();});
 
-// Skill nodes with labels — representing Manaf's expertise
+// Skill nodes with labels
 const SKILL_NODES = [
   { label:'Networking',   color:'#df0139', size:6 },
   { label:'Security',     color:'#1e1e27', size:6 },
@@ -41,16 +51,13 @@ const SKILL_NODES = [
   { label:'Firewall',     color:'#df0139', size:5 },
 ];
 
-// Protocol labels that float across the background
 const PROTOCOL_LABELS = [
   'BGP','OSPF','TCP/IP','VLAN','ACL','nftables','SSH','TLS',
   'DNS','DHCP','NAT','QoS','SNMP','ICMP','ARP','IPsec',
   'Suricata','Snort','SIEM','Zero Trust','ESP32','RPi'
 ];
 
-// Hexagonal grid parameters
 const HEX_SIZE = 45;
-const HEX_GAP = 4;
 
 class SkillNode {
   constructor(data, index) {
@@ -59,8 +66,8 @@ class SkillNode {
     this.baseSize = data.size;
     this.x = 0.1 * canvas.width + Math.random() * 0.8 * canvas.width;
     this.y = 0.1 * canvas.height + Math.random() * 0.8 * canvas.height;
-    this.vx = (Math.random() - 0.5) * 0.15;
-    this.vy = (Math.random() - 0.5) * 0.15;
+    this.vx = (Math.random() - 0.5) * 0.12;
+    this.vy = (Math.random() - 0.5) * 0.12;
     this.pulse = Math.random() * Math.PI * 2;
     this.index = index;
   }
@@ -68,7 +75,6 @@ class SkillNode {
     this.x += this.vx;
     this.y += this.vy;
     this.pulse += 0.015;
-    // Bounce off edges with padding
     const pad = 80;
     if (this.x < pad) { this.x = pad; this.vx *= -1; }
     if (this.x > canvas.width - pad) { this.x = canvas.width - pad; this.vx *= -1; }
@@ -76,67 +82,95 @@ class SkillNode {
     if (this.y > canvas.height - pad) { this.y = canvas.height - pad; this.vy *= -1; }
   }
   draw() {
-    const s = this.baseSize + Math.sin(this.pulse) * 1.5;
-    // Outer glow
-    const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, s * 6);
-    grad.addColorStop(0, this.color + '30');
+    const s = this.baseSize + Math.sin(this.pulse) * 2;
+    // Outer glow — cinematic bloom
+    const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, s * 8);
+    grad.addColorStop(0, this.color + '25');
+    grad.addColorStop(0.5, this.color + '08');
     grad.addColorStop(1, 'transparent');
     ctx.beginPath();
-    ctx.arc(this.x, this.y, s * 6, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, s * 8, 0, Math.PI * 2);
     ctx.fillStyle = grad;
     ctx.fill();
-    // Core
+    // Middle ring
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, s * 1.8, 0, Math.PI * 2);
+    ctx.strokeStyle = this.color + '15';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+    // Core — 3D sphere effect
+    const coreGrad = ctx.createRadialGradient(this.x - s*0.3, this.y - s*0.3, 0, this.x, this.y, s);
+    coreGrad.addColorStop(0, this.color + 'FF');
+    coreGrad.addColorStop(0.6, this.color + 'CC');
+    coreGrad.addColorStop(1, this.color + '80');
     ctx.beginPath();
     ctx.arc(this.x, this.y, s, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
+    ctx.fillStyle = coreGrad;
     ctx.fill();
-    ctx.shadowBlur = 0;
+    // Specular highlight
+    const specGrad = ctx.createRadialGradient(this.x - s*0.25, this.y - s*0.35, 0, this.x - s*0.25, this.y - s*0.35, s*0.6);
+    specGrad.addColorStop(0, 'rgba(255,255,255,0.5)');
+    specGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, s, 0, Math.PI * 2);
+    ctx.fillStyle = specGrad;
+    ctx.fill();
     // Label
     ctx.font = '500 9px "Outfit", sans-serif';
-    ctx.fillStyle = this.color + 'CC';
+    ctx.fillStyle = this.color + 'AA';
     ctx.textAlign = 'center';
     ctx.fillText(this.label, this.x, this.y + s + 14);
   }
 }
 
-// Data packets that travel along connections
+// Data packets with cinematic trails
 class DataPacket {
   constructor(nodeA, nodeB) {
     this.nodeA = nodeA;
     this.nodeB = nodeB;
-    this.t = Math.random(); // position along line 0-1
-    this.speed = 0.002 + Math.random() * 0.003;
-    this.size = 2 + Math.random() * 2;
+    this.t = Math.random();
+    this.speed = 0.001 + Math.random() * 0.003;
+    this.size = 1.5 + Math.random() * 2;
     this.dir = Math.random() > 0.5 ? 1 : -1;
+    this.trail = [];
+    this.trailLength = 6 + Math.floor(Math.random() * 4);
   }
   update() {
+    const ax = this.nodeA.x, ay = this.nodeA.y;
+    const bx = this.nodeB.x, by = this.nodeB.y;
+    const x = ax + (bx - ax) * this.t;
+    const y = ay + (by - ay) * this.t;
+    this.trail.unshift({x, y});
+    if (this.trail.length > this.trailLength) this.trail.pop();
     this.t += this.speed * this.dir;
     if (this.t > 1) { this.t = 1; this.dir = -1; }
     if (this.t < 0) { this.t = 0; this.dir = 1; }
   }
   draw() {
-    const ax = this.nodeA.x, ay = this.nodeA.y;
-    const bx = this.nodeB.x, by = this.nodeB.y;
-    const x = ax + (bx - ax) * this.t;
-    const y = ay + (by - ay) * this.t;
-    ctx.beginPath();
-    ctx.arc(x, y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = '#df0139';
-    ctx.shadowColor = '#df0139';
-    ctx.shadowBlur = 10;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    // Trailing glow
-    const tx = ax + (bx - ax) * (this.t - 0.05 * this.dir);
-    const ty = ay + (by - ay) * (this.t - 0.05 * this.dir);
-    ctx.beginPath();
-    ctx.arc(tx, ty, this.size * 0.6, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(223,1,57,0.25)';
-    ctx.fill();
+    // Cinematic trail
+    for (let i = 0; i < this.trail.length; i++) {
+      const alpha = (1 - i / this.trail.length) * 0.6;
+      const sz = this.size * (1 - i / this.trail.length * 0.5);
+      ctx.beginPath();
+      ctx.arc(this.trail[i].x, this.trail[i].y, sz, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(223,1,57,${alpha})`;
+      ctx.fill();
+    }
+    // Head glow
+    if (this.trail.length > 0) {
+      const h = this.trail[0];
+      ctx.beginPath();
+      ctx.arc(h.x, h.y, this.size * 2.5, 0, Math.PI * 2);
+      const glow = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, this.size * 2.5);
+      glow.addColorStop(0, 'rgba(223,1,57,0.3)');
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.fill();
+    }
   }
 }
 
-// Floating protocol label
+// Floating protocol label with cinematic fade
 class FloatingLabel {
   constructor(text) {
     this.text = text;
@@ -145,76 +179,114 @@ class FloatingLabel {
   reset() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
-    this.vx = (Math.random() - 0.5) * 0.2;
-    this.vy = (Math.random() - 0.5) * 0.15;
+    this.vx = (Math.random() - 0.5) * 0.15;
+    this.vy = (Math.random() - 0.5) * 0.1;
     this.opacity = 0;
-    this.maxOpacity = 0.08 + Math.random() * 0.07;
+    this.maxOpacity = 0.06 + Math.random() * 0.06;
     this.fadeIn = true;
     this.life = 0;
     this.maxLife = 600 + Math.random() * 400;
     this.size = 10 + Math.random() * 6;
+    this.rotation = (Math.random() - 0.5) * 0.1;
   }
   update() {
     this.x += this.vx;
     this.y += this.vy;
     this.life++;
-    if (this.fadeIn && this.opacity < this.maxOpacity) {
-      this.opacity += 0.001;
-    }
-    if (this.life > this.maxLife * 0.7) {
-      this.fadeIn = false;
-      this.opacity -= 0.001;
-    }
-    if (this.life > this.maxLife || this.opacity <= 0) {
-      this.reset();
-    }
+    if (this.fadeIn && this.opacity < this.maxOpacity) this.opacity += 0.0008;
+    if (this.life > this.maxLife * 0.7) { this.fadeIn = false; this.opacity -= 0.0008; }
+    if (this.life > this.maxLife || this.opacity <= 0) this.reset();
   }
   draw() {
     if (this.opacity <= 0) return;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
     ctx.font = `600 ${this.size}px "JetBrains Mono", monospace`;
     ctx.fillStyle = `rgba(223,1,57,${this.opacity})`;
     ctx.textAlign = 'center';
-    ctx.fillText(this.text, this.x, this.y);
+    ctx.fillText(this.text, 0, 0);
+    ctx.restore();
   }
 }
 
-// Initialize background elements
+// Cinematic ambient particles (depth-of-field)
+class AmbientParticle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.z = Math.random(); // 0=far, 1=near (depth)
+    this.size = 0.5 + this.z * 2;
+    this.speed = 0.05 + this.z * 0.15;
+    this.opacity = 0.03 + this.z * 0.06;
+    this.drift = (Math.random() - 0.5) * 0.3;
+    this.pulse = Math.random() * Math.PI * 2;
+  }
+  update() {
+    this.y -= this.speed;
+    this.x += this.drift + Math.sin(this.pulse) * 0.1;
+    this.pulse += 0.01;
+    if (this.y < -10) { this.y = canvas.height + 10; this.x = Math.random() * canvas.width; }
+    if (this.x < -10) this.x = canvas.width + 10;
+    if (this.x > canvas.width + 10) this.x = -10;
+  }
+  draw() {
+    const o = this.opacity * (0.7 + Math.sin(this.pulse) * 0.3);
+    // Far particles are blurry (simulated with larger, lower-opacity circles)
+    if (this.z < 0.3) {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(30,30,39,${o * 0.3})`;
+      ctx.fill();
+    }
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(30,30,39,${o})`;
+    ctx.fill();
+  }
+}
+
+// Initialize
 let skillNodes = [];
 let dataPackets = [];
 let floatingLabels = [];
+let ambientParticles = [];
 let bgTime = 0;
 
 function initBackground() {
   skillNodes = SKILL_NODES.map((d, i) => new SkillNode(d, i));
   dataPackets = [];
-  // Create packets for nearby node pairs
   for (let i = 0; i < skillNodes.length; i++) {
     for (let j = i + 1; j < skillNodes.length; j++) {
-      if (Math.random() > 0.5) {
-        dataPackets.push(new DataPacket(skillNodes[i], skillNodes[j]));
-      }
+      if (Math.random() > 0.5) dataPackets.push(new DataPacket(skillNodes[i], skillNodes[j]));
     }
   }
-  // Floating protocol labels
   floatingLabels = PROTOCOL_LABELS.map(t => new FloatingLabel(t));
+  ambientParticles = Array.from({length:60}, () => new AmbientParticle());
 }
 initBackground();
 
-// Draw hexagonal grid
+// Draw hexagonal grid with cinematic depth
 function drawHexGrid() {
   const w = HEX_SIZE;
   const h = w * Math.sqrt(3) / 2;
-  ctx.strokeStyle = 'rgba(30,30,39,0.04)';
-  ctx.lineWidth = 0.5;
   const cols = Math.ceil(canvas.width / (w * 1.5)) + 2;
   const rows = Math.ceil(canvas.height / (h * 2)) + 2;
-  const offsetX = (bgTime * 0.1) % (w * 1.5);
-  const offsetY = (bgTime * 0.05) % (h * 2);
+  const offsetX = (bgTime * 0.08) % (w * 1.5);
+  const offsetY = (bgTime * 0.04) % (h * 2);
 
   for (let row = -1; row < rows; row++) {
     for (let col = -1; col < cols; col++) {
       const cx = col * w * 1.5 + offsetX;
       const cy = row * h * 2 + (col % 2) * h + offsetY;
+      // Distance-based opacity for cinematic vignette
+      const dx = cx - canvas.width/2, dy = cy - canvas.height/2;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const maxDist = Math.sqrt(canvas.width*canvas.width + canvas.height*canvas.height) / 2;
+      const alpha = 0.035 * (1 - dist/maxDist * 0.7);
+      ctx.strokeStyle = `rgba(30,30,39,${alpha})`;
+      ctx.lineWidth = 0.5;
       drawHex(cx, cy, w / 2);
     }
   }
@@ -233,7 +305,7 @@ function drawHex(cx, cy, r) {
   ctx.stroke();
 }
 
-// Draw connection lines between skill nodes
+// Connection lines with cinematic glow
 function drawConnections() {
   for (let i = 0; i < skillNodes.length; i++) {
     for (let j = i + 1; j < skillNodes.length; j++) {
@@ -241,7 +313,15 @@ function drawConnections() {
       const dx = a.x - b.x, dy = a.y - b.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < 350) {
-        const alpha = 0.08 * (1 - dist / 350);
+        const alpha = 0.06 * (1 - dist / 350);
+        // Wider glow line
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(223,1,57,${alpha * 0.3})`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        // Core line
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
@@ -253,31 +333,75 @@ function drawConnections() {
   }
 }
 
-// Draw circuit board traces
+// Circuit traces with cinematic glow
 function drawCircuitTraces() {
   const traceCount = 8;
-  ctx.strokeStyle = 'rgba(30,30,39,0.035)';
-  ctx.lineWidth = 1;
   for (let i = 0; i < traceCount; i++) {
     const baseX = (canvas.width / traceCount) * i + 50;
     const baseY = 50 + (i * 137) % canvas.height;
+    // Glow
+    ctx.strokeStyle = 'rgba(223,1,57,0.015)';
+    ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(baseX, baseY);
-    // Draw right-angle circuit-style traces
     let cx = baseX, cy = baseY;
     for (let s = 0; s < 5; s++) {
       const seg = 30 + Math.sin(bgTime * 0.01 + i + s) * 20;
-      if (s % 2 === 0) { cx += seg; }
-      else { cy += seg; }
+      if (s % 2 === 0) cx += seg; else cy += seg;
       ctx.lineTo(cx, cy);
     }
     ctx.stroke();
-    // Node dot at junctions
+    // Core
+    ctx.strokeStyle = 'rgba(30,30,39,0.03)';
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.arc(cx, cy, 2, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(223,1,57,0.1)';
+    ctx.moveTo(baseX, baseY);
+    cx = baseX; cy = baseY;
+    for (let s = 0; s < 5; s++) {
+      const seg = 30 + Math.sin(bgTime * 0.01 + i + s) * 20;
+      if (s % 2 === 0) cx += seg; else cy += seg;
+      ctx.lineTo(cx, cy);
+    }
+    ctx.stroke();
+    // Junction dot with glow
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(223,1,57,0.06)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(223,1,57,0.12)';
     ctx.fill();
   }
+}
+
+// Cinematic lens flare effect
+function drawLensFlare() {
+  const time = bgTime * 0.003;
+  const flareX = canvas.width * 0.65 + Math.sin(time) * canvas.width * 0.1;
+  const flareY = canvas.height * 0.25 + Math.cos(time * 0.7) * canvas.height * 0.05;
+  const flareAlpha = 0.02 + Math.sin(time * 1.5) * 0.01;
+
+  // Main flare
+  const grad = ctx.createRadialGradient(flareX, flareY, 0, flareX, flareY, 200);
+  grad.addColorStop(0, `rgba(223,1,57,${flareAlpha})`);
+  grad.addColorStop(0.3, `rgba(255,200,200,${flareAlpha * 0.3})`);
+  grad.addColorStop(1, 'transparent');
+  ctx.beginPath();
+  ctx.arc(flareX, flareY, 200, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Secondary flare (opposite)
+  const f2x = canvas.width - flareX + canvas.width * 0.1;
+  const f2y = canvas.height - flareY + canvas.height * 0.1;
+  const grad2 = ctx.createRadialGradient(f2x, f2y, 0, f2x, f2y, 120);
+  grad2.addColorStop(0, `rgba(100,60,180,${flareAlpha * 0.5})`);
+  grad2.addColorStop(1, 'transparent');
+  ctx.beginPath();
+  ctx.arc(f2x, f2y, 120, 0, Math.PI * 2);
+  ctx.fillStyle = grad2;
+  ctx.fill();
 }
 
 // Main render loop
@@ -285,31 +409,57 @@ function drawBackground() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   bgTime++;
 
+  // Layer 0: Cinematic lens flare
+  drawLensFlare();
+
   // Layer 1: Hexagonal grid
   drawHexGrid();
 
   // Layer 2: Circuit traces
   drawCircuitTraces();
 
-  // Layer 3: Floating protocol labels
+  // Layer 3: Ambient particles (depth-of-field)
+  ambientParticles.forEach(p => { p.update(); p.draw(); });
+
+  // Layer 4: Floating protocol labels
   floatingLabels.forEach(l => { l.update(); l.draw(); });
 
-  // Layer 4: Connection lines
+  // Layer 5: Connection lines with glow
   drawConnections();
 
-  // Layer 5: Data packets
+  // Layer 6: Data packets with trails
   dataPackets.forEach(p => { p.update(); p.draw(); });
 
-  // Layer 6: Skill nodes
+  // Layer 7: Skill nodes (3D spheres)
   skillNodes.forEach(n => { n.update(); n.draw(); });
 
   requestAnimationFrame(drawBackground);
 }
 drawBackground();
 
+// ================ 3D ICON TILT EFFECT ================
+document.addEventListener('mousemove', (e) => {
+  document.querySelectorAll('.d-icon').forEach(icon => {
+    const rect = icon.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    const dx = (e.clientX - cx) / rect.width;
+    const dy = (e.clientY - cy) / rect.height;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 3) {
+      const img = icon.querySelector('.d-icon-img');
+      if (img && !icon.matches(':hover')) {
+        const rotX = dy * 3;
+        const rotY = -dx * 3;
+        img.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      }
+    }
+  });
+});
+
 // ================ BOOT ================
 const bootMsgs=[
-  {t:'ManafOS v3.0.0 — initializing kernel...',d:0},
+  {t:'ManafOS v4.0.0 — initializing kernel...',d:0},
   {t:'<span class="hl">[  OK  ]</span> Loaded neural-network.module',d:400},
   {t:'<span class="hl">[  OK  ]</span> Mounted /sys/security-ops',d:750},
   {t:'<span class="hl">[  OK  ]</span> Started embedded-systems.service',d:1050},
@@ -332,16 +482,15 @@ function runBoot(){
     document.getElementById('boot').classList.add('out');
     document.getElementById('desktop').classList.add('on');
     revealIcons();
-    // Welcome notification
-    setTimeout(()=>showToast('Welcome','ManafOS v3.0 — All systems ready.','var(--accent)'),800);
+    setTimeout(()=>showToast('Welcome','ManafOS v4.0 — All systems ready.','var(--accent)'),800);
   },3400);
 }
 
 // ================ DESKTOP ICONS ================
 function renderIcons(){
-  document.getElementById('desk-icons').innerHTML=APPS.map(a=>`
-    <div class="d-icon ${a.icClass}" onclick="openApp('${a.id}')">
-      <div class="d-icon-img">${ICONS[a.ic]}</div>
+  document.getElementById('desk-icons').innerHTML=APPS.map((a,i)=>`
+    <div class="d-icon ${a.icClass}" onclick="openApp('${a.id}')" style="--i:${i}">
+      <div class="d-icon-img"><img src="${ICON_IMAGES[a.ic]}" alt="${a.name}" class="d-icon-asset" draggable="false"></div>
       <div class="d-icon-label">${a.name}</div>
     </div>
   `).join('');
@@ -349,7 +498,7 @@ function renderIcons(){
 
 function revealIcons(){
   document.querySelectorAll('.d-icon').forEach((ic,i)=>{
-    setTimeout(()=>ic.classList.add('show'),i*80+200);
+    setTimeout(()=>ic.classList.add('show'),i*120+200);
   });
 }
 
@@ -382,16 +531,16 @@ function renderStart(){
   sm.className='start-menu'+(S.startOpen?' open':'');
   sm.innerHTML=`
     <div class="sm-header">
-      <div class="sm-avatar">MA</div>
+      <div class="sm-avatar"><img src="photo.jpg" alt="Manaf" class="sm-avatar-img" onerror="this.style.display='none';this.parentElement.innerHTML='MA'"></div>
       <div><h3>Manaf Abduljabbar</h3><p>Computer Engineer · Doha, QA</p></div>
     </div>
     ${APPS.map(a=>`
       <div class="sm-item" onclick="openApp('${a.id}');toggleStart();">
-        <div class="smi-ic" style="background:${a.color}25"><svg viewBox="0 0 24 24" fill="none" stroke="${a.color}" stroke-width="2" stroke-linecap="round">${ICONS[a.ic].replace(/<svg[^>]*>|<\/svg>/g,'')}</svg></div>
+        <div class="smi-ic"><img src="${ICON_IMAGES[a.ic]}" alt="${a.name}" class="smi-ic-img"></div>
         <div><div class="smi-name">${a.name}</div></div>
       </div>
     `).join('')}
-    <div class="sm-footer"><span>manaf@os:~$</span><span>v3.0.0</span></div>
+    <div class="sm-footer"><span>manaf@os:~$</span><span>v4.0.0</span></div>
   `;
 }
 
@@ -401,7 +550,19 @@ function toggleStart(){S.startOpen=!S.startOpen;renderStart();}
 function getContent(id){
   switch(id){
     case 'about':return `
-      <div class="app-hdr"><h2>Manaf Abduljabbar</h2><p>Computer Engineer based in Doha, Qatar — specializing in network infrastructure, security architecture, and embedded systems. Building robust, secure systems from silicon to cloud.</p></div>
+      <div class="about-hero">
+        <div class="about-photo-wrap">
+          <img src="photo.jpg" alt="Manaf Abduljabbar" class="about-photo" onerror="this.src='icons/about.png'">
+        </div>
+        <div class="about-hero-info">
+          <h2>Manaf Abduljabbar</h2>
+          <p class="about-tagline">Computer Engineer · Network Security · Embedded Systems</p>
+          <div class="about-actions">
+            <a href="cv.pdf" download class="cv-btn" title="Download CV"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download CV</a>
+          </div>
+        </div>
+      </div>
+      <div class="about-bio">Computer Engineer based in Doha, Qatar — specializing in network infrastructure, security architecture, and embedded systems. Building robust, secure systems from silicon to cloud.</div>
       <div class="i-row"><div class="i-card"><div class="ic-l">Education</div><div class="ic-v">B.Sc. Computer Eng.</div></div><div class="i-card"><div class="ic-l">University</div><div class="ic-v">Qatar University '24</div></div><div class="i-card"><div class="ic-l">Location</div><div class="ic-v">Doha, Qatar</div></div></div>
       <div class="app-sec"><h3>Experience</h3>
         <div class="exp-item"><div class="e-role">Software Engineer</div><div class="e-co">KraftxLab</div><div class="e-date">2025 — Present</div></div>
@@ -419,7 +580,7 @@ function getContent(id){
     case 'skills':return `
       <div class="app-hdr"><h2>Skills & Expertise</h2><p>Technical proficiency across networking, security, embedded systems, and dev.</p></div>
       ${[{n:'Networking (BGP, OSPF)',p:85,c:'#00e5a0'},{n:'Security (IDS/IPS)',p:80,c:'#ef4444'},{n:'Embedded Systems',p:82,c:'#f59e0b'},{n:'Python / Scripting',p:78,c:'#3b82f6'},{n:'Web Development',p:75,c:'#8b5cf6'},{n:'IoT & Blynk',p:77,c:'#10b981'},{n:'Cloud & DevOps',p:60,c:'#06b6d4'},{n:'UI/UX Design',p:70,c:'#f472b6'}].map(s=>`
-        <div class="sk-row"><div class="sk-top"><span>${s.n}</span><span style="color:${s.c}">${s.p}%</span></div><div class="sk-bar"><div class="sk-fill" style="width:${s.p}%;background:${s.c}"></div></div></div>
+        <div class="sk-row"><div class="sk-top"><span>${s.n}</span><span style="color:${s.c}">${s.p}%</span></div><div class="sk-bar"><div class="sk-fill" style="width:${s.p}%;background:${s.c};color:${s.c}"></div></div></div>
       `).join('')}
       <div class="app-sec" style="margin-top:18px"><h3>Tools & Technologies</h3>
       <span class="tag tag-g">Cisco</span><span class="tag tag-g">Juniper</span><span class="tag tag-g">MikroTik</span>
@@ -434,7 +595,7 @@ function getContent(id){
       <div class="sec-card"><h4><span class="sec-dot" style="background:#f59e0b"></span> Offensive Security</h4><p>Pentesting: Metasploit, Burp Suite. Recon: Nmap, OSINT, Shodan. CTF, red team, WiFi auditing.</p><div style="margin-top:8px"><span class="tag tag-y">Metasploit</span><span class="tag tag-y">Burp Suite</span><span class="tag tag-y">Nmap</span></div></div>
       <div class="sec-card"><h4><span class="sec-dot"></span> Defensive Security</h4><p>SOC monitoring, IR planning. ISO 27001, NIST. Hardening, forensics, auditing.</p><div style="margin-top:8px"><span class="tag tag-p">ISO 27001</span><span class="tag tag-p">NIST</span><span class="tag tag-p">IR</span></div></div>`;
     case 'terminal':return `
-      <div class="t-body" id="t-out"><div><span class="t-out">ManafOS Terminal v3.0.0</span></div><div><span class="t-out">Type <span class="t-hl">'help'</span> for commands.</span></div><div><span class="t-out">───────────────────────</span></div></div>
+      <div class="t-body" id="t-out"><div><span class="t-out">ManafOS Terminal v4.0.0</span></div><div><span class="t-out">Type <span class="t-hl">'help'</span> for commands.</span></div><div><span class="t-out">───────────────────────</span></div></div>
       <div class="t-in-line"><span class="t-prompt">manaf@os:~$&nbsp;</span><input class="t-input" id="t-input" type="text" autofocus spellcheck="false" autocomplete="off"></div>`;
     case 'contact':return `
       <div class="app-hdr"><h2>Get In Touch</h2><p>Ready to discuss infrastructure, security, or your next project? Let's connect.</p></div>
@@ -472,7 +633,7 @@ function closeWin(id){
       if(w)w._removed=true;
       if(S.focused===id)S.focused=null;
       render();
-    },250);
+    },350);
   }
 }
 function minimizeWin(id){const w=S.windows.find(w=>w.id===id);if(w){w.minimized=true;S.focused=null;render();}}
@@ -486,7 +647,6 @@ function toggleWin(id){
 }
 function focusWin(id){S.focused=id;S.nextZ++;}
 
-// Focus without full re-render — just update z-index and classes
 function softFocusWin(id){
   if(S.focused===id)return;
   S.focused=id;S.nextZ++;
@@ -538,7 +698,7 @@ function runCmd(c){
   if(l==='projects')return`01 Smart Dispatch — Snoonu Hackathon<br>02 Mecanum Robot — Raspberry Pi<br>03 Tremor Spoon — ESP32-C6<br>04 Cat/Turtle Detector — TF Lite<br>05 Water Quality Monitor — ESP32<br>06 Linux Firewall — Suricata`;
   if(l==='contact')return`📧 man.abduljabbar@gmail.com<br>💼 linkedin.com/in/manaf101<br>🐙 github.com/txanonymousxt`;
   if(l==='whoami')return`manaf — computer-engineer (clearance: FULL)`;
-  if(l==='neofetch')return`<span class="t-hl">ManafOS</span> v3.0.0 · Kernel: engineer-6.2<br>Host: Doha, Qatar · Shell: portfolio-sh<br>CPU: Networking@85% · GPU: Security@80%<br>Memory: 6 projects loaded · Uptime: ${Math.floor(Math.random()*300+50)}d`;
+  if(l==='neofetch')return`<span class="t-hl">ManafOS</span> v4.0.0 · Kernel: engineer-6.2<br>Host: Doha, Qatar · Shell: portfolio-sh<br>CPU: Networking@85% · GPU: Security@80%<br>Memory: 6 projects loaded · Uptime: ${Math.floor(Math.random()*300+50)}d`;
   if(l==='uptime')return`ManafOS up ${Math.floor(Math.random()*300+100)}d, load: 0.42, 0.31, 0.28`;
   if(l==='date')return new Date().toString();
   if(l==='clear'){document.getElementById('t-out').innerHTML='';return'';}
@@ -552,7 +712,7 @@ function showToast(title,msg,color){
   const t=document.createElement('div');t.className='toast';
   t.innerHTML=`<div class="toast-icon" style="background:${color||'var(--accent)'}22"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="${color||'var(--accent)'}" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="toast-text"><div class="tt-title">${title}</div><div class="tt-msg">${msg}</div></div>`;
   c.appendChild(t);
-  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),300);},3000);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),400);},3000);
 }
 
 // ================ CONTEXT MENU ================
@@ -568,9 +728,9 @@ document.addEventListener('click',()=>document.getElementById('ctx-menu').classL
 function ctxAction(a){
   document.getElementById('ctx-menu').classList.remove('show');
   if(a==='terminal')openApp('terminal');
-  if(a==='about')showToast('ManafOS v3.0','Built by Manaf Abduljabbar · Doha, Qatar','var(--accent)');
+  if(a==='about')showToast('ManafOS v4.0','Built by Manaf Abduljabbar · Doha, Qatar','var(--accent)');
   if(a==='refresh'){showToast('Desktop','Refreshing...','var(--accent2)');revealIcons();}
-  if(a==='wall')showToast('Wallpaper','Network topology mode active.','var(--accent)');
+  if(a==='wall')showToast('Wallpaper','Cinematic mode active.','var(--accent)');
 }
 
 // ================ RENDER ================
@@ -587,7 +747,6 @@ function renderWindows(){
     let el=document.getElementById(w.id);
 
     if(!el){
-      // Create new window element
       el=document.createElement('div');
       el.id=w.id;
       el.dataset.wid=w.id;
@@ -598,21 +757,18 @@ function renderWindows(){
         </div>
         <div class="win-body">${getContent(w.appId)}</div>`;
       c.appendChild(el);
-      // Bind terminal
       if(w.appId==='terminal'){
         const ti=el.querySelector('#t-input');
         if(ti)ti.addEventListener('keydown',handleTerm);
       }
     }
 
-    // Update classes
     const cls=['os-win'];
     if(w.id===S.focused)cls.push('focused');
     if(w.minimized)cls.push('minimized');
     if(w.maximized)cls.push('maximized');
     el.className=cls.join(' ');
 
-    // Update position/size
     el.style.left=w.x+'px';
     el.style.top=w.y+'px';
     el.style.width=w.w+'px';
@@ -620,12 +776,10 @@ function renderWindows(){
     el.style.zIndex=w.id===S.focused?S.nextZ:100;
   });
 
-  // Remove windows no longer in the list
   c.querySelectorAll('.os-win').forEach(el=>{
     if(!activeIds.has(el.id))el.remove();
   });
 
-  // Focus terminal input
   if(S.focused){
     const fw=S.windows.find(w=>w.id===S.focused&&w.appId==='terminal');
     if(fw){const ti=document.getElementById('t-input');if(ti)ti.focus();}
@@ -633,8 +787,6 @@ function renderWindows(){
 }
 
 // ================ EVENT DELEGATION ================
-// Handle traffic light buttons via mousedown delegation
-// Must use mousedown (not click) because the win-bar's onmousedown fires first
 document.getElementById('win-container').addEventListener('mousedown',e=>{
   const btn=e.target.closest('.tl[data-action]');
   if(btn){
@@ -648,17 +800,14 @@ document.getElementById('win-container').addEventListener('mousedown',e=>{
     else if(action==='maximize')maximizeWin(wid);
     return;
   }
-  // Focus window on mousedown (but not on button clicks)
   const win=e.target.closest('.os-win[data-wid]');
   if(win)softFocusWin(win.dataset.wid);
-},true); // useCapture=true to fire before inline onmousedown
+},true);
 
-// Close start on outside click
 document.addEventListener('click',e=>{
   if(S.startOpen&&!e.target.closest('.start-menu')&&!e.target.closest('.start-btn')){S.startOpen=false;renderStart();}
 });
 
-// Clock
 setInterval(renderTaskbar,30000);
 
 // ================ INIT ================
