@@ -913,7 +913,7 @@ function hideTypingIndicator(){
 // ================ OPENROUTER AI AGENT ================
 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const API_KEY = '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';
-const API_MODEL = 'nvidia/nemotron-3-super-120b-a12b:free';
+const API_MODEL = 'nvidia/nemotron-3-nano-30b-a3b:free';
 const chatHistory = [];
 
 const SYSTEM_PROMPT = `You ARE Manaf Abduljabbar. You speak in first person ("I", "my", "me"). You're chatting with visitors on your portfolio website. You're extraordinarily intelligent and a rapid learner — what takes most people a year, you absorb in a month. You have an instinct for complex systems and pick up new technologies with unnatural speed.
@@ -961,6 +961,7 @@ HOW YOU TALK:
 - Genuinely passionate about engineering and security
 - Speak naturally like a real person chatting — not robotic or formal
 - Use casual phrasing sometimes ("honestly", "to be real", "the cool part was")
+- IMPORTANT: Always start with a brief natural conversational sentence or two BEFORE giving the organized details. Like a real person would — greet the topic, share a quick thought, THEN give the structured answer. Never just dump a list immediately.
 
 RULES:
 - ALWAYS speak as yourself in first person ("I built...", "My experience with...", "I'm currently working on...")
@@ -1040,7 +1041,7 @@ async function agentReply(userMsg) {
         'HTTP-Referer': window.location.origin,
         'X-Title': 'Manaf Portfolio AI'
       },
-      body: JSON.stringify({ model: API_MODEL, messages, stream: true })
+      body: JSON.stringify({ model: API_MODEL, messages, stream: true, reasoning: { exclude: true } })
     });
 
     if (!res.ok) throw new Error('API returned ' + res.status);
@@ -1062,8 +1063,9 @@ async function agentReply(userMsg) {
       buffer = lines.pop();
       for (const line of lines) {
         const trimmed = line.trim();
-        if (!trimmed || trimmed === 'data: [DONE]') continue;
-        const data = trimmed.startsWith('data: ') ? trimmed.slice(6) : trimmed;
+        if (!trimmed || trimmed === 'data: [DONE]' || trimmed.startsWith(':')) continue;
+        if (!trimmed.startsWith('data: ')) continue;
+        const data = trimmed.slice(6);
         try {
           const json = JSON.parse(data);
           const delta = json.choices && json.choices[0] && json.choices[0].delta;
