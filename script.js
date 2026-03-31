@@ -6,6 +6,7 @@ const ICON_IMAGES = {
   security: 'icons/security.png',
   terminal: 'icons/terminal.png',
   contact: 'icons/contact.png',
+  agent: 'icons/agent.png',
 };
 
 // SVG icons for start menu / small contexts
@@ -16,6 +17,7 @@ const ICONS_SVG = {
   security:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
   terminal:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
   contact:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+  agent:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>`,
 };
 
 const APPS = [
@@ -25,6 +27,7 @@ const APPS = [
   {id:'security',name:'Security',ic:'security',icClass:'ic-security',color:'#b91c1c'},
   {id:'terminal',name:'Terminal',ic:'terminal',icClass:'ic-terminal',color:'#334155'},
   {id:'contact',name:'Contact',ic:'contact',icClass:'ic-contact',color:'#8b5cf6'},
+  {id:'agent',name:'Ask Manaf AI',ic:'agent',icClass:'ic-agent',color:'#06b6d4'},
 ];
 
 // ================ STATE ================
@@ -603,6 +606,39 @@ function getContent(id){
       <a href="https://qa.linkedin.com/in/manaf101" class="contact-link" target="_blank"><div class="cl-ic" style="background:rgba(59,130,246,0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div><div><div class="cl-label">LinkedIn</div><div class="cl-val">linkedin.com/in/manaf101</div></div></a>
       <a href="https://github.com/txanonymousxt" class="contact-link" target="_blank"><div class="cl-ic" style="background:rgba(30,30,39,0.06)"><svg viewBox="0 0 24 24" fill="none" stroke="#1e1e27" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div><div><div class="cl-label">GitHub</div><div class="cl-val">github.com/txanonymousxt</div></div></a>
       <div style="margin-top:20px;padding:18px;border-radius:var(--radius-sm);background:var(--accent-dim);border:1px solid rgba(223,1,57,0.12);"><div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px;">📍 Doha, Qatar</div><div style="font-size:11px;color:var(--text-dim);">Available for freelance · consulting · full-time</div></div>`;
+    case 'agent':return `
+      <div class="chat-container" id="chat-container">
+        <div class="chat-header-bar">
+          <div class="chat-ai-badge">
+            <div class="chat-ai-avatar"><img src="icons/agent.png" alt="AI" class="chat-ai-icon"></div>
+            <div>
+              <div class="chat-ai-name">Manaf AI</div>
+              <div class="chat-ai-status"><span class="chat-status-dot"></span>Online — Ask me anything</div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg chat-msg-ai">
+            <div class="chat-msg-avatar"><img src="icons/agent.png" alt="AI" class="chat-msg-avatar-img"></div>
+            <div class="chat-bubble chat-bubble-ai">
+              <div class="chat-bubble-text">Hey! 👋 I'm Manaf's AI assistant. Ask me about his experience, skills, projects, or anything else. I know his journey from Computer Engineering to network security and embedded systems.</div>
+              <div class="chat-bubble-time">${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true})}</div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-suggestions" id="chat-suggestions">
+          <button class="chat-suggestion" onclick="sendQuickQ('What are Manaf\'s main skills?')">💡 Skills & expertise</button>
+          <button class="chat-suggestion" onclick="sendQuickQ('Tell me about his projects')">🚀 Projects</button>
+          <button class="chat-suggestion" onclick="sendQuickQ('What is his work experience?')">💼 Experience</button>
+          <button class="chat-suggestion" onclick="sendQuickQ('How can I contact Manaf?')">📧 Contact info</button>
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" class="chat-input" id="chat-input" placeholder="Ask about Manaf..." autocomplete="off" spellcheck="false">
+          <button class="chat-send-btn" id="chat-send-btn" onclick="sendAgentMsg()" title="Send">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>`;
   }
 }
 
@@ -621,6 +657,7 @@ function openApp(appId){
   S.windows.push({id,appId,name:app.name,color:app.color,x,y,w,h,minimized:false,maximized:false,_removed:false});
   focusWin(id);render();
   if(appId==='terminal')setTimeout(()=>{const inp=document.getElementById('t-input');if(inp)inp.focus();},200);
+  if(appId==='agent')setTimeout(()=>{const inp=document.getElementById('chat-input');if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAgentMsg();}});}},200);
   showToast(app.name,'Application launched',app.color);
 }
 
@@ -809,6 +846,77 @@ document.addEventListener('click',e=>{
 });
 
 setInterval(renderTaskbar,30000);
+
+// ================ CHAT AGENT ================
+function sendAgentMsg(){
+  const inp=document.getElementById('chat-input');
+  if(!inp)return;
+  const msg=inp.value.trim();
+  if(!msg)return;
+  inp.value='';
+  // Hide suggestions after first message
+  const sug=document.getElementById('chat-suggestions');
+  if(sug)sug.style.display='none';
+  addChatMsg(msg,'user');
+  showTypingIndicator();
+  // --- STUB: Replace this with actual AI agent call ---
+  agentReply(msg);
+}
+
+function sendQuickQ(q){
+  const inp=document.getElementById('chat-input');
+  if(inp)inp.value=q;
+  sendAgentMsg();
+}
+
+function addChatMsg(text,sender){
+  const container=document.getElementById('chat-messages');
+  if(!container)return;
+  const time=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+  const isAI=sender==='ai';
+  const msgDiv=document.createElement('div');
+  msgDiv.className=`chat-msg chat-msg-${sender}`;
+  msgDiv.innerHTML=`
+    ${isAI?'<div class="chat-msg-avatar"><img src="icons/agent.png" alt="AI" class="chat-msg-avatar-img"></div>':''}
+    <div class="chat-bubble chat-bubble-${sender}">
+      <div class="chat-bubble-text">${text}</div>
+      <div class="chat-bubble-time">${time}</div>
+    </div>
+  `;
+  msgDiv.style.opacity='0';msgDiv.style.transform='translateY(10px)';
+  container.appendChild(msgDiv);
+  requestAnimationFrame(()=>{msgDiv.style.transition='all 0.3s ease';msgDiv.style.opacity='1';msgDiv.style.transform='translateY(0)';});
+  container.scrollTop=container.scrollHeight;
+}
+
+function showTypingIndicator(){
+  const container=document.getElementById('chat-messages');
+  if(!container)return;
+  const typing=document.createElement('div');
+  typing.className='chat-msg chat-msg-ai';
+  typing.id='chat-typing';
+  typing.innerHTML=`
+    <div class="chat-msg-avatar"><img src="icons/agent.png" alt="AI" class="chat-msg-avatar-img"></div>
+    <div class="chat-bubble chat-bubble-ai chat-typing-bubble">
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+  `;
+  container.appendChild(typing);
+  container.scrollTop=container.scrollHeight;
+}
+
+function hideTypingIndicator(){
+  const t=document.getElementById('chat-typing');
+  if(t)t.remove();
+}
+
+// --- PLACEHOLDER: Claude Code will replace this with actual AI agent ---
+function agentReply(userMsg){
+  setTimeout(()=>{
+    hideTypingIndicator();
+    addChatMsg("I'm the design shell for Manaf's AI agent. Claude Code will wire me up with the real intelligence soon! 🧠","ai");
+  },1500);
+}
 
 // ================ INIT ================
 renderIcons();
