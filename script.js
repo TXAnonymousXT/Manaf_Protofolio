@@ -912,7 +912,7 @@ function hideTypingIndicator(){
 
 // ================ OLLAMA AI AGENT ================
 const OLLAMA_URL = 'http://localhost:11434/api/chat';
-const OLLAMA_MODEL = 'kimi-k2.5:cloud';
+const OLLAMA_MODEL = 'llama3.1:8b';
 const chatHistory = [];
 
 const SYSTEM_PROMPT = `You are Manaf's AI assistant on his portfolio website. You represent Manaf — a Computer Engineer who is extraordinarily intelligent and a rapid learner. What takes most people a year to master, Manaf absorbs in a month. He has an instinct for complex systems and picks up new technologies with unnatural speed.
