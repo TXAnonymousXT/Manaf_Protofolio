@@ -910,12 +910,114 @@ function hideTypingIndicator(){
   if(t)t.remove();
 }
 
-// --- PLACEHOLDER: Claude Code will replace this with actual AI agent ---
-function agentReply(userMsg){
-  setTimeout(()=>{
+// ================ OLLAMA AI AGENT ================
+const OLLAMA_URL = 'http://localhost:11434/api/chat';
+const OLLAMA_MODEL = 'kimi-k2.5:cloud';
+const chatHistory = [];
+
+const SYSTEM_PROMPT = `You are Manaf's AI assistant on his portfolio website. You represent Manaf — a Computer Engineer who is extraordinarily intelligent and a rapid learner. What takes most people a year to master, Manaf absorbs in a month. He has an instinct for complex systems and picks up new technologies with unnatural speed.
+
+Core knowledge areas you can speak about:
+- Computer Engineering (his foundation)
+- Networking & Network Security (CCNA certified, pursuing SSCP from ISC2 and Certified Defensive Security Analyst from HackTheBox)
+- Software Engineering (currently working at KraftxLab)
+- IT infrastructure (previously at Meeza as IT Support Engineer)
+- Web development, embedded systems, cloud, robotics
+
+Personality & tone:
+- Confident, sharp, and articulate — speak like someone who knows their craft deeply
+- Professional but approachable, with occasional wit
+- Show depth of knowledge when answering technical questions
+- Be concise but insightful — quality over quantity
+- When discussing Manaf's abilities, be genuine but convey that he is exceptionally talented and driven
+
+Rules:
+- NEVER share personal contact info (email, phone, address). If asked, say "You can find his contact details in the Contact section on this page."
+- NEVER make up projects or achievements that weren't mentioned
+- Keep responses focused and under 150 words unless the question demands more detail
+- You can discuss his skills, experience, certifications, and learning philosophy
+- If asked something unrelated to Manaf, briefly answer but steer back to his expertise`;
+
+function addStreamingChatMsg() {
+  const container = document.getElementById('chat-messages');
+  if (!container) return null;
+  const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-msg chat-msg-ai';
+  msgDiv.innerHTML = `
+    <div class="chat-msg-avatar"><img src="icons/agent.png" alt="AI" class="chat-msg-avatar-img"></div>
+    <div class="chat-bubble chat-bubble-ai">
+      <div class="chat-bubble-text"></div>
+      <div class="chat-bubble-time">${time}</div>
+    </div>
+  `;
+  msgDiv.style.opacity = '0'; msgDiv.style.transform = 'translateY(10px)';
+  container.appendChild(msgDiv);
+  requestAnimationFrame(() => { msgDiv.style.transition = 'all 0.3s ease'; msgDiv.style.opacity = '1'; msgDiv.style.transform = 'translateY(0)'; });
+  const textEl = msgDiv.querySelector('.chat-bubble-text');
+  return { el: msgDiv, textEl, update(txt) { textEl.textContent = txt; container.scrollTop = container.scrollHeight; } };
+}
+
+async function agentReply(userMsg) {
+  chatHistory.push({ role: 'user', content: userMsg });
+
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...chatHistory
+  ];
+
+  try {
+    const res = await fetch(OLLAMA_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: OLLAMA_MODEL, messages, stream: true })
+    });
+
+    if (!res.ok) throw new Error('Ollama returned ' + res.status);
+
     hideTypingIndicator();
-    addChatMsg("I'm the design shell for Manaf's AI agent. Claude Code will wire me up with the real intelligence soon! 🧠","ai");
-  },1500);
+    const bubble = addStreamingChatMsg();
+    if (!bubble) return;
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const json = JSON.parse(line);
+          if (json.message && json.message.content) {
+            fullText += json.message.content;
+            bubble.update(fullText);
+          }
+        } catch (e) { /* skip malformed lines */ }
+      }
+    }
+    // Process any remaining buffer
+    if (buffer.trim()) {
+      try {
+        const json = JSON.parse(buffer);
+        if (json.message && json.message.content) {
+          fullText += json.message.content;
+          bubble.update(fullText);
+        }
+      } catch (e) { /* skip */ }
+    }
+
+    chatHistory.push({ role: 'assistant', content: fullText });
+
+  } catch (e) {
+    hideTypingIndicator();
+    addChatMsg("⚡ AI agent is currently offline. You can reach Manaf through the Contact section on this page!", "ai");
+  }
 }
 
 // ================ INIT ================
