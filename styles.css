@@ -676,7 +676,17 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-sans);ba
   border-radius:16px 4px 16px 16px;
   color:#fff;
 }
-.chat-bubble-text{font-size:13px;}
+.chat-bubble-text{font-size:13px;line-height:1.6;}
+.chat-bubble-text p{margin:0 0 6px 0;}
+.chat-bubble-text p:last-child{margin-bottom:0;}
+.chat-bubble-text ul,.chat-bubble-text ol{margin:6px 0;padding-left:20px;}
+.chat-bubble-text li{margin:3px 0;}
+.chat-bubble-text strong{font-weight:700;}
+.chat-bubble-text code{
+  background:rgba(6,182,212,0.1);padding:1px 5px;border-radius:4px;
+  font-family:var(--font-mono);font-size:12px;
+}
+.chat-bubble-text br{display:block;content:"";margin:4px 0;}
 .chat-bubble-time{
   font-size:9px;margin-top:6px;
   opacity:0.5;font-family:var(--font-mono);

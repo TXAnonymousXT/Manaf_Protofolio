@@ -939,6 +939,36 @@ Rules:
 - You can discuss his skills, experience, certifications, and learning philosophy
 - If asked something unrelated to Manaf, briefly answer but steer back to his expertise`;
 
+function mdToHtml(md) {
+  let html = md
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>');
+  // Convert lines into paragraphs and lists
+  const lines = html.split('\n');
+  let out = '';
+  let inList = false;
+  let listType = '';
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const ulMatch = trimmed.match(/^[-•]\s+(.*)/);
+    const olMatch = trimmed.match(/^\d+[.)]\s+(.*)/);
+    if (ulMatch) {
+      if (!inList || listType !== 'ul') { if (inList) out += `</${listType}>`; out += '<ul>'; inList = true; listType = 'ul'; }
+      out += `<li>${ulMatch[1]}</li>`;
+    } else if (olMatch) {
+      if (!inList || listType !== 'ol') { if (inList) out += `</${listType}>`; out += '<ol>'; inList = true; listType = 'ol'; }
+      out += `<li>${olMatch[1]}</li>`;
+    } else {
+      if (inList) { out += `</${listType}>`; inList = false; }
+      if (trimmed === '') { out += '<br>'; } else { out += `<p>${trimmed}</p>`; }
+    }
+  }
+  if (inList) out += `</${listType}>`;
+  return out;
+}
+
 function addStreamingChatMsg() {
   const container = document.getElementById('chat-messages');
   if (!container) return null;
@@ -956,7 +986,7 @@ function addStreamingChatMsg() {
   container.appendChild(msgDiv);
   requestAnimationFrame(() => { msgDiv.style.transition = 'all 0.3s ease'; msgDiv.style.opacity = '1'; msgDiv.style.transform = 'translateY(0)'; });
   const textEl = msgDiv.querySelector('.chat-bubble-text');
-  return { el: msgDiv, textEl, update(txt) { textEl.textContent = txt; container.scrollTop = container.scrollHeight; } };
+  return { el: msgDiv, textEl, update(txt) { textEl.innerHTML = mdToHtml(txt); container.scrollTop = container.scrollHeight; } };
 }
 
 async function agentReply(userMsg) {
