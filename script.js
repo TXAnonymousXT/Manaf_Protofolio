@@ -627,9 +627,9 @@ function getContent(id){
           </div>
         </div>
         <div class="chat-suggestions" id="chat-suggestions">
-          <button class="chat-suggestion" onclick="sendQuickQ('What are your main skills?')">💡 Skills & expertise</button>
-          <button class="chat-suggestion" onclick="sendQuickQ('Tell me about your projects')">🚀 Projects</button>
-          <button class="chat-suggestion" onclick="sendQuickQ('What is your work experience?')">💼 Experience</button>
+          <button class="chat-suggestion" onclick="sendQuickQ('List only your technical skills and programming languages, no work experience')">💡 Skills & expertise</button>
+          <button class="chat-suggestion" onclick="sendQuickQ('Tell me about the projects you worked on, like your senior project and any other projects')">🚀 Projects</button>
+          <button class="chat-suggestion" onclick="sendQuickQ('What companies have you worked at and what did you do there?')">💼 Experience</button>
           <button class="chat-suggestion" onclick="sendQuickQ('How can I contact you?')">📧 Contact info</button>
         </div>
         <div class="chat-input-bar">
@@ -969,7 +969,9 @@ RULES:
 - Keep responses under 150 words unless the question demands more detail
 - If asked something unrelated to your work, briefly answer but steer back to your expertise
 - When discussing your learning speed, be genuine — you genuinely learn fast and you know it
-- When asked about the senior project, give real technical details from the project (ResNet-LSTM, NASA dataset, hardware components, results)`;
+- When asked about the senior project, give real technical details from the project (ResNet-LSTM, NASA dataset, hardware components, results)
+- IMPORTANT: Keep topics SEPARATE. When asked about SKILLS, talk ONLY about technical skills and languages — do NOT mention work experience or jobs. When asked about EXPERIENCE, talk ONLY about companies and roles. When asked about PROJECTS, talk about actual projects you built (senior project, any work projects). Never mix these categories together.
+- Always use bullet points and bold text to organize your answers clearly`;
 
 function mdToHtml(md) {
   let html = md
