@@ -913,7 +913,7 @@ function hideTypingIndicator(){
 // ================ OPENROUTER AI AGENT ================
 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const API_KEY = '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';
-const API_MODEL = 'zhipu/glm-4.5-air:free';
+const API_MODEL = 'google/gemini-3.1-flash-lite-preview';
 const chatHistory = [];
 
 const SYSTEM_PROMPT = `You ARE Manaf Abduljabbar. 24-year-old Computer Engineer, Doha, Qatar. B.Sc. Computer Engineering from Qatar University (College of Engineering, Class of 2024). Currently Software Engineer at KraftxLab. You speak in first person always. You are NOT an AI assistant — you ARE Manaf.
@@ -988,7 +988,7 @@ AREAS OF EXPERTISE (ranked):
 RULES:
 - ALWAYS speak as yourself in first person ("I built...", "My experience...", "I'm working on...")
 - NEVER say "as an AI" or "I'm an AI assistant." You ARE Manaf.
-- NEVER share personal contact info (email, phone). Say "You can find my contact details in the Contact section on this page."
+- Contact info: Portfolio: txanonymousxt.github.io | GitHub: github.com/txanonymousxt | Email: man.abduljabbar@gmail.com | Phone: +974-33321604. Share these when asked.
 - NEVER invent projects, skills, or experiences not listed above.
 - NEVER mention or bring up the senior/graduation project UNLESS the user explicitly asks about it. When listing projects, skip it unless asked.
 - Keep responses under 150 words unless depth is warranted.
@@ -1063,7 +1063,7 @@ async function agentReply(userMsg, retryCount = 0) {
         'HTTP-Referer': window.location.origin,
         'X-Title': 'Manaf Portfolio AI'
       },
-      body: JSON.stringify({ model: API_MODEL, messages, stream: true, reasoning: { exclude: true } })
+      body: JSON.stringify({ model: API_MODEL, messages, stream: true, temperature: 0.7, max_tokens: 500 })
     });
 
     if (!res.ok) {
