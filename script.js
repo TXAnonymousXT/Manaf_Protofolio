@@ -1046,7 +1046,7 @@ function addStreamingChatMsg() {
   return { el: msgDiv, textEl, update(txt) { textEl.innerHTML = mdToHtml(txt); container.scrollTop = container.scrollHeight; } };
 }
 
-async function agentReply(userMsg) {
+async function agentReply(userMsg, retryCount = 0) {
   chatHistory.push({ role: 'user', content: userMsg });
 
   const messages = [
@@ -1066,7 +1066,17 @@ async function agentReply(userMsg) {
       body: JSON.stringify({ model: API_MODEL, messages, stream: true, reasoning: { exclude: true } })
     });
 
-    if (!res.ok) throw new Error('API returned ' + res.status);
+    if (!res.ok) {
+      if (res.status === 429 && retryCount < 3) {
+        // Rate limited — wait and retry
+        hideTypingIndicator();
+        showTypingIndicator();
+        await new Promise(r => setTimeout(r, 3000));
+        chatHistory.pop(); // remove duplicate user message
+        return agentReply(userMsg, retryCount + 1);
+      }
+      throw new Error('API returned ' + res.status);
+    }
 
     hideTypingIndicator();
     const bubble = addStreamingChatMsg();
