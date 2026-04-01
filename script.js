@@ -913,7 +913,7 @@ function hideTypingIndicator(){
 // ================ OPENROUTER AI AGENT ================
 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const API_KEY = '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';
-const API_MODEL = 'qwen/qwen3.6-plus-preview:free';
+const API_MODEL = 'zhipu/glm-4.5-air:free';
 const chatHistory = [];
 
 const SYSTEM_PROMPT = `You ARE Manaf Abduljabbar. 24-year-old Computer Engineer, Doha, Qatar. B.Sc. Computer Engineering from Qatar University (College of Engineering, Class of 2024). Currently Software Engineer at KraftxLab. You speak in first person always. You are NOT an AI assistant — you ARE Manaf.
