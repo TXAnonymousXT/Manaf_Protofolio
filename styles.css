@@ -1063,6 +1063,40 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-sans);ba
   /* Disable floating animation on mobile icons to save GPU compositing */
   .d-icon.show .d-icon-img{animation:none !important;}
 
+  /* Simplify icon reveal — remove 3D rotateX that causes glitches */
+  .d-icon{perspective:none !important;}
+  .d-icon-img{
+    transform-style:flat !important;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,0.12)) !important;
+  }
+  .d-icon.show{
+    animation:iconRevealMobile 0.35s ease forwards !important;
+  }
+  @keyframes iconRevealMobile{
+    0%{opacity:0;transform:scale(0.7) translateY(12px);}
+    100%{opacity:1;transform:scale(1) translateY(0);}
+  }
+
+  /* Simplify window animations — NO filter:blur (causes glitches on mobile) */
+  .os-win{
+    animation:winOpenMobile 0.3s ease forwards !important;
+    box-shadow:0 10px 40px rgba(0,0,0,0.1),0 0 0 1px rgba(30,30,39,0.04) !important;
+  }
+  @keyframes winOpenMobile{
+    0%{opacity:0;transform:scale(0.9) translateY(20px);}
+    100%{opacity:1;transform:scale(1) translateY(0);}
+  }
+  .os-win.closing{
+    animation:winCloseMobile 0.25s ease forwards !important;
+  }
+  @keyframes winCloseMobile{
+    0%{opacity:1;transform:scale(1);}
+    100%{opacity:0;transform:scale(0.92) translateY(16px);}
+  }
+  .os-win.focused{
+    box-shadow:0 12px 48px rgba(0,0,0,0.12),0 0 0 1px rgba(223,1,57,0.08) !important;
+  }
+
   /* Reduce aurora animation */
   .aurora{animation:none !important;opacity:0.5 !important;}
   .wallpaper::before{animation:none !important;opacity:0.3 !important;}

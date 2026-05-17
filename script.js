@@ -536,8 +536,9 @@ function renderIcons(){
 }
 
 function revealIcons(){
+  const delay = isMobile ? 50 : 120;
   document.querySelectorAll('.d-icon').forEach((ic,i)=>{
-    setTimeout(()=>ic.classList.add('show'),i*120+200);
+    setTimeout(()=>ic.classList.add('show'), i * delay + (isMobile ? 50 : 200));
   });
 }
 
