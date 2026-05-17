@@ -33,12 +33,25 @@ const APPS = [
 // ================ STATE ================
 const S = { windows:[], nextZ:200, focused:null, startOpen:false, winCtr:0, drag:null };
 
+// ================ PERFORMANCE & DEVICE DETECTION ================
+const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+let frameCount = 0;
+const FRAME_SKIP = isMobile ? 2 : 1; // Render every Nth frame on mobile
+
 // ================ CINEMATIC BACKGROUND ================
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 
-function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-resizeCanvas();window.addEventListener('resize',()=>{resizeCanvas();initBackground();});
+function resizeCanvas(){
+  const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resizeCanvas();
+window.addEventListener('resize', () => { resizeCanvas(); initBackground(); });
 
 // Skill nodes with labels
 const SKILL_NODES = [
@@ -258,15 +271,20 @@ let ambientParticles = [];
 let bgTime = 0;
 
 function initBackground() {
-  skillNodes = SKILL_NODES.map((d, i) => new SkillNode(d, i));
+  // On mobile: fewer nodes, fewer particles, fewer labels
+  const nodeData = isMobile ? SKILL_NODES.slice(0, 5) : SKILL_NODES;
+  skillNodes = nodeData.map((d, i) => new SkillNode(d, i));
   dataPackets = [];
+  const packetChance = isMobile ? 0.7 : 0.5;
   for (let i = 0; i < skillNodes.length; i++) {
     for (let j = i + 1; j < skillNodes.length; j++) {
-      if (Math.random() > 0.5) dataPackets.push(new DataPacket(skillNodes[i], skillNodes[j]));
+      if (Math.random() > packetChance) dataPackets.push(new DataPacket(skillNodes[i], skillNodes[j]));
     }
   }
-  floatingLabels = PROTOCOL_LABELS.map(t => new FloatingLabel(t));
-  ambientParticles = Array.from({length:60}, () => new AmbientParticle());
+  const labelData = isMobile ? PROTOCOL_LABELS.slice(0, 6) : PROTOCOL_LABELS;
+  floatingLabels = labelData.map(t => new FloatingLabel(t));
+  const particleCount = isMobile ? 15 : 60;
+  ambientParticles = Array.from({length: particleCount}, () => new AmbientParticle());
 }
 initBackground();
 
@@ -409,17 +427,28 @@ function drawLensFlare() {
 
 // Main render loop
 function drawBackground() {
+  frameCount++;
+
+  // Frame-skip on mobile for performance
+  if (frameCount % FRAME_SKIP !== 0) {
+    // Still update positions even on skipped frames so movement stays smooth
+    skillNodes.forEach(n => n.update());
+    dataPackets.forEach(p => p.update());
+    requestAnimationFrame(drawBackground);
+    return;
+  }
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   bgTime++;
 
-  // Layer 0: Cinematic lens flare
-  drawLensFlare();
+  // Layer 0: Cinematic lens flare (skip on mobile)
+  if (!isMobile) drawLensFlare();
 
-  // Layer 1: Hexagonal grid
-  drawHexGrid();
+  // Layer 1: Hexagonal grid (skip on mobile — biggest perf killer)
+  if (!isMobile) drawHexGrid();
 
-  // Layer 2: Circuit traces
-  drawCircuitTraces();
+  // Layer 2: Circuit traces (skip on mobile)
+  if (!isMobile) drawCircuitTraces();
 
   // Layer 3: Ambient particles (depth-of-field)
   ambientParticles.forEach(p => { p.update(); p.draw(); });
@@ -440,25 +469,32 @@ function drawBackground() {
 }
 drawBackground();
 
-// ================ 3D ICON TILT EFFECT ================
-document.addEventListener('mousemove', (e) => {
-  document.querySelectorAll('.d-icon').forEach(icon => {
-    const rect = icon.getBoundingClientRect();
-    const cx = rect.left + rect.width/2;
-    const cy = rect.top + rect.height/2;
-    const dx = (e.clientX - cx) / rect.width;
-    const dy = (e.clientY - cy) / rect.height;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    if (dist < 3) {
-      const img = icon.querySelector('.d-icon-img');
-      if (img && !icon.matches(':hover')) {
-        const rotX = dy * 3;
-        const rotY = -dx * 3;
-        img.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      }
-    }
+// ================ 3D ICON TILT EFFECT (throttled, desktop only) ================
+if (!isMobile) {
+  let tiltRAF = null;
+  document.addEventListener('mousemove', (e) => {
+    if (tiltRAF) return; // throttle
+    tiltRAF = requestAnimationFrame(() => {
+      tiltRAF = null;
+      document.querySelectorAll('.d-icon').forEach(icon => {
+        const rect = icon.getBoundingClientRect();
+        const cx = rect.left + rect.width/2;
+        const cy = rect.top + rect.height/2;
+        const dx = (e.clientX - cx) / rect.width;
+        const dy = (e.clientY - cy) / rect.height;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 3) {
+          const img = icon.querySelector('.d-icon-img');
+          if (img && !icon.matches(':hover')) {
+            const rotX = dy * 3;
+            const rotY = -dx * 3;
+            img.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+          }
+        }
+      });
+    });
   });
-});
+}
 
 // ================ BOOT ================
 const bootMsgs=[
@@ -1119,14 +1155,18 @@ async function agentReply(userMsg, retryCount = 0) {
 
 // ================ WELCOME GUIDE ================
 let welcomeShown = false;
+const WELCOME_MAX_VIEWS = 2; // Show welcome guide this many times, then stop
+
+function getWelcomeCount() {
+  return parseInt(localStorage.getItem('manafos-welcome-count') || '0', 10);
+}
 
 function showWelcomeGuide() {
-  // Skip if user previously chose "don't show again"
-  if (localStorage.getItem('manafos-welcomed') === 'forever') return;
+  const count = getWelcomeCount();
+  if (count >= WELCOME_MAX_VIEWS) return; // Already seen enough times
 
   welcomeShown = true;
 
-  // Show the overlay
   const guide = document.getElementById('welcome-guide');
   if (!guide) return;
 
@@ -1146,16 +1186,15 @@ function showWelcomeGuide() {
   }, 1200);
 }
 
-function dismissWelcome(permanent) {
+function dismissWelcome() {
   const guide = document.getElementById('welcome-guide');
   if (!guide) return;
 
-  // Store preference
-  if (permanent) {
-    localStorage.setItem('manafos-welcomed', 'forever');
-  } else {
-    sessionStorage.setItem('manafos-welcomed', 'session');
-  }
+  // Increment view counter
+  const count = getWelcomeCount() + 1;
+  localStorage.setItem('manafos-welcome-count', count.toString());
+  // Also mark this session so it doesn't show again in the same tab
+  sessionStorage.setItem('manafos-welcomed', 'session');
 
   // Cinematic dismiss
   guide.classList.remove('visible');
@@ -1177,11 +1216,57 @@ function dismissWelcome(permanent) {
     guide.classList.remove('hiding');
   }, 700);
 
-  // Auto-open About Me for first-time visitors to give them immediate content
-  if (!permanent) {
-    setTimeout(() => {
-      openApp('about');
-    }, 400);
+  // Show persistent desktop tips after guide closes
+  setTimeout(showDesktopTips, 800);
+
+  // Auto-open About Me on first view to give immediate content
+  if (count === 1) {
+    setTimeout(() => { openApp('about'); }, 400);
+  }
+}
+
+// ================ PERSISTENT DESKTOP TIPS ================
+function showDesktopTips() {
+  // Don't add duplicates
+  if (document.getElementById('desktop-tips')) return;
+
+  const tips = document.createElement('div');
+  tips.id = 'desktop-tips';
+  tips.className = 'desktop-tips';
+  tips.innerHTML = `
+    <div class="desktop-tip" style="--delay:0s">
+      <span class="tip-icon">🖱️</span>
+      <span>Click icons to open apps</span>
+    </div>
+    <div class="tip-divider">·</div>
+    <div class="desktop-tip" style="--delay:0.1s">
+      <span class="tip-icon">📋</span>
+      <span>Use the Start menu at bottom-left</span>
+    </div>
+    <div class="tip-divider">·</div>
+    <div class="desktop-tip" style="--delay:0.2s">
+      <span class="tip-icon">🤖</span>
+      <span>Try the AI chat for quick answers</span>
+    </div>
+    <button class="tips-close" onclick="hideDesktopTips()" title="Hide tips">✕</button>
+  `;
+  document.getElementById('desktop').appendChild(tips);
+
+  // Animate in
+  requestAnimationFrame(() => tips.classList.add('visible'));
+
+  // Auto-hide after 15 seconds
+  setTimeout(() => {
+    if (tips.classList.contains('visible')) hideDesktopTips();
+  }, 15000);
+}
+
+function hideDesktopTips() {
+  const tips = document.getElementById('desktop-tips');
+  if (tips) {
+    tips.classList.remove('visible');
+    tips.classList.add('hiding');
+    setTimeout(() => tips.remove(), 600);
   }
 }
 
@@ -1190,10 +1275,15 @@ renderIcons();
 runBoot();
 setTimeout(render, 3500);
 
-// Show Welcome Guide after boot completes and icons are revealed
+// Show Welcome Guide after boot (if not already seen enough times or this session)
 setTimeout(() => {
   if (sessionStorage.getItem('manafos-welcomed') !== 'session') {
-    showWelcomeGuide();
+    if (getWelcomeCount() < WELCOME_MAX_VIEWS) {
+      showWelcomeGuide();
+    } else {
+      // Already seen welcome guide max times — just show desktop tips
+      showDesktopTips();
+    }
   }
 }, 4500);
 
