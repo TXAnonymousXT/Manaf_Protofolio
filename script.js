@@ -1156,16 +1156,8 @@ async function agentReply(userMsg, retryCount = 0) {
 
 // ================ WELCOME GUIDE ================
 let welcomeShown = false;
-const WELCOME_MAX_VIEWS = 2; // Show welcome guide this many times, then stop
-
-function getWelcomeCount() {
-  return parseInt(localStorage.getItem('manafos-welcome-count') || '0', 10);
-}
 
 function showWelcomeGuide() {
-  const count = getWelcomeCount();
-  if (count >= WELCOME_MAX_VIEWS) return; // Already seen enough times
-
   welcomeShown = true;
 
   const guide = document.getElementById('welcome-guide');
@@ -1191,12 +1183,6 @@ function dismissWelcome() {
   const guide = document.getElementById('welcome-guide');
   if (!guide) return;
 
-  // Increment view counter
-  const count = getWelcomeCount() + 1;
-  localStorage.setItem('manafos-welcome-count', count.toString());
-  // Also mark this session so it doesn't show again in the same tab
-  sessionStorage.setItem('manafos-welcomed', 'session');
-
   // Cinematic dismiss
   guide.classList.remove('visible');
   guide.classList.add('hiding');
@@ -1220,10 +1206,8 @@ function dismissWelcome() {
   // Show persistent desktop tips after guide closes
   setTimeout(showDesktopTips, 800);
 
-  // Auto-open About Me on first view to give immediate content
-  if (count === 1) {
-    setTimeout(() => { openApp('about'); }, 400);
-  }
+  // Auto-open About Me to give immediate content
+  setTimeout(() => { openApp('about'); }, 400);
 }
 
 // ================ PERSISTENT DESKTOP TIPS ================
@@ -1276,15 +1260,8 @@ renderIcons();
 runBoot();
 setTimeout(render, 3500);
 
-// Show Welcome Guide after boot (if not already seen enough times or this session)
+// Show Welcome Guide after boot — every time
 setTimeout(() => {
-  if (sessionStorage.getItem('manafos-welcomed') !== 'session') {
-    if (getWelcomeCount() < WELCOME_MAX_VIEWS) {
-      showWelcomeGuide();
-    } else {
-      // Already seen welcome guide max times — just show desktop tips
-      showDesktopTips();
-    }
-  }
+  showWelcomeGuide();
 }, 4500);
 
