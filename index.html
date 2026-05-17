@@ -54,6 +54,49 @@
   <div class="taskbar" id="taskbar"></div>
 </div>
 
+<!-- WELCOME GUIDE -->
+<div id="welcome-guide">
+  <div class="welcome-card">
+    <div class="welcome-header">
+      <img src="photo.jpg" alt="Manaf" class="welcome-photo" onerror="this.style.display='none'">
+      <div class="welcome-intro">
+        <h2>Welcome to <span>ManafOS</span></h2>
+        <p>Manaf Abduljabbar's Interactive Portfolio</p>
+      </div>
+    </div>
+    <div class="welcome-body">
+      <div class="welcome-desc">This is an OS-style portfolio — explore it like a real desktop!</div>
+      <div class="welcome-hints">
+        <div class="welcome-hint">
+          <div class="welcome-hint-icon" style="background:var(--accent-dim)">🖱️</div>
+          <div class="welcome-hint-text">Click any desktop icon to open an app<span>About Me, Projects, Skills, and more</span></div>
+        </div>
+        <div class="welcome-hint">
+          <div class="welcome-hint-icon" style="background:rgba(59,130,246,0.1)">💬</div>
+          <div class="welcome-hint-text">Chat with Manaf AI for quick answers<span>Ask about experience, projects, or skills</span></div>
+        </div>
+        <div class="welcome-hint">
+          <div class="welcome-hint-icon" style="background:rgba(139,92,246,0.1)">⚡</div>
+          <div class="welcome-hint-text">Use the taskbar & start menu below<span>Just like a real operating system</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="welcome-footer">
+      <button class="welcome-cta" onclick="dismissWelcome()">
+        Start Exploring
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <button class="welcome-skip" onclick="dismissWelcome(true)">Don't show this again</button>
+    </div>
+  </div>
+</div>
+
+<!-- TASKBAR HINT -->
+<div class="taskbar-hint" id="taskbar-hint">
+  <div class="taskbar-hint-text">👆 Click the start button or any icon above</div>
+  <div class="taskbar-hint-arrow"></div>
+</div>
+
 <!-- TOASTS -->
 <div class="toast-container" id="toasts"></div>
 

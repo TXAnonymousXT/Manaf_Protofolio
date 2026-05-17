@@ -1117,7 +1117,83 @@ async function agentReply(userMsg, retryCount = 0) {
   }
 }
 
+// ================ WELCOME GUIDE ================
+let welcomeShown = false;
+
+function showWelcomeGuide() {
+  // Skip if user previously chose "don't show again"
+  if (localStorage.getItem('manafos-welcomed') === 'forever') return;
+
+  welcomeShown = true;
+
+  // Show the overlay
+  const guide = document.getElementById('welcome-guide');
+  if (!guide) return;
+
+  setTimeout(() => {
+    guide.classList.add('visible');
+  }, 600);
+
+  // Add pulsing hints to desktop icons
+  document.querySelectorAll('.d-icon.show').forEach(icon => {
+    icon.classList.add('hint-pulse');
+  });
+
+  // Show taskbar hint
+  setTimeout(() => {
+    const tbHint = document.getElementById('taskbar-hint');
+    if (tbHint) tbHint.classList.add('visible');
+  }, 1200);
+}
+
+function dismissWelcome(permanent) {
+  const guide = document.getElementById('welcome-guide');
+  if (!guide) return;
+
+  // Store preference
+  if (permanent) {
+    localStorage.setItem('manafos-welcomed', 'forever');
+  } else {
+    sessionStorage.setItem('manafos-welcomed', 'session');
+  }
+
+  // Cinematic dismiss
+  guide.classList.remove('visible');
+  guide.classList.add('hiding');
+
+  // Remove icon pulse hints
+  document.querySelectorAll('.d-icon.hint-pulse').forEach(icon => {
+    icon.classList.remove('hint-pulse');
+  });
+
+  // Hide taskbar hint
+  const tbHint = document.getElementById('taskbar-hint');
+  if (tbHint) tbHint.classList.remove('visible');
+
+  welcomeShown = false;
+
+  // Clean up after animation
+  setTimeout(() => {
+    guide.classList.remove('hiding');
+  }, 700);
+
+  // Auto-open About Me for first-time visitors to give them immediate content
+  if (!permanent) {
+    setTimeout(() => {
+      openApp('about');
+    }, 400);
+  }
+}
+
 // ================ INIT ================
 renderIcons();
 runBoot();
-setTimeout(render,3500);
+setTimeout(render, 3500);
+
+// Show Welcome Guide after boot completes and icons are revealed
+setTimeout(() => {
+  if (sessionStorage.getItem('manafos-welcomed') !== 'session') {
+    showWelcomeGuide();
+  }
+}, 4500);
+
