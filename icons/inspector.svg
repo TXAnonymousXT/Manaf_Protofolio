@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="topC" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c8f6ff"/><stop offset=".45" stop-color="#4fd8ff"/><stop offset="1" stop-color="#0b6f99"/>
+    </linearGradient>
+    <linearGradient id="sideC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1aa6d6"/><stop offset="1" stop-color="#063a55"/>
+    </linearGradient>
+    <linearGradient id="topB" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b9d2ff"/><stop offset=".5" stop-color="#3b82f6"/><stop offset="1" stop-color="#14306e"/>
+    </linearGradient>
+    <linearGradient id="sideB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a5fc4"/><stop offset="1" stop-color="#0d1f4a"/>
+    </linearGradient>
+    <linearGradient id="topR" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffb3c4"/><stop offset=".5" stop-color="#ff1a4d"/><stop offset="1" stop-color="#7a0020"/>
+    </linearGradient>
+    <linearGradient id="sideR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c3002f"/><stop offset="1" stop-color="#4a0014"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+
+  <!-- floor glow -->
+  <ellipse cx="128" cy="222" rx="78" ry="12" fill="#4fd8ff" opacity=".28" filter="url(#soft)"/>
+
+  <!-- layer 3 (bottom): link layer -->
+  <g opacity=".96">
+    <path d="M50 168 L128 208 L128 224 L50 184 Z" fill="url(#sideR)"/>
+    <path d="M128 208 L206 168 L206 184 L128 224 Z" fill="#5a0018"/>
+    <path d="M50 168 L128 128 L206 168 L128 208 Z" fill="url(#topR)" opacity=".92"/>
+    <path d="M50 168 L128 128 L206 168" fill="none" stroke="#ffd0db" stroke-opacity=".7" stroke-width="1.5"/>
+  </g>
+
+  <!-- layer 2: network layer -->
+  <g opacity=".96">
+    <path d="M50 128 L128 168 L128 184 L50 144 Z" fill="url(#sideB)"/>
+    <path d="M128 168 L206 128 L206 144 L128 184 Z" fill="#0c1b40"/>
+    <path d="M50 128 L128 88 L206 128 L128 168 Z" fill="url(#topB)" opacity=".9"/>
+    <path d="M50 128 L128 88 L206 128" fill="none" stroke="#dbe7ff" stroke-opacity=".7" stroke-width="1.5"/>
+  </g>
+
+  <!-- layer 1 (top): application layer -->
+  <g>
+    <path d="M50 88 L128 128 L128 144 L50 104 Z" fill="url(#sideC)"/>
+    <path d="M128 128 L206 88 L206 104 L128 144 Z" fill="#05344d"/>
+    <path d="M50 88 L128 48 L206 88 L128 128 Z" fill="url(#topC)"/>
+    <path d="M50 88 L128 48 L206 88" fill="none" stroke="#eafcff" stroke-width="1.8"/>
+    <path d="M78 74 L150 38" stroke="url(#shine)" stroke-width="6" stroke-linecap="round" opacity=".6"/>
+  </g>
+
+  <!-- the Signal: an M-shaped trace riding the top layer -->
+  <polyline filter="url(#glow)" points="70,90 92,79 100,62 112,92 124,54 136,98 148,66 158,78 186,64"
+    fill="none" stroke="#ffffff" stroke-width="4.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <polyline points="70,90 92,79 100,62 112,92 124,54 136,98 148,66 158,78 186,64"
+    fill="none" stroke="#ff1a4d" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" opacity=".9"/>
+
+  <!-- packets travelling down the stack -->
+  <circle cx="170" cy="118" r="4" fill="#eafcff" filter="url(#glow)"/>
+  <circle cx="92" cy="152" r="3.4" fill="#dbe7ff" filter="url(#glow)"/>
+  <circle cx="160" cy="190" r="3" fill="#ffd0db" filter="url(#glow)"/>
+</svg>

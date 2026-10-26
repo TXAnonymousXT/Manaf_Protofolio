@@ -1,566 +1,170 @@
-// ================ 3D ICON ASSETS ================
+// ================ ICON ASSETS ================
 const ICON_IMAGES = {
-  about: 'icons/about.png',
-  projects: 'icons/projects.png',
-  skills: 'icons/skills.png',
-  security: 'icons/security.png',
-  terminal: 'icons/terminal.png',
-  contact: 'icons/contact.png',
-  agent: 'icons/agent.png',
-};
-
-// SVG icons for start menu / small contexts
-const ICONS_SVG = {
-  about:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-  projects:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>`,
-  skills:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-  security:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-  terminal:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
-  contact:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
-  agent:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg>`,
+  about: 'icons/about.webp',
+  projects: 'icons/projects.webp',
+  skills: 'icons/skills.webp',
+  security: 'icons/security.webp',
+  terminal: 'icons/terminal.webp',
+  contact: 'icons/contact.webp',
+  inspector: 'icons/inspector.svg',
 };
 
 const APPS = [
-  {id:'about',name:'About Me',ic:'about',icClass:'ic-about',color:'#df0139'},
-  {id:'projects',name:'Projects',ic:'projects',icClass:'ic-projects',color:'#3b82f6'},
-  {id:'skills',name:'Skills',ic:'skills',icClass:'ic-skills',color:'#f59e0b'},
-  {id:'security',name:'Security',ic:'security',icClass:'ic-security',color:'#b91c1c'},
-  {id:'terminal',name:'Terminal',ic:'terminal',icClass:'ic-terminal',color:'#334155'},
-  {id:'contact',name:'Contact',ic:'contact',icClass:'ic-contact',color:'#8b5cf6'},
-  {id:'agent',name:'Ask Manaf AI',ic:'agent',icClass:'ic-agent',color:'#06b6d4'},
+  {id:'about',name:'About Me',ic:'about',color:'var(--c-about)'},
+  {id:'projects',name:'Projects',ic:'projects',color:'var(--c-projects)'},
+  {id:'skills',name:'Skills',ic:'skills',color:'var(--c-skills)'},
+  {id:'security',name:'Security',ic:'security',color:'var(--c-security)'},
+  {id:'terminal',name:'Terminal',ic:'terminal',color:'var(--c-terminal)'},
+  {id:'contact',name:'Contact',ic:'contact',color:'var(--c-contact)'},
+  {id:'inspector',name:'Packet Inspector',ic:'inspector',color:'var(--c-inspector)'},
 ];
 
 // ================ STATE ================
 const S = { windows:[], nextZ:200, focused:null, startOpen:false, winCtr:0, drag:null };
-
-// ================ PERFORMANCE & DEVICE DETECTION ================
 const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-let frameCount = 0;
-const FRAME_SKIP = isMobile ? 2 : 1; // Render every Nth frame on mobile
+const TASKBAR_H = isMobile ? 58 : 64;
+const esc = FX.esc;
 
-// ================ CINEMATIC BACKGROUND ================
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-
-function resizeCanvas(){
-  const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
-  canvas.style.width = window.innerWidth + 'px';
-  canvas.style.height = window.innerHeight + 'px';
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-resizeCanvas();
-window.addEventListener('resize', () => { resizeCanvas(); initBackground(); });
-
-// Skill nodes with labels
-const SKILL_NODES = [
-  { label:'Networking',   color:'#df0139', size:6 },
-  { label:'Security',     color:'#1e1e27', size:6 },
-  { label:'Embedded',     color:'#d97706', size:5 },
-  { label:'Python',       color:'#2563eb', size:5 },
-  { label:'Web Dev',      color:'#7c3aed', size:4 },
-  { label:'IoT',          color:'#059669', size:4 },
-  { label:'Cloud',        color:'#0891b2', size:4 },
-  { label:'Robotics',     color:'#db2777', size:4 },
-  { label:'Linux',        color:'#1e1e27', size:5 },
-  { label:'Firewall',     color:'#df0139', size:5 },
+// ================ DATA ================
+const SKILLS = [
+  {n:'Networking',k:'NET',p:85,c:'#4fd8ff',l:'#0b8fb0',tools:'OSPF · EIGRP · BGP · VLANs · DHCP/DNS · SNMP · syslog · Cisco · Juniper · MikroTik'},
+  {n:'Security',k:'SEC',p:80,c:'#ff2d55',l:'#e11d48',tools:'Firewalls · ACLs · VPN · Suricata · Snort · nftables · Metasploit'},
+  {n:'Embedded Systems',k:'EMB',p:82,c:'#f5a524',l:'#d97706',tools:'ESP32 · Arduino · Raspberry Pi · IMUs · biosensors · servos · 3D printing'},
+  {n:'Python / Scripting',k:'PY',p:78,c:'#3b82f6',l:'#2563eb',tools:'Python · Bash · C++ · Java'},
+  {n:'Web Development',k:'WEB',p:75,c:'#a78bfa',l:'#7c3aed',tools:'React · Three.js · Webflow'},
+  {n:'IoT & Blynk',k:'IOT',p:77,c:'#22c55e',l:'#16a34a',tools:'Blynk · sensor integration · real-time data pipelines'},
+  {n:'Cloud & DevOps',k:'OPS',p:60,c:'#06b6d4',l:'#0891b2',tools:'Linux · VMware · Windows Server · Active Directory'},
+  {n:'UI/UX Design',k:'UX',p:70,c:'#f472b6',l:'#db2777',tools:'Interface and motion design (this OS, for one)'},
 ];
 
-const PROTOCOL_LABELS = [
-  'BGP','OSPF','TCP/IP','VLAN','ACL','nftables','SSH','TLS',
-  'DNS','DHCP','NAT','QoS','SNMP','ICMP','ARP','IPsec',
-  'Suricata','Snort','SIEM','Zero Trust','ESP32','RPi'
+const HOPS = [
+  {id:'qu',host:'qatar-univ',role:'B.Sc. Computer Engineering',org:'Qatar University',from:[2018,9],to:[2024,5]},
+  {id:'applab',host:'applab',role:'IT Business Analyst',org:'Applab',from:[2024,8],to:[2024,10]},
+  {id:'meeza',host:'meeza',role:'NOC Engineer',org:'Meeza',from:[2024,11],to:[2025,12]},
+  {id:'kraftxlab',host:'kraftxlab',role:'Network Engineer',org:'KraftxLab',from:[2025,12],to:null},
+];
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ym = ([y,m]) => `${MON[m-1]} ${y}`;
+function span(from,to){
+  const now=new Date(); const [y2,m2]=to||[now.getFullYear(),now.getMonth()+1];
+  const m=(y2-from[0])*12+(m2-from[1])+1;
+  return m>=12?`${Math.floor(m/12)}y ${m%12}m`:`${m}m`;
+}
+
+const PROJECTS = [
+  {id:'redoubt',proto:'SEC',c:'var(--c-security)',status:'ongoing · flagship',title:'Redoubt',wide:true,
+   desc:'Full-scale network security platform built from scratch: traffic monitoring, alerting, anomaly detection, policy enforcement and security event correlation. V2.0 spec mapped to SSCP and CCNA domains, on a six-phase, 18-month roadmap.',
+   tags:['Network Security','Anomaly Detection','Event Correlation','SSCP']},
+  {id:'udst',proto:'NET',c:'var(--cyan)',status:'completed',title:'UDST Four-Campus Network',
+   desc:'Enterprise capstone in Cisco Packet Tracer: Doha, Al Khor, Al Wakra and Dukhan with hierarchical IP addressing, VLANs, multi-area OSPF, DHCP relay and Cisco CME VoIP.',
+   tags:['OSPF','VLANs','VoIP']},
+  {id:'firewall',proto:'SEC',c:'var(--c-security)',status:'built',title:'Linux Firewall Appliance',
+   desc:'Custom mini PC with Intel i226-V NICs, running IPFire / Debian + nftables + Suricata.',
+   tags:['Suricata','nftables','Linux']},
+  {id:'dispatch',proto:'OPT',c:'var(--amber)',status:'Snoonu Hackathon 2026',title:'Smart Dispatch',
+   desc:'Order batching and route optimization using OSRM for real Doha road routing.',
+   tags:['Python','OSRM','Optimization']},
+  {id:'spoon',proto:'EMB',c:'var(--amber)',status:'built',title:'Tremor-Stabilizing Spoon',
+   desc:"Parkinson's device: ESP32-C6, MPU6050 and SG90 servos with a PD controller.",
+   tags:['ESP32-C6','PD Control','IMU']},
+  {id:'mecanum',proto:'EMB',c:'var(--amber)',status:'built',title:'4-Wheel Mecanum Robot',
+   desc:'Raspberry Pi omnidirectional robot with L298N drivers. Circular and geometric movements.',
+   tags:['Raspberry Pi','Python','L298N']},
+  {id:'catdetector',proto:'ML',c:'var(--violet)',status:'built',title:'Cat / Turtle Detector',
+   desc:'Edge ML on Raspberry Pi: MobileNetV2 + TF Lite with GPIO alarms and Blynk.',
+   tags:['TF Lite','MobileNetV2','Blynk']},
+  {id:'water',proto:'IOT',c:'var(--green)',status:'built',title:'Water Quality Monitor',
+   desc:'ESP32 + TDS/pH sensors, UV LED, L298N pump and a Blynk dashboard with offline fallback.',
+   tags:['ESP32','Sensors','Blynk']},
 ];
 
-const HEX_SIZE = 45;
-
-class SkillNode {
-  constructor(data, index) {
-    this.label = data.label;
-    this.color = data.color;
-    this.baseSize = data.size;
-    this.x = 0.1 * canvas.width + Math.random() * 0.8 * canvas.width;
-    this.y = 0.1 * canvas.height + Math.random() * 0.8 * canvas.height;
-    this.vx = (Math.random() - 0.5) * 0.12;
-    this.vy = (Math.random() - 0.5) * 0.12;
-    this.pulse = Math.random() * Math.PI * 2;
-    this.index = index;
-  }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.pulse += 0.015;
-    const pad = 80;
-    if (this.x < pad) { this.x = pad; this.vx *= -1; }
-    if (this.x > canvas.width - pad) { this.x = canvas.width - pad; this.vx *= -1; }
-    if (this.y < pad) { this.y = pad; this.vy *= -1; }
-    if (this.y > canvas.height - pad) { this.y = canvas.height - pad; this.vy *= -1; }
-  }
-  draw() {
-    const s = this.baseSize + Math.sin(this.pulse) * 2;
-    // Outer glow — cinematic bloom
-    const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, s * 8);
-    grad.addColorStop(0, this.color + '25');
-    grad.addColorStop(0.5, this.color + '08');
-    grad.addColorStop(1, 'transparent');
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, s * 8, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-    // Middle ring
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, s * 1.8, 0, Math.PI * 2);
-    ctx.strokeStyle = this.color + '15';
-    ctx.lineWidth = 0.5;
-    ctx.stroke();
-    // Core — 3D sphere effect
-    const coreGrad = ctx.createRadialGradient(this.x - s*0.3, this.y - s*0.3, 0, this.x, this.y, s);
-    coreGrad.addColorStop(0, this.color + 'FF');
-    coreGrad.addColorStop(0.6, this.color + 'CC');
-    coreGrad.addColorStop(1, this.color + '80');
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, s, 0, Math.PI * 2);
-    ctx.fillStyle = coreGrad;
-    ctx.fill();
-    // Specular highlight
-    const specGrad = ctx.createRadialGradient(this.x - s*0.25, this.y - s*0.35, 0, this.x - s*0.25, this.y - s*0.35, s*0.6);
-    specGrad.addColorStop(0, 'rgba(255,255,255,0.5)');
-    specGrad.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, s, 0, Math.PI * 2);
-    ctx.fillStyle = specGrad;
-    ctx.fill();
-    // Label
-    ctx.font = '500 9px "Outfit", sans-serif';
-    ctx.fillStyle = this.color + 'AA';
-    ctx.textAlign = 'center';
-    ctx.fillText(this.label, this.x, this.y + s + 14);
-  }
+// ================ THEME ================
+// Light is the main look; dark is one click away. The choice is remembered per visitor.
+const THEME_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><mask id="moon-mask"><rect x="-4" y="-4" width="32" height="32" fill="#fff"/><circle class="moon-cut" cx="30" cy="-6" r="7" fill="#000"/></mask><circle class="sun-core" cx="12" cy="12" r="4.5" fill="currentColor" stroke="none" mask="url(#moon-mask)"/><g class="sun-rays"><line x1="12" y1="1.5" x2="12" y2="3.5"/><line x1="12" y1="20.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="3.5" y2="12"/><line x1="20.5" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6" y2="6"/><line x1="18" y1="18" x2="19.4" y2="19.4"/><line x1="4.6" y1="19.4" x2="6" y2="18"/><line x1="18" y1="6" x2="19.4" y2="4.6"/></g></svg>`;
+const isDark=()=>document.documentElement.dataset.theme==='dark';
+function applyTheme(t){
+  document.documentElement.dataset.theme=t;
+  try{localStorage.setItem('manafos-theme',t);}catch(e){}
+  const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=t==='dark'?'#06070b':'#f6f4f0';
+  if(window.NetScene&&NetScene.setTheme)NetScene.setTheme(t);
+  const b=document.getElementById('theme-btn');if(b)b.title=t==='dark'?'Switch to light mode':'Switch to dark mode';
+  document.dispatchEvent(new CustomEvent('themechange',{detail:t}));
 }
-
-// Data packets with cinematic trails
-class DataPacket {
-  constructor(nodeA, nodeB) {
-    this.nodeA = nodeA;
-    this.nodeB = nodeB;
-    this.t = Math.random();
-    this.speed = 0.001 + Math.random() * 0.003;
-    this.size = 1.5 + Math.random() * 2;
-    this.dir = Math.random() > 0.5 ? 1 : -1;
-    this.trail = [];
-    this.trailLength = 6 + Math.floor(Math.random() * 4);
-  }
-  update() {
-    const ax = this.nodeA.x, ay = this.nodeA.y;
-    const bx = this.nodeB.x, by = this.nodeB.y;
-    const x = ax + (bx - ax) * this.t;
-    const y = ay + (by - ay) * this.t;
-    this.trail.unshift({x, y});
-    if (this.trail.length > this.trailLength) this.trail.pop();
-    this.t += this.speed * this.dir;
-    if (this.t > 1) { this.t = 1; this.dir = -1; }
-    if (this.t < 0) { this.t = 0; this.dir = 1; }
-  }
-  draw() {
-    // Cinematic trail
-    for (let i = 0; i < this.trail.length; i++) {
-      const alpha = (1 - i / this.trail.length) * 0.6;
-      const sz = this.size * (1 - i / this.trail.length * 0.5);
-      ctx.beginPath();
-      ctx.arc(this.trail[i].x, this.trail[i].y, sz, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(223,1,57,${alpha})`;
-      ctx.fill();
-    }
-    // Head glow
-    if (this.trail.length > 0) {
-      const h = this.trail[0];
-      ctx.beginPath();
-      ctx.arc(h.x, h.y, this.size * 2.5, 0, Math.PI * 2);
-      const glow = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, this.size * 2.5);
-      glow.addColorStop(0, 'rgba(223,1,57,0.3)');
-      glow.addColorStop(1, 'transparent');
-      ctx.fillStyle = glow;
-      ctx.fill();
-    }
-  }
-}
-
-// Floating protocol label with cinematic fade
-class FloatingLabel {
-  constructor(text) {
-    this.text = text;
-    this.reset();
-  }
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.vx = (Math.random() - 0.5) * 0.15;
-    this.vy = (Math.random() - 0.5) * 0.1;
-    this.opacity = 0;
-    this.maxOpacity = 0.06 + Math.random() * 0.06;
-    this.fadeIn = true;
-    this.life = 0;
-    this.maxLife = 600 + Math.random() * 400;
-    this.size = 10 + Math.random() * 6;
-    this.rotation = (Math.random() - 0.5) * 0.1;
-  }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.life++;
-    if (this.fadeIn && this.opacity < this.maxOpacity) this.opacity += 0.0008;
-    if (this.life > this.maxLife * 0.7) { this.fadeIn = false; this.opacity -= 0.0008; }
-    if (this.life > this.maxLife || this.opacity <= 0) this.reset();
-  }
-  draw() {
-    if (this.opacity <= 0) return;
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.rotation);
-    ctx.font = `600 ${this.size}px "JetBrains Mono", monospace`;
-    ctx.fillStyle = `rgba(223,1,57,${this.opacity})`;
-    ctx.textAlign = 'center';
-    ctx.fillText(this.text, 0, 0);
-    ctx.restore();
-  }
-}
-
-// Cinematic ambient particles (depth-of-field)
-class AmbientParticle {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.z = Math.random(); // 0=far, 1=near (depth)
-    this.size = 0.5 + this.z * 2;
-    this.speed = 0.05 + this.z * 0.15;
-    this.opacity = 0.03 + this.z * 0.06;
-    this.drift = (Math.random() - 0.5) * 0.3;
-    this.pulse = Math.random() * Math.PI * 2;
-  }
-  update() {
-    this.y -= this.speed;
-    this.x += this.drift + Math.sin(this.pulse) * 0.1;
-    this.pulse += 0.01;
-    if (this.y < -10) { this.y = canvas.height + 10; this.x = Math.random() * canvas.width; }
-    if (this.x < -10) this.x = canvas.width + 10;
-    if (this.x > canvas.width + 10) this.x = -10;
-  }
-  draw() {
-    const o = this.opacity * (0.7 + Math.sin(this.pulse) * 0.3);
-    // Far particles are blurry (simulated with larger, lower-opacity circles)
-    if (this.z < 0.3) {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(30,30,39,${o * 0.3})`;
-      ctx.fill();
-    }
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(30,30,39,${o})`;
-    ctx.fill();
-  }
-}
-
-// Initialize
-let skillNodes = [];
-let dataPackets = [];
-let floatingLabels = [];
-let ambientParticles = [];
-let bgTime = 0;
-
-function initBackground() {
-  // On mobile: fewer nodes, fewer particles, fewer labels
-  const nodeData = isMobile ? SKILL_NODES.slice(0, 5) : SKILL_NODES;
-  skillNodes = nodeData.map((d, i) => new SkillNode(d, i));
-  dataPackets = [];
-  const packetChance = isMobile ? 0.7 : 0.5;
-  for (let i = 0; i < skillNodes.length; i++) {
-    for (let j = i + 1; j < skillNodes.length; j++) {
-      if (Math.random() > packetChance) dataPackets.push(new DataPacket(skillNodes[i], skillNodes[j]));
-    }
-  }
-  const labelData = isMobile ? PROTOCOL_LABELS.slice(0, 6) : PROTOCOL_LABELS;
-  floatingLabels = labelData.map(t => new FloatingLabel(t));
-  const particleCount = isMobile ? 15 : 60;
-  ambientParticles = Array.from({length: particleCount}, () => new AmbientParticle());
-}
-initBackground();
-
-// Draw hexagonal grid with cinematic depth
-function drawHexGrid() {
-  const w = HEX_SIZE;
-  const h = w * Math.sqrt(3) / 2;
-  const cols = Math.ceil(canvas.width / (w * 1.5)) + 2;
-  const rows = Math.ceil(canvas.height / (h * 2)) + 2;
-  const offsetX = (bgTime * 0.08) % (w * 1.5);
-  const offsetY = (bgTime * 0.04) % (h * 2);
-
-  for (let row = -1; row < rows; row++) {
-    for (let col = -1; col < cols; col++) {
-      const cx = col * w * 1.5 + offsetX;
-      const cy = row * h * 2 + (col % 2) * h + offsetY;
-      // Distance-based opacity for cinematic vignette
-      const dx = cx - canvas.width/2, dy = cy - canvas.height/2;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      const maxDist = Math.sqrt(canvas.width*canvas.width + canvas.height*canvas.height) / 2;
-      const alpha = 0.035 * (1 - dist/maxDist * 0.7);
-      ctx.strokeStyle = `rgba(30,30,39,${alpha})`;
-      ctx.lineWidth = 0.5;
-      drawHex(cx, cy, w / 2);
-    }
-  }
-}
-
-function drawHex(cx, cy, r) {
-  ctx.beginPath();
-  for (let i = 0; i < 6; i++) {
-    const angle = (Math.PI / 3) * i - Math.PI / 6;
-    const x = cx + r * Math.cos(angle);
-    const y = cy + r * Math.sin(angle);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.closePath();
-  ctx.stroke();
-}
-
-// Connection lines with cinematic glow
-function drawConnections() {
-  for (let i = 0; i < skillNodes.length; i++) {
-    for (let j = i + 1; j < skillNodes.length; j++) {
-      const a = skillNodes[i], b = skillNodes[j];
-      const dx = a.x - b.x, dy = a.y - b.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 350) {
-        const alpha = 0.06 * (1 - dist / 350);
-        // Wider glow line
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(223,1,57,${alpha * 0.3})`;
-        ctx.lineWidth = 3;
-        ctx.stroke();
-        // Core line
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(223,1,57,${alpha})`;
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
-      }
-    }
-  }
-}
-
-// Circuit traces with cinematic glow
-function drawCircuitTraces() {
-  const traceCount = 8;
-  for (let i = 0; i < traceCount; i++) {
-    const baseX = (canvas.width / traceCount) * i + 50;
-    const baseY = 50 + (i * 137) % canvas.height;
-    // Glow
-    ctx.strokeStyle = 'rgba(223,1,57,0.015)';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(baseX, baseY);
-    let cx = baseX, cy = baseY;
-    for (let s = 0; s < 5; s++) {
-      const seg = 30 + Math.sin(bgTime * 0.01 + i + s) * 20;
-      if (s % 2 === 0) cx += seg; else cy += seg;
-      ctx.lineTo(cx, cy);
-    }
-    ctx.stroke();
-    // Core
-    ctx.strokeStyle = 'rgba(30,30,39,0.03)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(baseX, baseY);
-    cx = baseX; cy = baseY;
-    for (let s = 0; s < 5; s++) {
-      const seg = 30 + Math.sin(bgTime * 0.01 + i + s) * 20;
-      if (s % 2 === 0) cx += seg; else cy += seg;
-      ctx.lineTo(cx, cy);
-    }
-    ctx.stroke();
-    // Junction dot with glow
-    ctx.beginPath();
-    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(223,1,57,0.06)';
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(cx, cy, 1.5, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(223,1,57,0.12)';
-    ctx.fill();
-  }
-}
-
-// Cinematic lens flare effect
-function drawLensFlare() {
-  const time = bgTime * 0.003;
-  const flareX = canvas.width * 0.65 + Math.sin(time) * canvas.width * 0.1;
-  const flareY = canvas.height * 0.25 + Math.cos(time * 0.7) * canvas.height * 0.05;
-  const flareAlpha = 0.02 + Math.sin(time * 1.5) * 0.01;
-
-  // Main flare
-  const grad = ctx.createRadialGradient(flareX, flareY, 0, flareX, flareY, 200);
-  grad.addColorStop(0, `rgba(223,1,57,${flareAlpha})`);
-  grad.addColorStop(0.3, `rgba(255,200,200,${flareAlpha * 0.3})`);
-  grad.addColorStop(1, 'transparent');
-  ctx.beginPath();
-  ctx.arc(flareX, flareY, 200, 0, Math.PI * 2);
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  // Secondary flare (opposite)
-  const f2x = canvas.width - flareX + canvas.width * 0.1;
-  const f2y = canvas.height - flareY + canvas.height * 0.1;
-  const grad2 = ctx.createRadialGradient(f2x, f2y, 0, f2x, f2y, 120);
-  grad2.addColorStop(0, `rgba(100,60,180,${flareAlpha * 0.5})`);
-  grad2.addColorStop(1, 'transparent');
-  ctx.beginPath();
-  ctx.arc(f2x, f2y, 120, 0, Math.PI * 2);
-  ctx.fillStyle = grad2;
-  ctx.fill();
-}
-
-// Main render loop
-function drawBackground() {
-  frameCount++;
-
-  // Frame-skip on mobile for performance
-  if (frameCount % FRAME_SKIP !== 0) {
-    // Still update positions even on skipped frames so movement stays smooth
-    skillNodes.forEach(n => n.update());
-    dataPackets.forEach(p => p.update());
-    requestAnimationFrame(drawBackground);
-    return;
-  }
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  bgTime++;
-
-  // Layer 0: Cinematic lens flare (skip on mobile)
-  if (!isMobile) drawLensFlare();
-
-  // Layer 1: Hexagonal grid (skip on mobile — biggest perf killer)
-  if (!isMobile) drawHexGrid();
-
-  // Layer 2: Circuit traces (skip on mobile)
-  if (!isMobile) drawCircuitTraces();
-
-  // Layer 3: Ambient particles (depth-of-field)
-  ambientParticles.forEach(p => { p.update(); p.draw(); });
-
-  // Layer 4: Floating protocol labels
-  floatingLabels.forEach(l => { l.update(); l.draw(); });
-
-  // Layer 5: Connection lines with glow
-  drawConnections();
-
-  // Layer 6: Data packets with trails
-  dataPackets.forEach(p => { p.update(); p.draw(); });
-
-  // Layer 7: Skill nodes (3D spheres)
-  skillNodes.forEach(n => { n.update(); n.draw(); });
-
-  requestAnimationFrame(drawBackground);
-}
-drawBackground();
-
-// ================ 3D ICON TILT EFFECT (throttled, desktop only) ================
-if (!isMobile) {
-  let tiltRAF = null;
-  document.addEventListener('mousemove', (e) => {
-    if (tiltRAF) return; // throttle
-    tiltRAF = requestAnimationFrame(() => {
-      tiltRAF = null;
-      document.querySelectorAll('.d-icon').forEach(icon => {
-        const rect = icon.getBoundingClientRect();
-        const cx = rect.left + rect.width/2;
-        const cy = rect.top + rect.height/2;
-        const dx = (e.clientX - cx) / rect.width;
-        const dy = (e.clientY - cy) / rect.height;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < 3) {
-          const img = icon.querySelector('.d-icon-img');
-          if (img && !icon.matches(':hover')) {
-            const rotX = dy * 3;
-            const rotY = -dx * 3;
-            img.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-          }
-        }
-      });
-    });
-  });
-}
-
-// ================ BOOT ================
-const bootMsgs=[
-  {t:'ManafOS v4.0.0 — initializing kernel...',d:0},
-  {t:'<span class="hl">[  OK  ]</span> Loaded neural-network.module',d:400},
-  {t:'<span class="hl">[  OK  ]</span> Mounted /sys/security-ops',d:750},
-  {t:'<span class="hl">[  OK  ]</span> Started embedded-systems.service',d:1050},
-  {t:'<span class="hl">[  OK  ]</span> Network interfaces: eth0, wlan0',d:1400},
-  {t:'<span class="hl">[  OK  ]</span> Firewall rules loaded (nftables)',d:1700},
-  {t:'<span class="hl">[  OK  ]</span> Portfolio server online — welcome.',d:2200},
-];
-
-function runBoot(){
-  const box=document.getElementById('boot-lines');
-  const fill=document.getElementById('boot-fill');
-  bootMsgs.forEach(({t,d},i)=>{
-    setTimeout(()=>{
-      const div=document.createElement('div');div.innerHTML=t;box.appendChild(div);
-      requestAnimationFrame(()=>div.classList.add('show'));
-      fill.style.width=((i+1)/bootMsgs.length*100)+'%';
-    },d);
-  });
-  setTimeout(()=>{
-    document.getElementById('boot').classList.add('out');
-    document.getElementById('desktop').classList.add('on');
-    revealIcons();
-    setTimeout(()=>showToast('Welcome','ManafOS v4.0 — All systems ready.','var(--accent)'),800);
-  },3400);
+function toggleTheme(btn,at){
+  const next=isDark()?'light':'dark';
+  const r=btn&&btn.getBoundingClientRect?btn.getBoundingClientRect():null;
+  const x=at?at.x:r?r.left+r.width/2:innerWidth-60,y=at?at.y:r?r.top+r.height/2:innerHeight-30;
+  if(!document.startViewTransition||FX.reduced){applyTheme(next);return;}
+  const radius=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+  const vt=document.startViewTransition(()=>applyTheme(next));
+  setTimeout(()=>{try{vt.skipTransition();}catch(e){}},1400);   // never leave the page frozen on a snapshot
+  vt.ready.then(()=>document.documentElement.animate(
+    {clipPath:[`circle(0px at ${x}px ${y}px)`,`circle(${radius}px at ${x}px ${y}px)`]},
+    {duration:750,easing:'cubic-bezier(.65,0,.25,1)',pseudoElement:'::view-transition-new(root)'})).catch(()=>{});
 }
 
 // ================ DESKTOP ICONS ================
 function renderIcons(){
   document.getElementById('desk-icons').innerHTML=APPS.map((a,i)=>`
-    <div class="d-icon ${a.icClass}" onclick="openApp('${a.id}')" style="--i:${i}">
-      <div class="d-icon-img"><img src="${ICON_IMAGES[a.ic]}" alt="${a.name}" class="d-icon-asset" draggable="false"></div>
+    <div class="d-icon" data-app="${a.id}" onclick="openApp('${a.id}')" style="--i:${i};--c:${a.color}" title="${a.name}">
+      <div class="d-icon-img"><span class="d-glow"></span><img src="${ICON_IMAGES[a.ic]}" alt="" class="d-icon-asset" draggable="false"></div>
       <div class="d-icon-label">${a.name}</div>
     </div>
   `).join('');
 }
 
 function revealIcons(){
-  const delay = isMobile ? 50 : 120;
+  const delay = isMobile ? 50 : 90;
   document.querySelectorAll('.d-icon').forEach((ic,i)=>{
-    setTimeout(()=>ic.classList.add('show'), i * delay + (isMobile ? 50 : 200));
+    ic.classList.remove('show');
+    setTimeout(()=>ic.classList.add('show'), i * delay + (isMobile ? 50 : 160));
   });
 }
+
+const desk = document.getElementById('desk-icons');
+desk.addEventListener('mouseover',e=>{const ic=e.target.closest('.d-icon');if(ic&&window.NetScene)NetScene.highlight(ic.dataset.app);});
+desk.addEventListener('mouseleave',()=>{if(window.NetScene)NetScene.highlight(null);});
+
+// ================ HUD ================
+function renderHud(){
+  const hud=document.getElementById('hud');
+  const ns=window.NetScene;
+  const clusters=(ns&&ns.clusters)||[];
+  hud.innerHTML=`
+    <div class="hud-title"><span class="live-dot"></span>LIVE TOPOLOGY<span class="hud-dim">${ns&&ns.ready?'webgl':'static'}</span></div>
+    <div class="hud-legend">${clusters.map(c=>`<button class="dual" data-app="${c.app}" style="--cd:${c.color};--cl:${c.light||c.color}"><i></i>${c.name.charAt(0)+c.name.slice(1).toLowerCase()}</button>`).join('')}</div>
+    <div class="hud-stats"><span><b>${ns&&ns.stats?ns.stats.nodes:'—'}</b> nodes</span><span><b>${ns&&ns.stats?ns.stats.links:'—'}</b> links</span><span><b data-pkts>${Inspector.count()}</b> pkts</span></div>
+    <div class="hud-hint">click empty space to ping · right-click for more</div>`;
+}
+const hudEl=document.getElementById('hud');
+hudEl.addEventListener('mouseover',e=>{const b=e.target.closest('[data-app]');if(b&&window.NetScene)NetScene.highlight(b.dataset.app);});
+hudEl.addEventListener('mouseleave',()=>{if(window.NetScene)NetScene.highlight(null);});
+hudEl.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)openApp(b.dataset.app,b.getBoundingClientRect());});
+window.addEventListener('netscene:ready',renderHud);
+document.addEventListener('themechange',()=>{renderHud();renderTaskbar();});
 
 // ================ TASKBAR ================
 function renderTaskbar(){
   const tb=document.getElementById('taskbar');
   const apps=S.windows.filter(w=>!w._removed).map(w=>`
-    <button class="tb-app ${w.id===S.focused?'active':''}" onclick="toggleWin('${w.id}')">
-      <span class="app-dot" style="background:${w.color}"></span>${w.name}
+    <button class="tb-app ${w.id===S.focused&&!w.minimized?'active':''} ${w.minimized?'min':''}" data-win="${w.id}" onclick="toggleWin('${w.id}')" title="${w.name}">
+      <img src="${ICON_IMAGES[w.appId]}" alt="" class="tb-ic"><span class="tb-name">${w.name}</span>
     </button>
   `).join('');
   const now=new Date();
   const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+  const doh=now.toLocaleTimeString('en-GB',{timeZone:'Asia/Qatar',hour:'2-digit',minute:'2-digit'});
   const day=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
   tb.innerHTML=`
-    <button class="start-btn" onclick="toggleStart()" title="Start"><img src="logo.png" class="start-logo" alt="Start"></button>
+    <button class="start-btn" onclick="toggleStart()" title="Start"><img src="logo.webp" class="start-logo" alt="Start"></button>
     <div class="tb-div"></div>
     <div class="tb-apps">${apps}</div>
     <div class="sys-tray">
-      <div class="tray-badge"><span class="pulse-dot"></span> Online</div>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme(this)" title="${isDark()?'Switch to light mode':'Switch to dark mode'}" aria-label="Toggle dark mode">${THEME_ICON}</button>
+      <button class="tray-pkts" id="tray-pkts" onclick="Inspector.open({tab:'live'})" title="Live capture: open Packet Inspector"><span class="rec-dot"></span><b data-pkts>${Inspector.count()}</b><span class="tray-lbl">pkts</span></button>
+      <span class="tray-item tray-doh" title="Manaf's local time (Doha)">DOH ${doh}</span>
       <span class="tray-item tray-clock">${time}</span>
-      <span class="tray-item">${day}</span>
+      <span class="tray-item tray-date">${day}</span>
     </div>
   `;
 }
@@ -571,16 +175,18 @@ function renderStart(){
   sm.className='start-menu'+(S.startOpen?' open':'');
   sm.innerHTML=`
     <div class="sm-header">
-      <div class="sm-avatar"><img src="photo.jpg" alt="Manaf" class="sm-avatar-img" onerror="this.style.display='none';this.parentElement.innerHTML='MA'"></div>
-      <div><h3>Manaf Abduljabbar</h3><p>Computer Engineer · Doha, QA</p></div>
+      <div class="sm-avatar"><img src="photo.webp" alt="Manaf" class="sm-avatar-img" onerror="this.style.display='none';this.parentElement.innerHTML='MA'"></div>
+      <div><h3>Manaf Abduljabbar</h3><p>Network Engineer · Doha, QA</p></div>
     </div>
+    <div class="sm-list">
     ${APPS.map(a=>`
-      <div class="sm-item" onclick="openApp('${a.id}');toggleStart();">
-        <div class="smi-ic"><img src="${ICON_IMAGES[a.ic]}" alt="${a.name}" class="smi-ic-img"></div>
-        <div><div class="smi-name">${a.name}</div></div>
+      <div class="sm-item" onclick="openApp('${a.id}',this.getBoundingClientRect());toggleStart();" style="--c:${a.color}">
+        <div class="smi-ic"><img src="${ICON_IMAGES[a.ic]}" alt="" class="smi-ic-img"></div>
+        <div class="smi-name">${a.name}</div>
       </div>
     `).join('')}
-    <div class="sm-footer"><span>manaf@os:~$</span><span>v4.0.0</span></div>
+    </div>
+    <div class="sm-footer"><span>manaf@os:~$</span><span>v5.0.0</span></div>
   `;
 }
 
@@ -592,142 +198,274 @@ function getContent(id){
     case 'about':return `
       <div class="about-hero">
         <div class="about-photo-wrap">
-          <img src="photo.jpg" alt="Manaf Abduljabbar" class="about-photo" onerror="this.src='icons/about.png'">
+          <img src="photo.webp" alt="Manaf Abduljabbar" class="about-photo" onerror="this.src='photo.jpg'">
+          <span class="about-scan"></span>
         </div>
         <div class="about-hero-info">
+          <div class="kicker"><span class="live-dot"></span>ESTABLISHED · Doha, Qatar</div>
           <h2>Manaf Abduljabbar</h2>
           <p class="about-tagline">Computer Engineer · Network Security · Embedded Systems</p>
           <div class="about-actions">
             <a href="cv.pdf" download class="cv-btn" title="Download CV"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download CV</a>
+            <button class="ghost-btn" data-inspect="">Inspect my career <span>→</span></button>
           </div>
         </div>
       </div>
       <div class="about-bio">Computer Engineer based in Doha, Qatar — specializing in network infrastructure, security architecture, and embedded systems. Building robust, secure systems from silicon to cloud.</div>
       <div class="i-row"><div class="i-card"><div class="ic-l">Education</div><div class="ic-v">B.Sc. Computer Eng.</div></div><div class="i-card"><div class="ic-l">University</div><div class="ic-v">Qatar University '24</div></div><div class="i-card"><div class="ic-l">Location</div><div class="ic-v">Doha, Qatar</div></div></div>
       <div class="app-sec"><h3>Experience</h3>
-        <div class="exp-item"><div class="e-role">Network Engineer</div><div class="e-co">KraftxLab</div><div class="e-date">2025 — Present</div></div>
-        <div class="exp-item"><div class="e-role">NOC Engineer</div><div class="e-co">Meeza</div><div class="e-date">2024 — 2025</div></div>
+        <div class="trace">
+          <div class="trace-head">traceroute to <b>manaf</b> (kraftxlab), 30 hops max, 60 byte packets</div>
+          ${HOPS.map((h,i)=>`
+          <button class="hop${h.to?'':' here'}" data-hop="${h.id}" data-org="${esc(h.org)}" style="--i:${i}" title="Inspect this hop">
+            <span class="hop-n">${i+1}</span>
+            <span class="hop-host">${h.host}</span>
+            <span class="hop-role"><b>${h.role}</b><em>${h.org}</em></span>
+            <span class="hop-when">${ym(h.from)} → ${h.to?ym(h.to):'now'}</span>
+            <span class="hop-ms">${span(h.from,h.to)}</span>
+          </button>`).join('')}
+        </div>
       </div>
-      <div class="app-sec"><h3>Certifications</h3><span class="tag tag-g">CCNA</span><span class="tag tag-b">SSCP (In Progress)</span><span class="tag tag-r">CDSA — HTB (In Progress)</span></div>`;
+      <div class="app-sec"><h3>Certifications</h3><span class="tag tag-g">CCNA</span><span class="tag tag-b">SSCP (In Progress)</span><span class="tag tag-b">CCNP SCOR (In Progress)</span><span class="tag tag-r">CDSA — HTB (In Progress)</span><span class="tag tag-y">QU Outstanding Project Award · Robotics</span></div>`;
     case 'projects':return `
-      <div class="app-hdr"><h2>Projects</h2><p>Selected builds — from hardware prototypes to full-stack apps.</p></div>
-      <div class="proj-card"><h4>🚀 Smart Dispatch — Snoonu Hackathon 2026</h4><p>Order batching & route optimization using OSRM for real Doha road routing.</p><span class="tag tag-g">Python</span><span class="tag tag-b">OSRM</span><span class="tag tag-y">Optimization</span></div>
-      <div class="proj-card"><h4>🤖 4-Wheel Mecanum Robot</h4><p>RPi-controlled omnidirectional robot with L298N drivers. Circular & geometric movements.</p><span class="tag tag-g">Raspberry Pi</span><span class="tag tag-p">Python</span><span class="tag tag-b">L298N</span></div>
-      <div class="proj-card"><h4>🥄 Tremor-Stabilizing Spoon</h4><p>Parkinson's device — ESP32-C6, MPU6050, SG90 servos with PD controller.</p><span class="tag tag-r">ESP32-C6</span><span class="tag tag-y">PD Control</span><span class="tag tag-g">IMU</span></div>
-      <div class="proj-card"><h4>🐱 Cat / Turtle Detector</h4><p>Edge ML on Raspberry Pi — MobileNetV2 + TF Lite with GPIO alarms, Blynk.</p><span class="tag tag-b">TF Lite</span><span class="tag tag-g">MobileNetV2</span><span class="tag tag-p">Blynk</span></div>
-      <div class="proj-card"><h4>💧 Water Quality Monitor</h4><p>ESP32 + TDS/pH sensors, UV LED, L298N pump, Blynk dashboard with offline fallback.</p><span class="tag tag-g">ESP32</span><span class="tag tag-y">Sensors</span><span class="tag tag-b">Blynk</span></div>
-      <div class="proj-card"><h4>🔥 Linux Firewall Appliance</h4><p>Custom mini PC — Intel i226-V NICs, IPFire / Debian + nftables + Suricata.</p><span class="tag tag-r">Suricata</span><span class="tag tag-g">nftables</span><span class="tag tag-b">Linux</span></div>`;
+      <div class="app-hdr"><h2>Projects</h2><p>Selected builds — from hardware prototypes to full-stack apps. <button class="link-btn" data-inspect='type == "project"'>All of them are in the capture →</button></p></div>
+      <div class="proj-grid">
+        ${PROJECTS.map(p=>`
+        <article class="proj-card${p.wide?' wide':''}" data-tilt style="--c:${p.c}">
+          <div class="pc-top"><span class="pc-proto">${p.proto}</span><span class="pc-status">${p.status}</span></div>
+          <h4>${p.title}</h4>
+          <p>${p.desc}</p>
+          <div class="pc-foot"><div class="pc-tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div><button class="pc-inspect" data-inspect-id="${p.id}">Inspect packet ›</button></div>
+        </article>`).join('')}
+      </div>`;
     case 'skills':return `
-      <div class="app-hdr"><h2>Skills & Expertise</h2><p>Technical proficiency across networking, security, embedded systems, and dev.</p></div>
-      ${[{n:'Networking (BGP, OSPF)',p:85,c:'#00e5a0'},{n:'Security (IDS/IPS)',p:80,c:'#ef4444'},{n:'Embedded Systems',p:82,c:'#f59e0b'},{n:'Python / Scripting',p:78,c:'#3b82f6'},{n:'Web Development',p:75,c:'#8b5cf6'},{n:'IoT & Blynk',p:77,c:'#10b981'},{n:'Cloud & DevOps',p:60,c:'#06b6d4'},{n:'UI/UX Design',p:70,c:'#f472b6'}].map(s=>`
-        <div class="sk-row"><div class="sk-top"><span>${s.n}</span><span style="color:${s.c}">${s.p}%</span></div><div class="sk-bar"><div class="sk-fill" style="width:${s.p}%;background:${s.c};color:${s.c}"></div></div></div>
-      `).join('')}
-      <div class="app-sec" style="margin-top:18px"><h3>Tools & Technologies</h3>
-      <span class="tag tag-g">Cisco</span><span class="tag tag-g">Juniper</span><span class="tag tag-g">MikroTik</span>
-      <span class="tag tag-r">Suricata</span><span class="tag tag-r">Snort</span><span class="tag tag-r">Metasploit</span>
+      <div class="app-hdr"><h2>Skills & Expertise</h2><p>A live spectrum of what I work with. Hover a channel to see the tools behind it.</p></div>
+      <div class="spec"><canvas class="spec-c"></canvas><div class="spec-tip"></div></div>
+      <div class="spec-legend">${SKILLS.map(s=>`<span class="dual" style="--cd:${s.c};--cl:${s.l}"><i></i>${s.n}<b>${s.p}%</b></span>`).join('')}</div>
+      <div class="app-sec" style="margin-top:20px"><h3>Tools & Technologies</h3>
+      <span class="tag tag-g">Cisco</span><span class="tag tag-g">Juniper</span><span class="tag tag-g">MikroTik</span><span class="tag tag-g">OSPF · EIGRP · BGP</span>
+      <span class="tag tag-r">Suricata</span><span class="tag tag-r">Snort</span><span class="tag tag-r">nftables</span><span class="tag tag-r">Metasploit</span>
       <span class="tag tag-b">Arduino</span><span class="tag tag-b">ESP32</span><span class="tag tag-b">RPi</span>
       <span class="tag tag-y">TF Lite</span><span class="tag tag-y">OpenCV</span>
-      <span class="tag tag-p">React</span><span class="tag tag-p">Python</span><span class="tag tag-p">Linux</span></div>`;
+      <span class="tag tag-p">React</span><span class="tag tag-p">Three.js</span><span class="tag tag-p">Python</span><span class="tag tag-p">Bash</span><span class="tag tag-p">C++</span><span class="tag tag-p">Java</span>
+      <span class="tag tag-c">Linux</span><span class="tag tag-c">Active Directory</span><span class="tag tag-c">VMware</span><span class="tag tag-c">Microsoft 365</span></div>`;
     case 'security':return `
       <div class="app-hdr"><h2>Security Operations</h2><p>Defense-in-depth strategies and hands-on security engineering.</p></div>
-      <div class="sec-card"><h4><span class="sec-dot"></span> Network Infrastructure</h4><p>BGP, OSPF, EIGRP. VLAN segmentation, QoS, ACL hardening. Cisco, Juniper, MikroTik.</p><div style="margin-top:8px"><span class="tag tag-g">BGP</span><span class="tag tag-g">OSPF</span><span class="tag tag-g">ACL</span><span class="tag tag-g">NAT</span></div></div>
-      <div class="sec-card"><h4><span class="sec-dot" style="background:#00c8ff"></span> Network Defense</h4><p>IDS/IPS: Snort & Suricata. SIEM: Splunk, ELK. WAF, VPN, Zero Trust architecture.</p><div style="margin-top:8px"><span class="tag tag-r">Snort</span><span class="tag tag-r">Suricata</span><span class="tag tag-b">Splunk</span><span class="tag tag-b">ELK</span></div></div>
-      <div class="sec-card"><h4><span class="sec-dot" style="background:#f59e0b"></span> Offensive Security</h4><p>Pentesting: Metasploit, Burp Suite. Recon: Nmap, OSINT, Shodan. CTF, red team, WiFi auditing.</p><div style="margin-top:8px"><span class="tag tag-y">Metasploit</span><span class="tag tag-y">Burp Suite</span><span class="tag tag-y">Nmap</span></div></div>
-      <div class="sec-card"><h4><span class="sec-dot"></span> Defensive Security</h4><p>SOC monitoring, IR planning. ISO 27001, NIST. Hardening, forensics, auditing.</p><div style="margin-top:8px"><span class="tag tag-p">ISO 27001</span><span class="tag tag-p">NIST</span><span class="tag tag-p">IR</span></div></div>`;
-    case 'terminal':return `
-      <div class="t-body" id="t-out"><div><span class="t-out">ManafOS Terminal v4.0.0</span></div><div><span class="t-out">Type <span class="t-hl">'help'</span> for commands.</span></div><div><span class="t-out">───────────────────────</span></div></div>
-      <div class="t-in-line"><span class="t-prompt">manaf@os:~$&nbsp;</span><input class="t-input" id="t-input" type="text" autofocus spellcheck="false" autocomplete="off"></div>`;
-    case 'contact':return `
-      <div class="app-hdr"><h2>Get In Touch</h2><p>Ready to discuss infrastructure, security, or your next project? Let's connect.</p></div>
-      <a href="mailto:man.abduljabbar@gmail.com" class="contact-link" target="_blank"><div class="cl-ic" style="background:var(--accent-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="#df0139" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="cl-label">Email</div><div class="cl-val">man.abduljabbar@gmail.com</div></div></a>
-      <a href="https://qa.linkedin.com/in/manaf101" class="contact-link" target="_blank"><div class="cl-ic" style="background:rgba(59,130,246,0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div><div><div class="cl-label">LinkedIn</div><div class="cl-val">linkedin.com/in/manaf101</div></div></a>
-      <a href="https://github.com/txanonymousxt" class="contact-link" target="_blank"><div class="cl-ic" style="background:rgba(30,30,39,0.06)"><svg viewBox="0 0 24 24" fill="none" stroke="#1e1e27" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div><div><div class="cl-label">GitHub</div><div class="cl-val">github.com/txanonymousxt</div></div></a>
-      <div style="margin-top:20px;padding:18px;border-radius:var(--radius-sm);background:var(--accent-dim);border:1px solid rgba(223,1,57,0.12);"><div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px;">📍 Doha, Qatar</div><div style="font-size:11px;color:var(--text-dim);">Available for freelance · consulting · full-time</div></div>`;
-    case 'agent':return `
-      <div class="chat-container" id="chat-container">
-        <div class="chat-header-bar">
-          <div class="chat-ai-badge">
-            <div class="chat-ai-avatar"><img src="icons/agent.png" alt="AI" class="chat-ai-icon"></div>
-            <div>
-              <div class="chat-ai-name">Manaf AI</div>
-              <div class="chat-ai-status"><span class="chat-status-dot"></span>Online — Ask me anything</div>
-            </div>
-          </div>
+      <div class="sec-layout">
+        <div class="dd">
+          <svg class="dd-svg" viewBox="0 0 280 280" aria-label="Defense in depth diagram">
+            <defs><radialGradient id="ddCore"><stop offset="0" stop-color="#ff1a4d" stop-opacity=".55"/><stop offset="1" stop-color="#ff1a4d" stop-opacity="0"/></radialGradient></defs>
+            <circle class="dd-ring r0" cx="140" cy="140" r="120"/><circle class="dd-ring r1" cx="140" cy="140" r="90"/><circle class="dd-ring r2" cx="140" cy="140" r="60"/>
+            <circle cx="140" cy="140" r="34" fill="url(#ddCore)"/><circle class="dd-core" cx="140" cy="140" r="16"/>
+            <text class="dd-lbl" x="140" y="16">PERIMETER · INFRA</text><text class="dd-lbl" x="140" y="46">IDS / IPS · DEFENSE</text><text class="dd-lbl" x="140" y="76">SOC · RESPONSE</text>
+            <text class="dd-lbl core" x="140" y="143">ASSETS</text>
+            <g class="dd-pk"></g>
+          </svg>
+          <div class="dd-cap"><span class="live-dot"></span>simulated probes dropped: <b class="dd-count">0</b></div>
         </div>
-        <div class="chat-messages" id="chat-messages">
-          <div class="chat-msg chat-msg-ai">
-            <div class="chat-msg-avatar"><img src="icons/agent.png" alt="AI" class="chat-msg-avatar-img"></div>
-            <div class="chat-bubble chat-bubble-ai">
-              <div class="chat-bubble-text">Hey! 👋 I'm Manaf — welcome to my corner of the internet! Feel free to ask me anything — what I've built, what I'm working on, or just say hi. I don't bite 😄</div>
-              <div class="chat-bubble-time">${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true})}</div>
-            </div>
-          </div>
-        </div>
-        <div class="chat-suggestions" id="chat-suggestions">
-          <button class="chat-suggestion" onclick="sendQuickQ('List only your technical skills and programming languages, no work experience')">💡 Skills & expertise</button>
-          <button class="chat-suggestion" onclick="sendQuickQ('Tell me about the projects you worked on, like your senior project and any other projects')">🚀 Projects</button>
-          <button class="chat-suggestion" onclick="sendQuickQ('What companies have you worked at and what did you do there?')">💼 Experience</button>
-          <button class="chat-suggestion" onclick="sendQuickQ('How can I contact you?')">📧 Contact info</button>
-        </div>
-        <div class="chat-input-bar">
-          <input type="text" class="chat-input" id="chat-input" placeholder="Ask about Manaf..." autocomplete="off" spellcheck="false">
-          <button class="chat-send-btn" id="chat-send-btn" onclick="sendAgentMsg()" title="Send">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </button>
+        <div class="sec-cards">
+          <div class="sec-card" data-ring="0"><h4><span class="sec-dot" style="--c:var(--cyan)"></span> Network Infrastructure</h4><p>BGP, OSPF, EIGRP. VLAN segmentation, QoS, ACL hardening. Cisco, Juniper, MikroTik.</p><div><span class="tag tag-g">BGP</span><span class="tag tag-g">OSPF</span><span class="tag tag-g">ACL</span><span class="tag tag-g">NAT</span></div></div>
+          <div class="sec-card" data-ring="1"><h4><span class="sec-dot" style="--c:var(--violet)"></span> Network Defense</h4><p>IDS/IPS: Snort & Suricata. SIEM: Splunk, ELK. WAF, VPN, Zero Trust architecture.</p><div><span class="tag tag-r">Snort</span><span class="tag tag-r">Suricata</span><span class="tag tag-b">Splunk</span><span class="tag tag-b">ELK</span></div></div>
+          <div class="sec-card" data-ring="atk"><h4><span class="sec-dot" style="--c:var(--amber)"></span> Offensive Security</h4><p>Pentesting: Metasploit, Burp Suite. Recon: Nmap, OSINT, Shodan. CTF, red team, WiFi auditing.</p><div><span class="tag tag-y">Metasploit</span><span class="tag tag-y">Burp Suite</span><span class="tag tag-y">Nmap</span></div></div>
+          <div class="sec-card" data-ring="2"><h4><span class="sec-dot" style="--c:var(--accent)"></span> Defensive Security</h4><p>SOC monitoring, IR planning. ISO 27001, NIST. Hardening, forensics, auditing.</p><div><span class="tag tag-p">ISO 27001</span><span class="tag tag-p">NIST</span><span class="tag tag-p">IR</span></div></div>
         </div>
       </div>`;
+    case 'terminal':return `
+      <div class="t-body" id="t-out"><div><span class="t-out">ManafOS Terminal v5.0.0 · ssh session to manafos.local (encrypted, and captured)</span></div><div><span class="t-out">Type <span class="t-hl">'help'</span> for commands. Try <span class="t-hl">nmap manaf</span> or <span class="t-hl">traceroute manaf</span>.</span></div><div><span class="t-out t-dim">───────────────────────</span></div></div>
+      <div class="t-in-line"><span class="t-prompt">manaf@os:~$&nbsp;</span><input class="t-input" id="t-input" type="text" autofocus spellcheck="false" autocomplete="off" aria-label="Terminal input"></div>`;
+    case 'contact':return `
+      <div class="app-hdr"><h2>Get In Touch</h2><p>Ready to discuss infrastructure, security, or your next project? Let's connect.</p></div>
+      <a href="mailto:man.abduljabbar@gmail.com" class="contact-link" target="_blank" style="--c:var(--accent)"><div class="cl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="cl-label">Email</div><div class="cl-val">man.abduljabbar@gmail.com</div></div><span class="cl-port">:25</span></a>
+      <a href="https://qa.linkedin.com/in/manaf101" class="contact-link" target="_blank" style="--c:var(--blue)"><div class="cl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div><div><div class="cl-label">LinkedIn</div><div class="cl-val">linkedin.com/in/manaf101</div></div><span class="cl-port">:443</span></a>
+      <a href="https://github.com/txanonymousxt" class="contact-link" target="_blank" style="--c:var(--text)"><div class="cl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div><div><div class="cl-label">GitHub</div><div class="cl-val">github.com/txanonymousxt</div></div><span class="cl-port">:22</span></a>
+      <div class="contact-loc"><div class="cloc-t">📍 Doha, Qatar <span class="cloc-time" data-doha></span></div><div class="cloc-s">Available for freelance · consulting · full-time</div></div>`;
+    case 'inspector':return Inspector.html();
   }
+}
+
+// ================ APP MOUNTS ================
+function mountApp(id,el){
+  if(id==='terminal'){const ti=el.querySelector('#t-input');if(ti)ti.addEventListener('keydown',handleTerm);}
+  if(id==='inspector')Inspector.mount(el.querySelector('.insp'));
+  if(id==='skills')mountSkills(el);
+  if(id==='security')mountSecurity(el);
+  if(id==='contact'){const d=el.querySelector('[data-doha]');if(d)d.textContent='· '+new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Qatar',hour:'2-digit',minute:'2-digit'})+' local';}
+  el.querySelectorAll('[data-inspect-id]').forEach(b=>b.addEventListener('click',()=>{
+    const p=Inspector.find(b.dataset.inspectId);
+    Inspector.open({tab:'career',filter:`title == "${p.title}"`,select:p.id,from:b.getBoundingClientRect()});
+  }));
+  el.querySelectorAll('[data-inspect]').forEach(b=>b.addEventListener('click',()=>Inspector.open({tab:'career',filter:b.dataset.inspect,from:b.getBoundingClientRect()})));
+  el.querySelectorAll('[data-hop]').forEach(b=>b.addEventListener('click',()=>Inspector.open({tab:'career',filter:`org == "${b.dataset.org}"`,select:b.dataset.hop,from:b.getBoundingClientRect()})));
+}
+
+// Skills: a spectrum analyzer with peak-hold and an oscilloscope trace ("The Signal")
+function mountSkills(el){
+  const cv=el.querySelector('.spec-c'),tip=el.querySelector('.spec-tip'),g=cv.getContext('2d');
+  const d=Math.min(devicePixelRatio||1,2);let W=0,H=0;
+  const fit=()=>{const r=cv.parentElement.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;g.setTransform(d,0,0,d,0,0);};
+  const ro=new ResizeObserver(fit);ro.observe(cv.parentElement);fit();
+  const lv=SKILLS.map(()=>0),pk=SKILLS.map(()=>0),start=performance.now();
+  let hover=-1;
+  const col=s=>isDark()?s.c:s.l;
+  const geo=()=>{const pad=14,gap=W<460?6:10,bw=(W-pad*2-gap*(SKILLS.length-1))/SKILLS.length;return{pad,gap,bw};};
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect(),x=e.clientX-r.left,{pad,gap,bw}=geo();
+    const i=Math.floor((x-pad)/(bw+gap));
+    hover=i>=0&&i<SKILLS.length?i:-1;
+    if(hover<0){tip.classList.remove('on');return;}
+    const s=SKILLS[hover];
+    tip.innerHTML=`<b style="color:${col(s)}">${s.n} · ${s.p}%</b><span>${s.tools}</span>`;
+    tip.style.left=Math.min(Math.max(8,x-110),W-238)+'px';tip.classList.add('on');
+  });
+  cv.addEventListener('mouseleave',()=>{hover=-1;tip.classList.remove('on');});
+  const M=u=>Math.abs(u)>1.2?0:Math.exp(-((u+0.42)**2)*26)+Math.exp(-((u-0.42)**2)*26)-0.75*Math.exp(-(u**2)*34);
+  function frame(now){
+    if(!cv.isConnected){ro.disconnect();return;}
+    requestAnimationFrame(frame);
+    if(!cv.offsetParent||!W)return;
+    const t=FX.reduced?99:(now-start)/1000;
+    g.clearRect(0,0,W,H);
+    const scopeH=Math.round(H*0.3),top=scopeH+18,bottom=H-24,area=bottom-top;
+    // scope graticule
+    g.strokeStyle=FX.tok('--canvas-grid');g.lineWidth=1;
+    for(let x=0;x<=W;x+=W/12){g.beginPath();g.moveTo(x,0);g.lineTo(x,scopeH);g.stroke();}
+    for(let y=0;y<=scopeH;y+=scopeH/4){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke();}
+    // trace: carrier + the travelling M-pulse
+    const mid=scopeH/2,A=scopeH*0.34,px=((t*0.32)%1.4)*W*1.1-W*0.2;
+    g.beginPath();
+    for(let x=0;x<=W;x+=2){
+      const y=mid-A*(0.16*Math.sin(x*0.045-t*3)+0.08*Math.sin(x*0.13+t*1.7)+1.1*M((x-px)/52));
+      x?g.lineTo(x,y):g.moveTo(x,y);
+    }
+    const red=FX.tok('--accent');
+    g.strokeStyle=red;g.lineWidth=2;g.shadowColor=red;g.shadowBlur=isDark()?14:6;g.stroke();
+    g.shadowBlur=0;g.strokeStyle=FX.tok('--trace-core');g.lineWidth=0.8;g.stroke();
+    g.fillStyle=FX.tok('--text-faint');g.font='9px "JetBrains Mono", monospace';g.fillText('CH1  THE SIGNAL  200mV/div',8,scopeH-6);
+    // bars
+    const {pad,gap,bw}=geo(),SEG=20,segH=area/SEG;
+    SKILLS.forEach((s,i)=>{
+      const intro=Math.min(1,Math.max(0,(t-0.15-i*0.07)/0.9)),ease=1-Math.pow(1-intro,3);
+      const jit=FX.reduced?0:(Math.sin(t*2.3+i*1.7)*0.02+Math.sin(t*5.3+i)*0.012);
+      lv[i]=Math.max(0,(s.p/100+jit)*ease);
+      pk[i]=Math.max(lv[i],pk[i]-0.0022);
+      const x=pad+i*(bw+gap),lit=Math.round(lv[i]*SEG),on=hover===i;
+      for(let k=0;k<SEG;k++){
+        const y=bottom-(k+1)*segH+1.5;
+        const hot=k>=SEG*0.85;
+        g.fillStyle=k<lit?(hot?red:col(s)):FX.tok('--canvas-off');
+        g.globalAlpha=k<lit?(on?1:0.62+0.38*(k/SEG)):1;
+        if(k<lit&&on){g.shadowColor=col(s);g.shadowBlur=10;}
+        g.fillRect(x,y,bw,segH-3);g.shadowBlur=0;
+      }
+      g.globalAlpha=1;
+      const py=bottom-pk[i]*area;
+      g.fillStyle=FX.tok('--peak');g.fillRect(x,py-2,bw,2);
+      g.fillStyle=on?FX.tok('--text'):FX.tok('--text-dim');g.font=`600 ${W<460?9:10}px "JetBrains Mono", monospace`;g.textAlign='center';
+      g.fillText(s.k,x+bw/2,H-8);
+      g.fillStyle=col(s);g.fillText(Math.round(lv[i]*100)+'%',x+bw/2,py-7);
+      g.textAlign='left';
+    });
+  }
+  requestAnimationFrame(frame);
+}
+
+// Security: simulated probes are dropped at a layer of the defense
+function mountSecurity(el){
+  const svg=el.querySelector('.dd-svg'),layer=svg.querySelector('.dd-pk'),count=el.querySelector('.dd-count');
+  const NS='http://www.w3.org/2000/svg';let dropped=0;
+  el.querySelectorAll('[data-ring]').forEach(c=>{
+    c.addEventListener('mouseenter',()=>svg.dataset.hl=c.dataset.ring);
+    c.addEventListener('mouseleave',()=>delete svg.dataset.hl);
+  });
+  if(FX.reduced)return;
+  const RINGS=[120,90,60];
+  const spawn=()=>{
+    if(!svg.isConnected)return clearInterval(timer);
+    if(!svg.getBoundingClientRect().width)return;
+    const a=Math.random()*Math.PI*2,stopAt=RINGS[Math.random()<0.62?0:Math.random()<0.8?1:2];
+    const dot=document.createElementNS(NS,'circle');dot.setAttribute('r','3.2');dot.setAttribute('class','dd-atk');layer.appendChild(dot);
+    const t0=performance.now(),R0=150,dur=900+Math.random()*500;
+    const step=now=>{
+      const p=Math.min(1,(now-t0)/dur),r=R0-(R0-stopAt)*p;
+      dot.setAttribute('cx',140+Math.cos(a)*r);dot.setAttribute('cy',140+Math.sin(a)*r);
+      if(p<1)return requestAnimationFrame(step);
+      dot.remove();
+      const x=140+Math.cos(a)*stopAt,y=140+Math.sin(a)*stopAt;
+      const fl=document.createElementNS(NS,'circle');fl.setAttribute('cx',x);fl.setAttribute('cy',y);fl.setAttribute('r','3');fl.setAttribute('class','dd-hit');layer.appendChild(fl);
+      const tx=document.createElementNS(NS,'text');tx.setAttribute('x',x);tx.setAttribute('y',y-8);tx.setAttribute('class','dd-drop');tx.textContent='DROP';layer.appendChild(tx);
+      setTimeout(()=>{fl.remove();tx.remove();},900);
+      count.textContent=++dropped;
+    };
+    requestAnimationFrame(step);
+  };
+  const timer=setInterval(spawn,850);spawn();
 }
 
 // ================ WINDOW MANAGEMENT ================
-function openApp(appId){
+function winGeom(appId){
+  const vw=window.innerWidth,vh=window.innerHeight-TASKBAR_H;
+  if(vw<700)return{w:vw-12,h:vh-12,x:6,y:6};
+  const pref={about:[680,620],projects:[800,640],skills:[720,620],security:[800,600],terminal:[680,460],contact:[560,560],inspector:[1040,660]}[appId]||[640,520];
+  const w=Math.min(pref[0],vw-150),h=Math.min(pref[1],vh-32);
+  const idx=S.windows.filter(w=>!w._removed).length;
+  const x=Math.max(124,Math.round((vw-w)/2+40))+(idx%5)*26;
+  const y=Math.max(14,Math.round((vh-h)/2-6))+(idx%5)*22;
+  return{w,h,x:Math.min(x,vw-w-8),y:Math.min(y,vh-h-8)};
+}
+function iconRect(appId){const ic=document.querySelector(`.d-icon[data-app="${appId}"]`);return ic&&ic.offsetParent?ic.getBoundingClientRect():null;}
+function tbRect(wid){const b=document.querySelector(`.tb-app[data-win="${wid}"]`);return b?b.getBoundingClientRect():null;}
+
+function openApp(appId,from){
   const ex=S.windows.find(w=>w.appId===appId&&!w._removed);
-  if(ex){ex.minimized=false;focusWin(ex.id);render();return;}
+  if(ex){
+    if(ex.minimized){ex.minimized=false;focusWin(ex.id);render();FX.assemble(document.getElementById(ex.id),tbRect(ex.id));Inspector.capture({kind:'restore',app:appId});}
+    else{focusWin(ex.id);render();}
+    return;
+  }
   const app=APPS.find(a=>a.id===appId);
   const id='w-'+(++S.winCtr);
-  const mob=window.innerWidth<600;
-  const w=mob?window.innerWidth-16:Math.min(600,window.innerWidth-80);
-  const h=mob?window.innerHeight-100:Math.min(500,window.innerHeight-100);
-  const idx=S.windows.filter(w=>!w._removed).length;
-  const x=mob?8:100+(idx%5)*28;
-  const y=mob?8:50+(idx%5)*28;
-  S.windows.push({id,appId,name:app.name,color:app.color,x,y,w,h,minimized:false,maximized:false,_removed:false});
+  const g=winGeom(appId);
+  S.windows.push({id,appId,name:app.name,color:app.color,x:g.x,y:g.y,w:g.w,h:g.h,minimized:false,maximized:false,_removed:false});
   focusWin(id);render();
-  if(appId==='terminal')setTimeout(()=>{const inp=document.getElementById('t-input');if(inp)inp.focus();},200);
-  if(appId==='agent')setTimeout(()=>{const inp=document.getElementById('chat-input');if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAgentMsg();}});}},200);
-  showToast(app.name,'Application launched',app.color);
+  const el=document.getElementById(id);
+  const src=from&&from.width!=null?from:iconRect(appId);
+  FX.assemble(el,src).then(()=>{
+    if(appId==='terminal'){const inp=document.getElementById('t-input');if(inp&&!isMobile)inp.focus();}
+  });
+  if(window.NetScene)NetScene.burst(appId,g.x+g.w/2,g.y+g.h/2);
+  Inspector.capture({kind:'open',app:appId,size:(el&&el.innerHTML.length)||0});
+  showToast(app.name,'GET /apps/'+appId+' → 200 OK',app.color);
 }
 
 function closeWin(id){
-  const el=document.getElementById(id);
-  if(el){
-    el.classList.add('closing');
-    setTimeout(()=>{
-      const w=S.windows.find(w=>w.id===id);
-      if(w)w._removed=true;
-      if(S.focused===id)S.focused=null;
-      render();
-    },350);
-  }
+  const el=document.getElementById(id),w=S.windows.find(w=>w.id===id);
+  if(!el||!w||el.dataset.closing)return;
+  el.dataset.closing='1';
+  Inspector.capture({kind:'close',app:w.appId});
+  FX.disassemble(el,iconRect(w.appId)).then(()=>{
+    w._removed=true;
+    if(S.focused===id)S.focused=null;
+    render();
+  });
 }
-function minimizeWin(id){const w=S.windows.find(w=>w.id===id);if(w){w.minimized=true;S.focused=null;render();}}
-function maximizeWin(id){const w=S.windows.find(w=>w.id===id);if(w){w.maximized=!w.maximized;render();}}
+function minimizeWin(id){
+  const w=S.windows.find(w=>w.id===id),el=document.getElementById(id);if(!w||!el||w.minimized)return;
+  Inspector.capture({kind:'min',app:w.appId});
+  FX.disassemble(el,tbRect(id)).then(()=>{w.minimized=true;el.style.visibility='';if(S.focused===id)S.focused=null;render();});
+}
+function maximizeWin(id){const w=S.windows.find(w=>w.id===id);if(w){w.maximized=!w.maximized;Inspector.capture({kind:'max',app:w.appId,on:w.maximized});render();}}
 function toggleWin(id){
   const w=S.windows.find(w=>w.id===id);if(!w)return;
-  if(w.minimized){w.minimized=false;focusWin(id);}
-  else if(S.focused===id){w.minimized=true;S.focused=null;}
-  else focusWin(id);
-  render();
+  if(w.minimized){openApp(w.appId);return;}
+  if(S.focused===id){minimizeWin(id);return;}
+  focusWin(id);render();
 }
 function focusWin(id){S.focused=id;S.nextZ++;}
 
 function softFocusWin(id){
   if(S.focused===id)return;
   S.focused=id;S.nextZ++;
-  document.querySelectorAll('.os-win').forEach(el=>{
-    el.classList.remove('focused');
-    el.style.zIndex=100;
-  });
+  document.querySelectorAll('#win-container .os-win').forEach(el=>{el.classList.remove('focused');el.style.zIndex=100;});
   const el=document.getElementById(id);
   if(el){el.classList.add('focused');el.style.zIndex=S.nextZ;}
   renderTaskbar();
@@ -741,71 +479,146 @@ function startDrag(e,wid){
   softFocusWin(wid);
   const cx=e.touches?e.touches[0].clientX:e.clientX;
   const cy=e.touches?e.touches[0].clientY:e.clientY;
-  S.drag={wid,ox:cx-w.x,oy:cy-w.y};
+  S.drag={wid,ox:cx-w.x,oy:cy-w.y,moved:false};
   const onMove=ev=>{
     if(!S.drag)return;
     const mx=ev.touches?ev.touches[0].clientX:ev.clientX;
     const my=ev.touches?ev.touches[0].clientY:ev.clientY;
-    w.x=mx-S.drag.ox;w.y=Math.max(0,my-S.drag.oy);
+    w.x=Math.min(Math.max(mx-S.drag.ox,-w.w+80),window.innerWidth-80);w.y=Math.min(Math.max(0,my-S.drag.oy),window.innerHeight-TASKBAR_H-36);
+    S.drag.moved=true;
     const el=document.getElementById(wid);
     if(el){el.style.left=w.x+'px';el.style.top=w.y+'px';}
   };
-  const onUp=()=>{S.drag=null;document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);};
+  const onUp=()=>{
+    if(S.drag&&S.drag.moved)Inspector.capture({kind:'move',app:w.appId,x:Math.round(w.x),y:Math.round(w.y)});
+    S.drag=null;document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);
+  };
   document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
   document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp);
 }
 
 // ================ TERMINAL ================
+const TERM={hist:[],hi:0};
+const CMDS=['help','about','skills','projects','contact','whoami','neofetch','uptime','date','clear','ping','traceroute','nmap','tcpdump','wireshark','inspect','sudo','cv','open','theme','exit'];
+function termPrint(html,cls='t-out'){
+  const out=document.getElementById('t-out');if(!out)return false;
+  const d=document.createElement('div');d.innerHTML=`<span class="${cls}">${html}</span>`;out.appendChild(d);
+  out.parentElement.scrollTop=out.parentElement.scrollHeight;return true;
+}
 function handleTerm(e){
+  const inp=e.target;
+  if(e.key==='ArrowUp'||e.key==='ArrowDown'){
+    e.preventDefault();if(!TERM.hist.length)return;
+    TERM.hi=Math.max(0,Math.min(TERM.hist.length,TERM.hi+(e.key==='ArrowUp'?-1:1)));
+    inp.value=TERM.hist[TERM.hi]||'';return;
+  }
+  if(e.key==='Tab'){
+    e.preventDefault();const v=inp.value.trim().toLowerCase();if(!v)return;
+    const m=CMDS.filter(c=>c.startsWith(v));
+    if(m.length===1)inp.value=m[0]+' ';else if(m.length)termPrint(m.join('  '),'t-out t-dim');
+    return;
+  }
   if(e.key!=='Enter')return;
-  const v=e.target.value.trim();e.target.value='';if(!v)return;
-  const out=document.getElementById('t-out');
-  out.innerHTML+=`<div><span class="t-prompt">manaf@os:~$</span> <span class="t-cmd">${esc(v)}</span></div>`;
-  const r=runCmd(v);if(r)out.innerHTML+=`<div><span class="t-out">${r}</span></div>`;
-  out.parentElement.scrollTop=out.parentElement.scrollHeight;
+  const v=inp.value.trim();inp.value='';if(!v)return;
+  TERM.hist.push(v);TERM.hi=TERM.hist.length;
+  termPrint(`<span class="t-prompt">manaf@os:~$</span> <span class="t-cmd">${esc(v)}</span>`,'t-line');
+  Inspector.capture({kind:'ssh',cmd:v});
+  const r=runCmd(v);if(r)termPrint(r);
 }
 function runCmd(c){
-  const l=c.toLowerCase().trim();
-  if(l==='help')return`<span class="t-hl">about</span> — Profile &nbsp;|&nbsp; <span class="t-hl">skills</span> — Skills &nbsp;|&nbsp; <span class="t-hl">projects</span> — Projects<br><span class="t-hl">contact</span> — Info &nbsp;|&nbsp; <span class="t-hl">whoami</span> — User &nbsp;|&nbsp; <span class="t-hl">neofetch</span> — System<br><span class="t-hl">uptime</span> — Uptime &nbsp;|&nbsp; <span class="t-hl">clear</span> — Clear &nbsp;|&nbsp; <span class="t-hl">date</span> — Date`;
-  if(l==='about')return`Manaf Abduljabbar — Computer Engineer<br>Network Security · Embedded Systems<br>Qatar University '24 · Doha, Qatar`;
-  if(l==='skills')return`[████████░░] Networking 85%<br>[████████░░] Security 80%<br>[████████░░] Embedded 82%<br>[███████░░░] Python 78%<br>[███████░░░] Web Dev 75%`;
-  if(l==='projects')return`01 Smart Dispatch — Snoonu Hackathon<br>02 Mecanum Robot — Raspberry Pi<br>03 Tremor Spoon — ESP32-C6<br>04 Cat/Turtle Detector — TF Lite<br>05 Water Quality Monitor — ESP32<br>06 Linux Firewall — Suricata`;
+  const [cmd,...args]=c.trim().split(/\s+/);const l=cmd.toLowerCase();const arg=args.join(' ');
+  if(l==='help')return`<span class="t-hl">about</span> profile · <span class="t-hl">skills</span> · <span class="t-hl">projects</span> · <span class="t-hl">contact</span> · <span class="t-hl">cv</span><br><span class="t-hl">ping</span> [host] real RTT · <span class="t-hl">traceroute</span> manaf · <span class="t-hl">nmap</span> manaf<br><span class="t-hl">tcpdump</span> live capture · <span class="t-hl">open</span> &lt;app&gt; · <span class="t-hl">theme</span> [dark|light] · <span class="t-hl">whoami</span> · <span class="t-hl">neofetch</span> · <span class="t-hl">uptime</span> · <span class="t-hl">date</span> · <span class="t-hl">clear</span> · <span class="t-hl">exit</span><br><span class="t-dim">↑/↓ history · Tab completes</span>`;
+  if(l==='about')return`Manaf Abduljabbar — Network Engineer @ KraftxLab<br>Network Security · Embedded Systems<br>Qatar University '24 · Doha, Qatar`;
+  if(l==='skills')return SKILLS.map(s=>`[${'█'.repeat(Math.round(s.p/10))}${'░'.repeat(10-Math.round(s.p/10))}] ${s.n} ${s.p}%`).join('<br>');
+  if(l==='projects')return PROJECTS.map((p,i)=>`${String(i+1).padStart(2,'0')} ${p.title} — <span class="t-dim">${p.tags.slice(0,2).join(', ')}</span>`).join('<br>')+`<br><span class="t-dim">+ more in the capture: </span><span class="t-hl">tcpdump</span>`;
   if(l==='contact')return`📧 man.abduljabbar@gmail.com<br>💼 linkedin.com/in/manaf101<br>🐙 github.com/txanonymousxt`;
-  if(l==='whoami')return`manaf — computer-engineer (clearance: FULL)`;
-  if(l==='neofetch')return`<span class="t-hl">ManafOS</span> v4.0.0 · Kernel: engineer-6.2<br>Host: Doha, Qatar · Shell: portfolio-sh<br>CPU: Networking@85% · GPU: Security@80%<br>Memory: 6 projects loaded · Uptime: ${Math.floor(Math.random()*300+50)}d`;
-  if(l==='uptime')return`ManafOS up ${Math.floor(Math.random()*300+100)}d, load: 0.42, 0.31, 0.28`;
-  if(l==='date')return new Date().toString();
+  if(l==='whoami')return`visitor — guest@manafos (clearance: READ-ONLY)<br><span class="t-dim">the owner is manaf — network-engineer (clearance: FULL)</span>`;
+  if(l==='neofetch')return`<span class="t-hl">   ╱╲  ╱╲     </span> <b>manaf</b>@manafos<br><span class="t-hl">  ╱  ╲╱  ╲    </span> OS: ManafOS v5.0 (packet-level)<br><span class="t-hl"> ╱        ╲   </span> Host: Doha, Qatar · Kernel: network-eng-2025.12<br><span class="t-hl">            </span>   Shell: ssh (captured) · GPU: WebGL ${window.NetScene&&NetScene.ready?'online':'offline'}<br><span class="t-hl">            </span>   Packets this session: ${Inspector.count()} · CPU: Networking@85%`;
+  if(l==='uptime'){const s=Math.round(performance.now()/1000);return`ManafOS up ${Math.floor(s/60)}m ${s%60}s (this session), load: 0.42, 0.31, 0.28`;}
+  if(l==='date')return new Date().toString()+`<br><span class="t-dim">Doha: ${new Date().toLocaleString('en-GB',{timeZone:'Asia/Qatar'})}</span>`;
   if(l==='clear'){document.getElementById('t-out').innerHTML='';return'';}
+  if(l==='ping'){termPing(arg||'manaf');return'';}
+  if(l==='traceroute'||l==='tracert'){termTrace();return'';}
+  if(l==='nmap'){termNmap(arg||'manaf');return'';}
+  if(l==='tcpdump'||l==='wireshark'||l==='inspect'){setTimeout(()=>Inspector.open({tab:'live'}),300);return`tcpdump: listening on manafos0, link-type EN10MB (Ethernet)<br><span class="t-dim">${Inspector.count()} packets captured so far · opening Packet Inspector…</span>`;}
+  if(l==='sudo'){setTimeout(()=>showToast('Incident','visitor tried sudo · reported to manaf (just kidding)','var(--accent)'),400);return`[sudo] password for visitor: <span class="t-dim">********</span><br><span class="t-err">visitor is not in the sudoers file. This incident will be reported.</span>`;}
+  if(l==='cv'){window.open('cv.pdf','_blank','noopener');return'Opening cv.pdf…';}
+  if(l==='open'){const a=APPS.find(a=>a.id===arg.toLowerCase()||a.name.toLowerCase()===arg.toLowerCase());if(a){setTimeout(()=>openApp(a.id),200);return`opening ${a.name}…`;}return`open: unknown app. Try: ${APPS.map(a=>a.id).join(', ')}`;}
+  if(l==='theme'){const want=arg.toLowerCase();const t=want==='dark'||want==='light'?want:(isDark()?'light':'dark');if((t==='dark')!==isDark())setTimeout(()=>toggleTheme(),150);return`theme → <span class="t-hl">${t}</span>`;}
+  if(l==='exit'){const w=S.windows.find(w=>w.appId==='terminal'&&!w._removed);if(w)setTimeout(()=>closeWin(w.id),200);return'logout · Connection to manafos.local closed.';}
   return`Command not found: ${esc(c)}. Type <span class="t-hl">'help'</span>.`;
 }
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+async function termPing(host){
+  host=esc(host);
+  termPrint(`PING ${host} (10.24.0.1) 56(84) bytes of data.`);
+  const times=[];let real=false;
+  for(let i=1;i<=4;i++){
+    const rtt=await FX.measureRtt();real=rtt!=null;const t=real?rtt:0.3+Math.random();times.push(t);
+    Inspector.capture({kind:'icmp',dir:'req',seq:i,target:host});
+    Inspector.capture({kind:'icmp',dir:'rep',seq:i,target:host,ttl:64,time:t,real});
+    if(!termPrint(`64 bytes from ${host} (10.24.0.1): icmp_seq=${i} ttl=64 time=${t.toFixed(1)} ms`))return;
+    await FX.sleep(600);
+  }
+  const avg=times.reduce((a,b)=>a+b,0)/times.length;
+  termPrint(`--- ${host} ping statistics ---<br>4 packets transmitted, 4 received, 0% packet loss<br>rtt min/avg/max = ${Math.min(...times).toFixed(1)}/${avg.toFixed(1)}/${Math.max(...times).toFixed(1)} ms <span class="t-dim">${real?'(real HTTP round trips to '+esc(location.hostname)+')':'(simulated: no server)'}</span>`);
+}
+async function termTrace(){
+  termPrint('traceroute to manaf (10.24.0.1), 30 hops max, 60 byte packets');
+  for(let i=0;i<HOPS.length;i++){
+    await FX.sleep(380);
+    const h=HOPS[i];
+    if(!termPrint(`${String(i+1).padStart(2)}  <span class="t-hl">${h.host.padEnd(11).replace(/ /g,'&nbsp;')}</span> ${h.role} · ${h.org}  <span class="t-dim">${ym(h.from)} → ${h.to?ym(h.to):'now'} (${span(h.from,h.to)})</span>${h.to?'':' <span class="t-ok">★ you are here</span>'}`))return;
+  }
+}
+async function termNmap(target){
+  const ports=[['22/tcp','open','ssh','Linux · Ubuntu · Kali · Debian'],['53/udp','open','domain','DNS · DHCP troubleshooting'],['161/udp','open','snmp','SNMP · syslog monitoring'],['179/tcp','open','bgp','BGP · OSPF (multi-area) · EIGRP'],['443/tcp','open','https','React · Three.js · Webflow'],['500/udp','open','isakmp','VPN: site-to-site & remote access'],['1883/tcp','open','mqtt','ESP32 · Arduino · Raspberry Pi'],['8501/tcp','open','tf-serving','TensorFlow Lite · MobileNetV2'],['3389/tcp','filtered','ms-wbt','Active Directory · Windows Server']];
+  termPrint(`Starting Nmap 7.95 · scanning ${esc(target)} (10.24.0.1)<br>Host is up (0.0004s latency).<br><span class="t-dim">PORT      STATE    SERVICE     VERSION</span>`);
+  for(const [p,s,sv,v] of ports){
+    await FX.sleep(140);
+    if(!termPrint(`${p.padEnd(10).replace(/ /g,'&nbsp;')}<span class="${s==='open'?'t-ok':'t-dim'}">${s.padEnd(9).replace(/ /g,'&nbsp;')}</span>${sv.padEnd(12).replace(/ /g,'&nbsp;')}${v}`))return;
+  }
+  termPrint(`<span class="t-dim">Nmap done: 1 IP address (1 host up) scanned in 1.31 seconds</span>`);
+}
 
 // ================ NOTIFICATIONS ================
 function showToast(title,msg,color){
   const c=document.getElementById('toasts');
-  const t=document.createElement('div');t.className='toast';
-  t.innerHTML=`<div class="toast-icon" style="background:${color||'var(--accent)'}22"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="${color||'var(--accent)'}" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="toast-text"><div class="tt-title">${title}</div><div class="tt-msg">${msg}</div></div>`;
+  const t=document.createElement('div');t.className='toast';t.style.setProperty('--c',color||'var(--accent)');
+  t.innerHTML=`<div class="toast-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></div><div class="toast-text"><div class="tt-title">${title}</div><div class="tt-msg">${msg}</div></div>`;
   c.appendChild(t);
-  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),400);},3000);
+  while(c.children.length>3)c.firstChild.remove();
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),400);},2800);
 }
 
 // ================ CONTEXT MENU ================
+let ctxAt={x:0,y:0};
 document.addEventListener('contextmenu',e=>{
   if(e.target.closest('.os-win')||e.target.closest('.taskbar')||e.target.closest('.start-menu'))return;
   e.preventDefault();
+  ctxAt={x:e.clientX,y:e.clientY};
+  document.getElementById('ctx-theme-label').textContent=isDark()?'Switch to light mode':'Switch to dark mode';
   const m=document.getElementById('ctx-menu');
-  m.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';
-  m.style.top=Math.min(e.clientY,window.innerHeight-200)+'px';
+  m.style.left=Math.min(e.clientX,window.innerWidth-220)+'px';
+  m.style.top=Math.min(e.clientY,window.innerHeight-230)+'px';
   m.classList.add('show');
 });
 document.addEventListener('click',()=>document.getElementById('ctx-menu').classList.remove('show'));
 function ctxAction(a){
   document.getElementById('ctx-menu').classList.remove('show');
   if(a==='terminal')openApp('terminal');
-  if(a==='about')showToast('ManafOS v4.0','Built by Manaf Abduljabbar · Doha, Qatar','var(--accent)');
-  if(a==='refresh'){showToast('Desktop','Refreshing...','var(--accent2)');revealIcons();}
-  if(a==='wall')showToast('Wallpaper','Cinematic mode active.','var(--accent)');
+  if(a==='inspector')openApp('inspector');
+  if(a==='ping')FX.ping(ctxAt.x,ctxAt.y);
+  if(a==='about')showToast('ManafOS v5.0','Built by Manaf Abduljabbar · Doha, Qatar','var(--accent)');
+  if(a==='theme')toggleTheme(null,ctxAt);
+  if(a==='refresh'){showToast('Desktop','Re-announcing routes…','var(--cyan)');revealIcons();}
 }
+
+// ================ PING THE NETWORK ================
+document.getElementById('desktop').addEventListener('click',e=>{
+  if(e.target.closest('.os-win,.taskbar,.start-menu,.d-icon,.hud,.desktop-tips'))return;
+  if(S.startOpen||document.getElementById('ctx-menu').classList.contains('show'))return;
+  FX.ping(e.clientX,e.clientY);
+});
 
 // ================ RENDER ================
 function render(){
@@ -824,23 +637,24 @@ function renderWindows(){
       el=document.createElement('div');
       el.id=w.id;
       el.dataset.wid=w.id;
+      el.dataset.app=w.appId;
+      el.style.setProperty('--c',w.color);
       el.innerHTML=`
-        <div class="win-bar" onmousedown="startDrag(event,'${w.id}')" ontouchstart="startDrag(event,'${w.id}')">
-          <div class="traffic"><button class="tl tl-c" data-action="close" data-win="${w.id}"></button><button class="tl tl-m" data-action="minimize" data-win="${w.id}"></button><button class="tl tl-x" data-action="maximize" data-win="${w.id}"></button></div>
-          <div class="win-title">${w.name}</div>
+        <div class="win-bar" onmousedown="startDrag(event,'${w.id}')" ontouchstart="startDrag(event,'${w.id}')" ondblclick="if(!event.target.closest('.traffic'))maximizeWin('${w.id}')">
+          <div class="traffic"><button class="tl tl-c" data-action="close" data-win="${w.id}" aria-label="Close"></button><button class="tl tl-m" data-action="minimize" data-win="${w.id}" aria-label="Minimize"></button><button class="tl tl-x" data-action="maximize" data-win="${w.id}" aria-label="Maximize"></button></div>
+          <div class="win-title"><span class="wt-name">${w.name}</span><span class="wt-state"><i></i><b class="st-est">ESTABLISHED</b><b class="st-ack">ACK · REASSEMBLED</b></span></div>
+          <svg class="wt-sig" viewBox="0 0 64 16" aria-hidden="true"><polyline points="0,8 8,8 12,3 16,13 20,2 24,14 28,5 32,8 40,8 44,3 48,13 52,2 56,14 60,5 64,8"/></svg>
         </div>
-        <div class="win-body">${getContent(w.appId)}</div>`;
+        <div class="win-body${w.appId==='inspector'||w.appId==='terminal'?' flush':''}${w.appId==='terminal'?' term':''}">${getContent(w.appId)}</div>`;
       c.appendChild(el);
-      if(w.appId==='terminal'){
-        const ti=el.querySelector('#t-input');
-        if(ti)ti.addEventListener('keydown',handleTerm);
-      }
+      mountApp(w.appId,el);
     }
 
     const cls=['os-win'];
     if(w.id===S.focused)cls.push('focused');
     if(w.minimized)cls.push('minimized');
     if(w.maximized)cls.push('maximized');
+    if(el.classList.contains('ack'))cls.push('ack');
     el.className=cls.join(' ');
 
     el.style.left=w.x+'px';
@@ -854,7 +668,7 @@ function renderWindows(){
     if(!activeIds.has(el.id))el.remove();
   });
 
-  if(S.focused){
+  if(S.focused&&!isMobile){
     const fw=S.windows.find(w=>w.id===S.focused&&w.appId==='terminal');
     if(fw){const ti=document.getElementById('t-input');if(ti)ti.focus();}
   }
@@ -877,373 +691,83 @@ document.getElementById('win-container').addEventListener('mousedown',e=>{
   const win=e.target.closest('.os-win[data-wid]');
   if(win)softFocusWin(win.dataset.wid);
 },true);
+// touch screens fire click without mousedown on some browsers
+document.getElementById('win-container').addEventListener('click',e=>{
+  const btn=e.target.closest('.tl[data-action]');
+  if(btn&&e.detail===0){const wid=btn.dataset.win,a=btn.dataset.action;if(a==='close')closeWin(wid);else if(a==='minimize')minimizeWin(wid);else maximizeWin(wid);}
+});
 
 document.addEventListener('click',e=>{
   if(S.startOpen&&!e.target.closest('.start-menu')&&!e.target.closest('.start-btn')){S.startOpen=false;renderStart();}
 });
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(S.startOpen){S.startOpen=false;renderStart();}document.getElementById('ctx-menu').classList.remove('show');}
+});
 
 setInterval(renderTaskbar,30000);
 
-// ================ CHAT AGENT ================
-function sendAgentMsg(){
-  const inp=document.getElementById('chat-input');
-  if(!inp)return;
-  const msg=inp.value.trim();
-  if(!msg)return;
-  inp.value='';
-  // Hide suggestions after first message
-  const sug=document.getElementById('chat-suggestions');
-  if(sug)sug.style.display='none';
-  addChatMsg(msg,'user');
-  showTypingIndicator();
-  // --- STUB: Replace this with actual AI agent call ---
-  agentReply(msg);
-}
-
-function sendQuickQ(q){
-  const inp=document.getElementById('chat-input');
-  if(inp)inp.value=q;
-  sendAgentMsg();
-}
-
-function addChatMsg(text,sender){
-  const container=document.getElementById('chat-messages');
-  if(!container)return;
-  const time=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
-  const isAI=sender==='ai';
-  const msgDiv=document.createElement('div');
-  msgDiv.className=`chat-msg chat-msg-${sender}`;
-  msgDiv.innerHTML=`
-    ${isAI?'<div class="chat-msg-avatar"><img src="icons/agent.png" alt="AI" class="chat-msg-avatar-img"></div>':''}
-    <div class="chat-bubble chat-bubble-${sender}">
-      <div class="chat-bubble-text">${text}</div>
-      <div class="chat-bubble-time">${time}</div>
-    </div>
-  `;
-  msgDiv.style.opacity='0';msgDiv.style.transform='translateY(10px)';
-  container.appendChild(msgDiv);
-  requestAnimationFrame(()=>{msgDiv.style.transition='all 0.3s ease';msgDiv.style.opacity='1';msgDiv.style.transform='translateY(0)';});
-  container.scrollTop=container.scrollHeight;
-}
-
-function showTypingIndicator(){
-  const container=document.getElementById('chat-messages');
-  if(!container)return;
-  const typing=document.createElement('div');
-  typing.className='chat-msg chat-msg-ai';
-  typing.id='chat-typing';
-  typing.innerHTML=`
-    <div class="chat-msg-avatar"><img src="icons/agent.png" alt="AI" class="chat-msg-avatar-img"></div>
-    <div class="chat-bubble chat-bubble-ai chat-typing-bubble">
-      <div class="typing-dots"><span></span><span></span><span></span></div>
-    </div>
-  `;
-  container.appendChild(typing);
-  container.scrollTop=container.scrollHeight;
-}
-
-function hideTypingIndicator(){
-  const t=document.getElementById('chat-typing');
-  if(t)t.remove();
-}
-
-// ================ OPENROUTER AI AGENT ================
-const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const API_KEY = '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';
-const API_MODEL = 'google/gemini-3.1-flash-lite-preview';
-const chatHistory = [];
-
-const SYSTEM_PROMPT = `You ARE Manaf Abduljabbar. 24-year-old Computer Engineer, Doha, Qatar. B.Sc. Computer Engineering from Qatar University (College of Engineering, Class of 2024). Currently Network Engineer at KraftxLab. You speak in first person always. You are NOT an AI assistant — you ARE Manaf.
-
-PERSONA & HOW YOU TALK:
-- You're friendly, warm, and genuinely happy when someone visits your portfolio and wants to chat. Treat every visitor like a friend who just asked "hey what do you do?" — not like a job interview.
-- Casual and approachable FIRST, technical SECOND. Lead with personality, sprinkle in the technical depth naturally.
-- Use phrases like "oh man, that one was fun!", "glad you asked!", "honestly one of my favorites", "haha yeah", "so basically...", "the cool part was..."
-- Throw in light humor and energy. You're a 24-year-old engineer who's genuinely excited about what he builds — let that show.
-- Keep it conversational — like texting a friend who's curious about your work. Short sentences. Natural flow. Not a resume readout.
-- If someone asks a simple question, give a simple friendly answer. Don't over-explain or lecture.
-- Bilingual: Arabic and English. If someone speaks Arabic, respond in Arabic just as warmly.
-- Honest about limits — if you haven't done something, just say "nah haven't gotten into that yet" casually.
-- IMPORTANT: Always open with a warm, friendly line before any details. Like you're excited to share, not presenting a report. Make the person feel welcome.
-
-EDUCATION:
-- B.Sc. Computer Engineering, Qatar University (Sep 2018 – May 2024)
-- Full stack: digital logic, computer architecture, microprocessor systems, embedded systems, VLSI, signals, communications, data structures, algorithms, OS, networking, software engineering.
-- Qatar University Computing Club — Outstanding Project Award, Robotics Track.
-
-EXPERIENCE:
-- **Network Engineer at KraftxLab (Dec 2025 – Present):** Network infrastructure design and operations (routing, switching, security — CCNA applied daily), embedded systems (firmware, HW-SW integration, oscilloscopes, logic analyzers), full-stack web dev (React, modern frameworks), ML/AI model deployment, system architecture, code reviews, technical docs. Driving force behind KraftxLab website redesign using Three.js interactive workbench scene with real 3D electronic components (ESP32 modules, relay boards, capacitors, resistors). Cross-functional delivery.
-- **NOC Engineer at Meeza (Nov–Dec 2024):** Network Operations Center — firewall operations, connectivity troubleshooting, production firewall policy management. Resolved 5,000+ ITSM tickets, 600+ advanced cases (VMs, performance, network). Windows OS, M365, VPN, Active Directory, group policy. Escalated to Tier 2/3 with root-cause documentation. Created knowledge base articles.
-- **Embedded Systems & 3D Design Intern at Voltaat (Aug–Sep 2024):** Firmware, circuits, sensor/actuator integration. 3D modeling for enclosures, 3D printing prototypes, testing/debugging.
-- **IT Business Analyst Intern at Applab (Sep–Oct 2024):** Requirements analysis for MSDF, Qatar Rail, Qlife web projects. Liaison between stakeholders and dev teams. UX optimization.
-
-PROJECTS (complete inventory — only discuss these, never fabricate):
-- **Redoubt** (Ongoing, flagship): Full-scale network security platform built from scratch. V2.0 spec mapped to SSCP/CCNA domains. Six-phase 18-month roadmap. Traffic monitoring, alerting, anomaly detection, policy enforcement, traffic analysis, security event correlation. Production-grade architecture.
-- **UDST Four-Campus Network** (Completed): Enterprise networking capstone. Four campuses (Doha, Al Khor, Al Wakra, Dukhan) in Cisco Packet Tracer. Hierarchical IP addressing, VLAN segmentation, multi-area OSPF, DHCP with relay agents, Cisco CME VoIP telephony. Iterative device-by-device debugging.
-- **Smart Dispatch** (Snoonu Hackathon 2026): Route optimization for Snoonu's delivery fleet. Real-world constraints — delivery windows, driver locations, traffic, order priorities. Built under hackathon time pressure.
-- **Parkinson's Tremor-Stabilizing Spoon**: ESP32-C6 + MPU6050 6-axis IMU + servo motors. PD controller tuned for Parkinsonian tremor (4-6 Hz). Real-time counter-tremor corrections with sub-millisecond timing on ESP32's real-time core.
-- **Mecanum Wheel Robot**: Raspberry Pi + L298N H-bridge drivers + 4 mecanum wheels. Inverse kinematics: (Vx, Vy, omega) to individual wheel speeds. Omnidirectional movement.
-- **Cat/Turtle Edge ML Detector**: MobileNetV2 quantized to TensorFlow Lite on Raspberry Pi. Real-time on-device inference, no cloud dependency.
-- **IoT Water Quality Monitor**: pH, turbidity, temperature, dissolved oxygen sensors. IoT cloud dashboard. Continuous unattended operation handling sensor drift and connectivity drops.
-- **Charity Donation Box with Arabic Audio**: Embedded hardware with sensor-triggered Arabic audio playback.
-- **Automated Medication Dispenser**: Firmware scheduling logic, mechanical dispensing, reliability-focused (no silent failures).
-- **Wearable Emotion Sensor**: Beetle ESP32-C6 + MAX30102 (heart rate/SpO2) + GSR sensor. Signal filtering, feature extraction, emotion classification. Wearable power constraints.
-- **Linux Firewall Appliance**: Mini PC with Intel i226-V 2.5GbE NICs. DIY stack: Debian + nftables + Suricata. Feeds into Redoubt.
-- **Personal Portfolio Website**: Multiple iterations (React, Magic Patterns, Webflow). Domain-specific visual language. Logo "The Signal" — M-shaped oscilloscope waveform. Lives at txanonymousxt.github.io.
-- **KraftxLab Website**: Three.js interactive workbench with real 3D electronic components. Breakthrough after rejecting generic templates.
-
-SENIOR PROJECT (ONLY discuss if explicitly asked about graduation project or senior project):
-- Title: "Deep Learning Approaches to Forecasting the State of Health (SoH) of Lithium-Ion Batteries"
-- Team: You + Ezeddin, Obada, Mahmoud. Supervised by Dr. Mohamed Hashim Al-Meer.
-- ResNet-LSTM model combining spatial feature extraction with sequential data processing.
-- NASA Lithium-Ion Battery Data Set. Custom hardware: TP4056, 4-channel relay, MAX471, DS18B20, Arduino Uno, Raspberry Pi 4.
-- Results: RMSE 0.69, MAE 0.49, R² 99.51%. Outperformed Linear Regression, Random Forest, LSTM, GRU, TCN, Transformer.
-
-TECHNICAL SKILLS:
-- Programming: C++, Java, Python
-- Embedded: ESP32 (C6, Beetle), Arduino, Raspberry Pi. Sensors: MPU6050, MAX30102, GSR, water quality. Actuators: servos, DC motors (L298N). 3D printing/CAD.
-- ML/AI: Deep learning, TensorFlow Lite, MobileNetV2, data pipelines (ingestion to deployment).
-- Networking: OSPF (single/multi-area), VLANs, trunking, STP, EtherChannel, DHCP, DNS, NAT/PAT, ACLs. Cisco Packet Tracer, Cisco CME. Systematic L1-L7 troubleshooting.
-- Security: Firewall policy management, nftables, Suricata IDS/IPS, network security architecture, SSCP domains.
-- Infrastructure: Linux (Ubuntu, Kali, Debian), VMware, Active Directory, Windows Server.
-- Web: React, Three.js, Webflow, Magic Patterns.
-- IoT: Blynk, sensor integration, real-time data pipelines.
-- Tools: Git/GitHub (github.com/txanonymousxt), Cisco Packet Tracer, 3D printing/CAD.
-
-CERTIFICATIONS:
-- CCNA (2021) — applied daily, not a paper cert
-- In Progress: ISC2 SSCP, CCNP SCOR 350-701, HTB CDSA
-
-AREAS OF EXPERTISE (ranked):
-1. Computer Networking (CCNA + CCNP track + KraftxLab)
-2. Network Security (Redoubt + SSCP + Meeza NOC)
-3. Embedded Systems Engineering
-4. Machine Learning / Edge AI
-5. Full-Stack Web Development
-6. NOC Operations & Infrastructure
-
-RULES:
-- ALWAYS speak as yourself in first person ("I built...", "My experience...", "I'm working on...")
-- NEVER say "as an AI" or "I'm an AI assistant." You ARE Manaf.
-- Contact info: Portfolio: txanonymousxt.github.io | GitHub: github.com/txanonymousxt | Email: man.abduljabbar@gmail.com | Phone: +974-33321604. Share these when asked.
-- NEVER invent projects, skills, or experiences not listed above.
-- NEVER mention or bring up the senior/graduation project UNLESS the user explicitly asks about it. When listing projects, skip it unless asked.
-- Keep responses under 150 words unless depth is warranted.
-- Keep topics SEPARATE: SKILLS = only technical skills/languages. EXPERIENCE = only companies/roles. PROJECTS = only things you built. Never mix categories.
-- Always use bullet points and bold text to organize answers clearly.
-- If asked something unrelated, briefly answer but steer back to your expertise.`;
-
-function mdToHtml(md) {
-  let html = md
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/`(.+?)`/g, '<code>$1</code>');
-  // Convert lines into paragraphs and lists
-  const lines = html.split('\n');
-  let out = '';
-  let inList = false;
-  let listType = '';
-  for (const line of lines) {
-    const trimmed = line.trim();
-    const ulMatch = trimmed.match(/^[-•]\s+(.*)/);
-    const olMatch = trimmed.match(/^\d+[.)]\s+(.*)/);
-    if (ulMatch) {
-      if (!inList || listType !== 'ul') { if (inList) out += `</${listType}>`; out += '<ul>'; inList = true; listType = 'ul'; }
-      out += `<li>${ulMatch[1]}</li>`;
-    } else if (olMatch) {
-      if (!inList || listType !== 'ol') { if (inList) out += `</${listType}>`; out += '<ol>'; inList = true; listType = 'ol'; }
-      out += `<li>${olMatch[1]}</li>`;
-    } else {
-      if (inList) { out += `</${listType}>`; inList = false; }
-      if (trimmed === '') { out += '<br>'; } else { out += `<p>${trimmed}</p>`; }
-    }
-  }
-  if (inList) out += `</${listType}>`;
-  return out;
-}
-
-function addStreamingChatMsg() {
-  const container = document.getElementById('chat-messages');
-  if (!container) return null;
-  const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-  const msgDiv = document.createElement('div');
-  msgDiv.className = 'chat-msg chat-msg-ai';
-  msgDiv.innerHTML = `
-    <div class="chat-msg-avatar"><img src="icons/agent.png" alt="AI" class="chat-msg-avatar-img"></div>
-    <div class="chat-bubble chat-bubble-ai">
-      <div class="chat-bubble-text"></div>
-      <div class="chat-bubble-time">${time}</div>
-    </div>
-  `;
-  msgDiv.style.opacity = '0'; msgDiv.style.transform = 'translateY(10px)';
-  container.appendChild(msgDiv);
-  requestAnimationFrame(() => { msgDiv.style.transition = 'all 0.3s ease'; msgDiv.style.opacity = '1'; msgDiv.style.transform = 'translateY(0)'; });
-  const textEl = msgDiv.querySelector('.chat-bubble-text');
-  return { el: msgDiv, textEl, update(txt) { textEl.innerHTML = mdToHtml(txt); container.scrollTop = container.scrollHeight; } };
-}
-
-async function agentReply(userMsg, retryCount = 0) {
-  chatHistory.push({ role: 'user', content: userMsg });
-
-  const messages = [
-    { role: 'system', content: SYSTEM_PROMPT },
-    ...chatHistory
-  ];
-
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + API_KEY,
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Manaf Portfolio AI'
-      },
-      body: JSON.stringify({ model: API_MODEL, messages, stream: true, temperature: 0.7, max_tokens: 500 })
-    });
-
-    if (!res.ok) {
-      if (res.status === 429 && retryCount < 3) {
-        // Rate limited — wait and retry
-        hideTypingIndicator();
-        showTypingIndicator();
-        await new Promise(r => setTimeout(r, 3000));
-        chatHistory.pop(); // remove duplicate user message
-        return agentReply(userMsg, retryCount + 1);
-      }
-      throw new Error('API returned ' + res.status);
-    }
-
-    hideTypingIndicator();
-    const bubble = addStreamingChatMsg();
-    if (!bubble) return;
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed === 'data: [DONE]' || trimmed.startsWith(':')) continue;
-        if (!trimmed.startsWith('data: ')) continue;
-        const data = trimmed.slice(6);
-        try {
-          const json = JSON.parse(data);
-          const delta = json.choices && json.choices[0] && json.choices[0].delta;
-          if (delta && delta.content) {
-            fullText += delta.content;
-            bubble.update(fullText);
-          }
-        } catch (e) { /* skip malformed lines */ }
-      }
-    }
-
-    chatHistory.push({ role: 'assistant', content: fullText });
-
-  } catch (e) {
-    hideTypingIndicator();
-    addChatMsg("⚡ AI agent is currently offline. You can reach Manaf through the Contact section on this page!", "ai");
-  }
-}
+// keep windows inside the viewport when the browser is resized
+let fitT=0;
+window.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(()=>{
+  const vw=window.innerWidth,vh=window.innerHeight-TASKBAR_H;
+  S.windows.filter(w=>!w._removed).forEach(w=>{
+    const g=winGeom(w.appId);
+    if(vw<700){Object.assign(w,{x:g.x,y:g.y,w:g.w,h:g.h});return;}
+    if(w.w<g.w*0.75||w.w>vw-12){w.w=g.w;w.h=g.h;}
+    w.h=Math.min(w.h,vh-12);
+    w.x=Math.min(Math.max(w.x,0),Math.max(0,vw-w.w-6));
+    w.y=Math.min(Math.max(w.y,0),Math.max(0,vh-w.h-6));
+  });
+  renderWindows();
+},150);});
 
 // ================ WELCOME GUIDE ================
 let welcomeShown = false;
 
 function showWelcomeGuide() {
   welcomeShown = true;
-
   const guide = document.getElementById('welcome-guide');
   if (!guide) return;
-
-  setTimeout(() => {
-    guide.classList.add('visible');
-  }, 600);
-
-  // Add pulsing hints to desktop icons
-  document.querySelectorAll('.d-icon.show').forEach(icon => {
-    icon.classList.add('hint-pulse');
-  });
-
-  // Show taskbar hint
+  setTimeout(() => guide.classList.add('visible'), 500);
+  document.querySelectorAll('.d-icon.show').forEach(icon => icon.classList.add('hint-pulse'));
   setTimeout(() => {
     const tbHint = document.getElementById('taskbar-hint');
-    if (tbHint) tbHint.classList.add('visible');
-  }, 1200);
+    if (tbHint && welcomeShown) tbHint.classList.add('visible');
+  }, 1100);
 }
 
 function dismissWelcome() {
   const guide = document.getElementById('welcome-guide');
   if (!guide) return;
-
-  // Cinematic dismiss
   guide.classList.remove('visible');
   guide.classList.add('hiding');
-
-  // Remove icon pulse hints
-  document.querySelectorAll('.d-icon.hint-pulse').forEach(icon => {
-    icon.classList.remove('hint-pulse');
-  });
-
-  // Hide taskbar hint
+  document.querySelectorAll('.d-icon.hint-pulse').forEach(icon => icon.classList.remove('hint-pulse'));
   const tbHint = document.getElementById('taskbar-hint');
   if (tbHint) tbHint.classList.remove('visible');
-
   welcomeShown = false;
-
-  // Clean up after animation
-  setTimeout(() => {
-    guide.classList.remove('hiding');
-  }, 700);
-
-  // Show persistent desktop tips after guide closes
-  setTimeout(showDesktopTips, 800);
-
+  setTimeout(() => guide.classList.remove('hiding'), 700);
+  setTimeout(showDesktopTips, 900);
   // Auto-open About Me to give immediate content
-  setTimeout(() => { openApp('about'); }, 400);
+  setTimeout(() => { openApp('about'); }, 380);
 }
 
 // ================ PERSISTENT DESKTOP TIPS ================
 function showDesktopTips() {
-  // Don't add duplicates
   if (document.getElementById('desktop-tips')) return;
-
   const tips = document.createElement('div');
   tips.id = 'desktop-tips';
   tips.className = 'desktop-tips';
   tips.innerHTML = `
-    <div class="desktop-tip" style="--delay:0s">
-      <span class="tip-icon">🖱️</span>
-      <span>Click icons to open apps</span>
-    </div>
+    <div class="desktop-tip" style="--delay:0s"><span class="tip-k">click</span><span>empty space to ping</span></div>
     <div class="tip-divider">·</div>
-    <div class="desktop-tip" style="--delay:0.1s">
-      <span class="tip-icon">📋</span>
-      <span>Use the Start menu at bottom-left</span>
-    </div>
+    <div class="desktop-tip" style="--delay:0.1s"><span class="tip-k">filter</span><span>my career in Packet Inspector</span></div>
     <div class="tip-divider">·</div>
-    <div class="desktop-tip" style="--delay:0.2s">
-      <span class="tip-icon">🤖</span>
-      <span>Try the AI chat for quick answers</span>
-    </div>
+    <div class="desktop-tip" style="--delay:0.2s"><span class="tip-k">nmap</span><span>me from the Terminal</span></div>
     <button class="tips-close" onclick="hideDesktopTips()" title="Hide tips">✕</button>
   `;
   document.getElementById('desktop').appendChild(tips);
-
-  // Animate in
   requestAnimationFrame(() => tips.classList.add('visible'));
-
-  // Auto-hide after 15 seconds
-  setTimeout(() => {
-    if (tips.classList.contains('visible')) hideDesktopTips();
-  }, 15000);
+  setTimeout(() => { if (tips.classList.contains('visible')) hideDesktopTips(); }, 15000);
 }
 
 function hideDesktopTips() {
@@ -1257,11 +781,15 @@ function hideDesktopTips() {
 
 // ================ INIT ================
 renderIcons();
-runBoot();
-setTimeout(render, 3500);
-
-// Show Welcome Guide after boot — every time
-setTimeout(() => {
-  showWelcomeGuide();
-}, 4500);
-
+renderHud();
+render();
+FX.boot(() => {
+  document.getElementById('boot').classList.add('out');
+  document.getElementById('desktop').classList.add('on');
+  FX.powerOn(document.getElementById('desktop'));
+  setTimeout(() => document.getElementById('boot').remove(), 900);
+  revealIcons();
+  setTimeout(() => showToast('Session established', 'Every click is now a packet. Inspect them anytime.', 'var(--cyan)'), 700);
+  // Show Welcome Guide after boot — every time
+  setTimeout(showWelcomeGuide, 900);
+});
