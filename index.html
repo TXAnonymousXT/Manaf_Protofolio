@@ -1,133 +1,435 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="day">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="Manaf Abduljabbar — Network Engineer in Doha, Qatar. ManafOS v5 is a packet-level portfolio: a live network where every click is traffic you can inspect.">
-<meta name="keywords" content="Manaf Abduljabbar, Network Engineer, Computer Engineer, Network Security, Embedded Systems, Qatar University, Doha Qatar, CCNA, Portfolio">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manaf Abduljabbar — Mended</title>
+<meta name="description" content="Manaf Abduljabbar, network engineer in Doha, Qatar. Computer engineering, network security and embedded systems. A network switch in porcelain, broken once and rejoined with gold, because what matters is the repair.">
 <meta name="author" content="Manaf Abduljabbar">
-<meta name="theme-color" content="#f6f4f0">
+<meta name="theme-color" content="#D3CCBE">
 <meta name="color-scheme" content="light dark">
 <script>
-  // apply the saved theme before first paint; light is the default look
-  (function () { var t = "light"; try { t = localStorage.getItem("manafos-theme") || "light"; } catch (e) {} document.documentElement.dataset.theme = t; if (t === "dark") document.querySelector('meta[name="theme-color"]').content = "#06070b"; })();
+  // day or night, saved, before first paint; day is the default
+  (function () { var t = 'day'; try { t = localStorage.getItem('manaf-mended-room') === 'night' ? 'night' : 'day'; } catch (e) {} document.documentElement.dataset.theme = t; document.documentElement.classList.add('js'); })();
 </script>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ManafOS v5 — Manaf Abduljabbar</title>
-<link rel="icon" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
-<link rel="canonical" href="https://txanonymousxt.github.io/Manaf_Protofolio/">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Manaf Abduljabbar | Network Engineer">
-<meta property="og:description" content="A packet-level portfolio: inspect my career frame by frame.">
-<meta property="og:image" content="logo.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:creator" content="@manaf101">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='10' rx='2' fill='%23EFECE5' stroke='%23240952'/%3E%3Cpath d='M13 11l3 4-2 2 4 4' fill='none' stroke='%23B98A2E' stroke-width='1.4'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
-<script type="importmap">{ "imports": { "three": "./vendor/three.module.js" } }</script>
-<link rel="modulepreload" href="vendor/three.module.js">
-<link rel="modulepreload" href="vendor/three.core.js">
 </head>
 <body>
+<a class="skip" href="#catalogue">Skip to the catalogue</a>
 
-<!-- BOOT: a real handshake with the visitor's browser -->
-<div id="boot">
-  <div class="boot-wrap">
-    <div class="boot-brand">
-      <img src="logo.webp" alt="" class="boot-logo">
-      <div>
-        <div class="boot-title">ManafOS <span>v5.0</span></div>
-        <div class="boot-sub">packet-level portfolio · establishing session</div>
+<canvas id="scene" aria-hidden="true"></canvas>
+<i id="seam" aria-hidden="true"></i>
+
+<header class="nav">
+  <a class="brand" href="#top">Manaf<span class="brand-last"> Abduljabbar</span></a>
+  <nav aria-label="Page">
+    <button type="button" class="js-only" data-open="menu">Menu</button>
+    <a class="nav-wide" href="#talk">Contact</a>
+    <button type="button" id="lights" class="js-only">Lights off</button>
+    <a href="assets/cv.pdf" download>CV</a>
+    <button type="button" class="tray js-only" data-live title="Live capture: open the Packet Inspector"><i class="rec"></i><b data-pkts>0</b> pkts</button>
+    <span class="tray tray-doh js-only" title="Local time in Doha">DOH <span data-doha></span></span>
+  </nav>
+</header>
+
+<nav class="seek" aria-label="Chapters">
+  <p>What are you looking for?</p>
+  <ul>
+    <li><a href="#about" data-ch="2">About Me</a></li>
+    <li><a href="#kraftxlab" data-ch="3 4">Experience</a></li>
+    <li><a href="#projects" data-ch="5">Projects</a></li>
+    <li><a href="#skills" data-ch="6">Skills</a></li>
+    <li><a href="#security" data-ch="7">Security</a></li>
+    <li><a href="#credentials" data-ch="8">Credentials</a></li>
+    <li><a href="#terminal" data-ch="9">Terminal</a></li>
+    <li><a href="#inspector" data-ch="10">Packet Inspector</a></li>
+    <li><a href="#talk" data-ch="11">Contact</a></li>
+  </ul>
+</nav>
+
+<main id="main">
+
+  <section class="chapter first" id="top" aria-labelledby="h1">
+    <div class="panel">
+      <img class="still" src="assets/still-0.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A 24-port network switch made of white porcelain, its lid and front crossed by seams of gold where it was broken and repaired, with three patch cables curling across a plaster floor in low window light.">
+      <h1 id="h1">Manaf Abduljabbar</h1>
+      <div class="intro">
+        <p class="role">Network engineer. Doha, Qatar.</p>
+        <p class="thesis">Everything breaks. What matters is the repair.</p>
+      </div>
+      <p class="wall wall-hero"><b>Mended.</b> A 24-port switch in porcelain, broken once and rejoined with gold. The Japanese call the craft kintsugi: the seams stay visible, on purpose.</p>
+      <p class="hint" id="hint">Scroll, and it comes apart.<span class="js-only"> Click anywhere to ping it.</span></p>
+    </div>
+  </section>
+
+  <section class="chapter wide" id="break" aria-labelledby="h-break">
+    <div class="panel center">
+      <img class="still" src="assets/still-1.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The same switch broken apart in mid-air: dozens of porcelain pieces with gold-edged breaks, two small fans, a gold heatsink and lengths of cable, hanging over a sunlit floor.">
+      <h2 id="h-break">Every network is waiting to fail.</h2>
+      <p class="body">A cable gets pulled. A power supply goes. Someone pushes the wrong config at 2 a.m. The work is what happens next.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="about" aria-labelledby="h-about">
+    <div class="panel left">
+      <img class="still" src="assets/still-2.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A porcelain plaque printed Manaf, with a portrait of Manaf engraved in Royal Indigo, beside a column of broken pieces and gold flecks.">
+      <div class="col">
+        <h2 id="h-about">Robust, secure systems, from silicon to cloud.</h2>
+        <p class="who"><b>Computer Engineer</b><span>Network Security · Embedded Systems</span></p>
+        <p class="body">I'm based in Doha, Qatar, and I specialize in network infrastructure, security architecture and embedded systems.</p>
+        <dl class="facts">
+          <div><dt>Education</dt><dd>B.Sc. Computer Eng.</dd></div>
+          <div><dt>University</dt><dd>Qatar University '24</dd></div>
+          <div><dt>Location</dt><dd>Doha, Qatar</dd></div>
+        </dl>
+        <div class="acts"><button type="button" class="btn solid js-only" data-open="about">About me</button><a class="btn" href="assets/cv.pdf" download>Download CV</a></div>
       </div>
     </div>
-    <div class="hs" id="hs"></div>
-    <div class="boot-lines" id="boot-lines"></div>
-    <div class="boot-progress"><div class="boot-progress-fill" id="boot-fill"></div></div>
-    <div class="boot-skip">click or press any key to skip</div>
-  </div>
-</div>
+  </section>
 
-<!-- DESKTOP -->
-<div id="desktop">
-  <div class="wallpaper" id="wallpaper">
-    <canvas id="net-canvas" aria-hidden="true"></canvas>
-    <div class="wall-fallback" aria-hidden="true"></div>
-    <div class="wall-vignette" aria-hidden="true"></div>
-    <div class="wall-grain" aria-hidden="true"></div>
-  </div>
-  <div class="hud" id="hud"></div>
-  <div class="desktop-icons" id="desk-icons"></div>
-  <div id="win-container"></div>
-  <div class="start-menu" id="start-menu"></div>
-  <div class="taskbar" id="taskbar"></div>
-</div>
-
-<div id="fx-layer" aria-hidden="true"></div>
-<canvas id="trail" aria-hidden="true"></canvas>
-
-<!-- WELCOME GUIDE -->
-<div id="welcome-guide">
-  <div class="welcome-card">
-    <div class="welcome-header">
-      <img src="photo.webp" alt="Manaf" class="welcome-photo" onerror="this.style.display='none'">
-      <div class="welcome-intro">
-        <h2>Welcome to <span>ManafOS</span></h2>
-        <p>Manaf Abduljabbar · Network Engineer · Doha</p>
+  <section class="chapter" id="kraftxlab" aria-labelledby="h-k">
+    <div class="panel left">
+      <img class="still" src="assets/still-3.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A porcelain plaque printed KraftxLab, with an engraving of a network, and in front of it one broken block of the switch showing its RJ45 jacks and numbered ports, with gold along the break.">
+      <div class="col">
+        <h2 id="h-k">Every port configured, every change documented.</h2>
+        <p class="who"><b>Network Engineer, KraftxLab</b><span>Dec 2025 – present</span></p>
+        <p class="body">I configure and manage routers, switches, firewalls and wireless access points across multiple client deployments. VLANs, inter-VLAN routing and OSPF keep traffic segmented and flowing. Firewall rules, ACLs and VPN tunnels enforce the security policy and secure remote access.</p>
+        <div class="acts"><button type="button" class="btn solid js-only" data-open="experience">The whole route</button><button type="button" class="btn js-only" data-hop="kraftxlab" data-org="KraftxLab">Inspect this hop</button></div>
       </div>
     </div>
-    <div class="welcome-body">
-      <div class="welcome-desc">This whole portfolio is a live network. Every click you make is a packet, and you can inspect all of them.</div>
-      <div class="welcome-hints">
-        <div class="welcome-hint">
-          <div class="welcome-hint-icon" style="--c:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
-          <div class="welcome-hint-text">Open apps from the desktop<span>Windows arrive as packets and reassemble</span></div>
-        </div>
-        <div class="welcome-hint">
-          <div class="welcome-hint-icon" style="--c:var(--cyan)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></div>
-          <div class="welcome-hint-text">Inspect my career packet by packet<span>Packet Inspector: filter it like Wireshark</span></div>
-        </div>
-        <div class="welcome-hint">
-          <div class="welcome-hint-icon" style="--c:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="6" opacity=".6"/><circle cx="12" cy="12" r="10" opacity=".3"/></svg></div>
-          <div class="welcome-hint-text">Click empty space to ping the network<span>Real round-trip time to this server</span></div>
+  </section>
+
+  <section class="chapter" id="noc" aria-labelledby="h-n">
+    <div class="panel left">
+      <img class="still" src="assets/still-4.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A porcelain plaque printed Meeza, engraved with 5,000 small marks, beside a column of broken pieces and fine gold flecks.">
+      <div class="col">
+        <h2 id="h-n">5,000+ tickets, inside SLA.</h2>
+        <p class="who"><b>NOC Engineer, Meeza</b><span>Nov 2024 – Dec 2025</span></p>
+        <p class="body">In Meeza's network operations center I monitored network health, reviewed firewall policies and processed access changes for enterprise clients, with a two-month TechOps rotation on firewall operations. Another 600+ advanced cases across virtual machines, performance and connectivity, and critical incidents escalated to Tier 2/3 with clear documentation.</p>
+        <p class="wall">There are 5,000 flecks of gold in this room. One for each.</p>
+        <div class="acts"><button type="button" class="btn js-only" data-hop="meeza" data-org="Meeza">Inspect this hop</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="projects" aria-labelledby="h-p">
+    <div class="panel left">
+      <img class="still" src="assets/still-5.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A ribbed white porcelain toroid and a small fan, in front of a porcelain plaque printed Projects, listing thirteen projects.">
+      <div class="col">
+        <h2 id="h-p">From hardware prototypes to full-stack apps.</h2>
+        <p class="body">Redoubt, my flagship: a network security platform built from scratch. A four-campus enterprise network. Smart Dispatch, from the Snoonu Hackathon. And away from the rack, hardware I wired myself: a spoon that steadies a tremor, a mecanum wheel robot, a water quality monitor, a wearable that reads emotion from the skin.</p>
+        <div class="acts"><button type="button" class="btn solid js-only" data-open="projects">All 13 projects</button><button type="button" class="btn js-only" data-inspect='type == "project"'>In the capture</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="skills" aria-labelledby="h-sk">
+    <div class="panel left">
+      <img class="still" src="assets/still-6.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A porcelain plaque printed Skills, engraved with a spectrum of eight levels and a waveform, with porcelain parts in front of it.">
+      <div class="col">
+        <h2 id="h-sk">A live spectrum of what I work with.</h2>
+        <ul class="levels mini">
+          <li><b>Networking</b><i style="--p:85"></i><em>85%</em></li>
+          <li><b>Embedded Systems</b><i style="--p:82"></i><em>82%</em></li>
+          <li><b>Security</b><i style="--p:80"></i><em>80%</em></li>
+          <li><b>Python / Scripting</b><i style="--p:78"></i><em>78%</em></li>
+          <li><b>IoT &amp; Blynk</b><i style="--p:77"></i><em>77%</em></li>
+          <li><b>Web Development</b><i style="--p:75"></i><em>75%</em></li>
+          <li><b>UI/UX Design</b><i style="--p:70"></i><em>70%</em></li>
+          <li><b>Cloud &amp; DevOps</b><i style="--p:60"></i><em>60%</em></li>
+        </ul>
+        <div class="acts"><button type="button" class="btn solid js-only" data-open="skills">Tools and technologies</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="security" aria-labelledby="h-s">
+    <div class="panel left">
+      <img class="still" src="assets/still-7.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A heatsink cast entirely in gold, in front of a porcelain plaque printed Security with an engraved plan of a star fort.">
+      <div class="col">
+        <h2 id="h-s">Security, from the inside out.</h2>
+        <p class="who"><b>Firewalls, VPN, intrusion detection</b></p>
+        <p class="body">My own Linux firewall appliance runs Debian with nftables policy and Suricata IDS/IPS on Intel i226-V 2.5GbE ports. It feeds Redoubt, the network security platform I'm building from scratch: traffic monitoring, alerting, anomaly detection and event correlation. At work the same ideas run in production: firewall rules, ACLs, and site-to-site and remote-access VPNs.</p>
+        <div class="acts"><button type="button" class="btn solid js-only" data-open="security">Security operations</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="credentials" aria-labelledby="h-c">
+    <div class="panel left">
+      <img class="still" src="assets/still-8.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A broken piece of the white lid, edged in gold, carrying a Royal Indigo maker's mark: the name Manaf in Arabic and Latin script, ringed by the words Porcelain, handle with care, Doha 2026.">
+      <div class="col">
+        <h2 id="h-c">Fired, and still in the kiln.</h2>
+        <dl class="kiln">
+          <div><dt>Fired</dt><dd>CCNA, 2021</dd><dd>B.Sc. Computer Engineering, Qatar University, 2018 – 2024</dd><dd>Outstanding Project Award, QU Computing Club, Robotics Track</dd></div>
+          <div><dt>In the kiln</dt><dd>ISC2 SSCP</dd><dd>CCNP SCOR, 350-701</dd><dd>HTB CDSA</dd></div>
+        </dl>
+        <p class="wall">That's the maker's mark: my name, in Arabic, under the glaze.</p>
+        <div class="acts"><button type="button" class="btn js-only" data-inspect='type == "cert"'>Inspect the certificates</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="terminal" aria-labelledby="h-t2">
+    <div class="panel left">
+      <img class="still" src="assets/still-9.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A porcelain plaque printed Terminal, with the output of a port scan of Manaf, and the console block of the switch in front of it.">
+      <div class="col">
+        <h2 id="h-t2">Prefer a terminal? So do I.</h2>
+        <p class="body">It's a working one, and it answers. Try <code>nmap manaf</code>, <code>traceroute manaf</code> or <code>neofetch</code>. <code>ping</code> makes real round trips to this server. Every command you type is encrypted, and captured.</p>
+        <div class="acts"><button type="button" class="btn solid js-only" data-open="terminal">Open the terminal</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="inspector" aria-labelledby="h-i">
+    <div class="panel left">
+      <img class="still" src="assets/still-10.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A porcelain plaque printed Packet Inspector, with a printed table of career frames, and a patch cable from the switch in front of it.">
+      <div class="col">
+        <h2 id="h-i">Inspect my career, packet by packet.</h2>
+        <p class="body">Every job, certificate and project is a frame in a capture. Filter it like Wireshark, or just ask it a question. The second tab is your own session, captured live: every DNS lookup, handshake and click, with real timings. Nothing leaves your browser.</p>
+        <p class="wall js-only"><b data-pkts>0</b> packets from you so far.</p>
+        <div class="acts"><button type="button" class="btn solid js-only" data-open="inspector">Open Packet Inspector</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="talk" aria-labelledby="h-t">
+    <div class="panel top">
+      <img class="still" src="assets/still-11.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The switch back in one piece on the plaster floor, its gold seams catching the low sun.">
+      <div class="col">
+        <h2 id="h-t">Bring me what broke.</h2>
+        <div class="reach">
+          <p class="body">Ready to discuss infrastructure, security, or your next project? <b>Available for freelance, consulting and full-time, in Doha or remote.</b> <span class="local">Doha, Qatar · <span data-doha></span> local</span></p>
+          <div>
+            <a class="mail" href="mailto:man.abduljabbar@gmail.com">man.abduljabbar@<wbr>gmail.com</a>
+            <ul class="links">
+              <li><a href="https://qa.linkedin.com/in/manaf101" target="_blank" rel="noopener">LinkedIn</a></li>
+              <li><a href="https://github.com/txanonymousxt" target="_blank" rel="noopener">GitHub</a></li>
+              <li><a href="assets/cv.pdf" download>Download CV</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-    <div class="welcome-footer">
-      <button class="welcome-cta" onclick="dismissWelcome()">
-        Start Exploring
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </button>
+  </section>
+
+  <section class="catalogue" id="catalogue" aria-labelledby="h-cat">
+    <header class="cat-head reveal">
+      <h2 id="h-cat">Everything else, in order.</h2>
+    </header>
+
+    <div class="entry reveal" id="c-about">
+      <h3>About me</h3>
+      <div class="sheet-body">
+        <div class="me">
+          <img class="me-photo" src="assets/photo.webp" width="360" height="360" loading="lazy" decoding="async" alt="Portrait of Manaf Abduljabbar.">
+          <div>
+            <p class="kicker">Established · Doha, Qatar</p>
+            <h4>Manaf Abduljabbar</h4>
+            <p class="tagline">Computer Engineer · Network Security · Embedded Systems</p>
+            <div class="acts"><a class="btn solid" href="assets/cv.pdf" download>Download CV</a><button type="button" class="btn js-only" data-inspect="">Inspect my career</button></div>
+          </div>
+        </div>
+        <p class="bio">Computer Engineer based in Doha, Qatar, specializing in network infrastructure, security architecture and embedded systems. Building robust, secure systems from silicon to cloud.</p>
+        <dl class="facts">
+          <div><dt>Education</dt><dd>B.Sc. Computer Eng.</dd></div>
+          <div><dt>University</dt><dd>Qatar University '24</dd></div>
+          <div><dt>Location</dt><dd>Doha, Qatar</dd></div>
+        </dl>
+      </div>
     </div>
+
+    <div class="entry reveal" id="c-experience">
+      <h3>Experience</h3>
+      <div class="sheet-body rows">
+        <div class="route">
+          <p class="route-head">traceroute to <b>manaf</b> (kraftxlab), 30 hops max, 60 byte packets</p>
+          <button type="button" class="hop" data-hop="qu" data-org="Qatar University"><span class="hop-n">1</span><span class="hop-host">qatar-univ</span><span class="hop-role"><b>B.Sc. Computer Engineering</b><em>Qatar University</em></span><span class="hop-when">Sep 2018 → May 2024</span><span class="hop-ms" data-span="2018-9>2024-5"></span></button>
+          <button type="button" class="hop" data-hop="applab" data-org="Applab"><span class="hop-n">2</span><span class="hop-host">applab</span><span class="hop-role"><b>IT Business Analyst</b><em>Applab</em></span><span class="hop-when">Aug 2024 → Oct 2024</span><span class="hop-ms" data-span="2024-8>2024-10"></span></button>
+          <button type="button" class="hop" data-hop="meeza" data-org="Meeza"><span class="hop-n">3</span><span class="hop-host">meeza</span><span class="hop-role"><b>NOC Engineer</b><em>Meeza</em></span><span class="hop-when">Nov 2024 → Dec 2025</span><span class="hop-ms" data-span="2024-11>2025-12"></span></button>
+          <button type="button" class="hop here" data-hop="kraftxlab" data-org="KraftxLab"><span class="hop-n">4</span><span class="hop-host">kraftxlab</span><span class="hop-role"><b>Network Engineer</b><em>KraftxLab</em></span><span class="hop-when">Dec 2025 → now</span><span class="hop-ms" data-span="2025-12>now"></span></button>
+        </div>
+        <article>
+          <p class="when">Dec 2025 – present</p>
+          <h4>Network Engineer, KraftxLab</h4>
+          <ul>
+            <li>Routers, switches, firewalls and wireless access points across multiple client deployments</li>
+            <li>VLANs, inter-VLAN routing and OSPF; firewall rules, ACLs and VPN tunnels</li>
+            <li>Monitoring with SNMP, syslog and traffic analysis; Layer 2/3 troubleshooting across switching, routing, DNS and DHCP</li>
+            <li>Topology diagrams and standard configuration baselines</li>
+            <li>Connectivity for IoT and edge devices, with the embedded team</li>
+          </ul>
+        </article>
+        <article>
+          <p class="when">Nov 2024 – Dec 2025</p>
+          <h4>NOC Engineer, Meeza</h4>
+          <ul>
+            <li>5,000+ ITSM tickets resolved within SLA; 600+ advanced cases across virtual machines, performance and connectivity</li>
+            <li>Network health monitoring, firewall policy review and access changes for enterprise clients</li>
+            <li>Two-month TechOps rotation on firewall operations and connectivity troubleshooting</li>
+            <li>Hardware and software faults on desktops, laptops and mobile devices; critical incidents escalated to Tier 2/3 with clear documentation</li>
+            <li>Active Directory accounts, permissions and group policy; Microsoft 365, VPN access and enterprise apps; knowledge base articles for recurring fixes</li>
+          </ul>
+        </article>
+        <article>
+          <p class="when">Aug – Oct 2024</p>
+          <h4>IT Business Analyst, Applab</h4>
+          <ul>
+            <li>Requirements for three government web projects: MSDF, Qatar Rail and Qlife</li>
+            <li>Business needs turned into technical specifications; releases coordinated with frontend and backend developers; features tested before deployment</li>
+          </ul>
+        </article>
+        <article>
+          <p class="when">Sep 2018 – May 2024</p>
+          <h4>B.Sc. Computer Engineering, Qatar University</h4>
+          <ul>
+            <li>College of Engineering, Doha: digital logic and VLSI up to operating systems, networking and software engineering</li>
+            <li>QU Computing Club: Outstanding Project Award, Robotics Track</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+
+    <div class="entry reveal" id="c-projects">
+      <h3>Projects</h3>
+      <div class="sheet-body">
+        <p class="lede">Selected builds, from hardware prototypes to full-stack apps. <button type="button" class="link js-only" data-inspect='type == "project"'>All of them are in the capture</button></p>
+        <ul class="builds">
+          <li class="big"><span class="pc-top"><i>SEC</i>ongoing · flagship</span><b>Redoubt</b><span>Full-scale network security platform built from scratch: traffic monitoring, alerting, anomaly detection, policy enforcement and security event correlation. V2.0 spec mapped to SSCP and CCNA domains, on a six-phase, 18-month roadmap.</span><em>Network Security · Anomaly Detection · Event Correlation · SSCP</em><button type="button" class="link js-only" data-inspect-id="redoubt">Inspect packet</button></li>
+          <li><span class="pc-top"><i>NET</i>completed</span><b>UDST Four-Campus Network</b><span>Enterprise capstone in Cisco Packet Tracer: Doha, Al Khor, Al Wakra and Dukhan with hierarchical IP addressing, VLANs, multi-area OSPF, DHCP relay and Cisco CME VoIP.</span><em>OSPF · VLANs · VoIP</em><button type="button" class="link js-only" data-inspect-id="udst">Inspect packet</button></li>
+          <li><span class="pc-top"><i>SEC</i>built</span><b>Linux Firewall Appliance</b><span>Custom mini PC with Intel i226-V NICs, running IPFire / Debian + nftables + Suricata.</span><em>Suricata · nftables · Linux</em><button type="button" class="link js-only" data-inspect-id="firewall">Inspect packet</button></li>
+          <li><span class="pc-top"><i>OPT</i>Snoonu Hackathon 2026</span><b>Smart Dispatch</b><span>Order batching and route optimization using OSRM for real Doha road routing.</span><em>Python · OSRM · Optimization</em><button type="button" class="link js-only" data-inspect-id="dispatch">Inspect packet</button></li>
+          <li><span class="pc-top"><i>EMB</i>built</span><b>Tremor-Stabilizing Spoon</b><span>Parkinson's device: ESP32-C6, MPU6050 and SG90 servos with a PD controller tuned for 4–6 Hz tremor.</span><em>ESP32-C6 · PD Control · IMU</em><button type="button" class="link js-only" data-inspect-id="spoon">Inspect packet</button></li>
+          <li><span class="pc-top"><i>EMB</i>built</span><b>4-Wheel Mecanum Robot</b><span>Raspberry Pi omnidirectional robot with L298N drivers. Inverse kinematics; circular and geometric movements.</span><em>Raspberry Pi · Python · L298N</em><button type="button" class="link js-only" data-inspect-id="mecanum">Inspect packet</button></li>
+          <li><span class="pc-top"><i>ML</i>built</span><b>Cat / Turtle Detector</b><span>Edge ML on Raspberry Pi: MobileNetV2 + TF Lite with GPIO alarms and Blynk, running on the device with no cloud.</span><em>TF Lite · MobileNetV2 · Blynk</em><button type="button" class="link js-only" data-inspect-id="catdetector">Inspect packet</button></li>
+          <li><span class="pc-top"><i>IOT</i>built</span><b>Water Quality Monitor</b><span>ESP32 + TDS/pH sensors, UV LED, L298N pump and a Blynk dashboard with offline fallback.</span><em>ESP32 · Sensors · Blynk</em><button type="button" class="link js-only" data-inspect-id="water">Inspect packet</button></li>
+          <li><span class="pc-top"><i>EMB</i>built</span><b>Wearable Emotion Sensor</b><span>Beetle ESP32-C6 with MAX30102 and a GSR sensor: signal filtering, feature extraction and emotion classification, within wearable power limits.</span><em>Beetle ESP32-C6 · MAX30102 · GSR</em><button type="button" class="link js-only" data-inspect-id="emotion">Inspect packet</button></li>
+          <li><span class="pc-top"><i>EMB</i>built</span><b>Automated Medication Dispenser</b><span>Firmware scheduling and a mechanical dispensing mechanism. Reliability first: no silent failures.</span><em>Firmware · Scheduling · Mechanical Dispensing</em><button type="button" class="link js-only" data-inspect-id="dispenser">Inspect packet</button></li>
+          <li><span class="pc-top"><i>EMB</i>built</span><b>Charity Donation Box</b><span>Embedded hardware with sensor-triggered Arabic audio playback.</span><em>Sensors · Audio Playback · Embedded Hardware</em><button type="button" class="link js-only" data-inspect-id="charity">Inspect packet</button></li>
+          <li><span class="pc-top"><i>WEB</i>shipped</span><b>KraftxLab Website</b><span>Drove the redesign around a Three.js interactive workbench of real 3D electronic components.</span><em>Three.js · WebGL · Interactive 3D</em><button type="button" class="link js-only" data-inspect-id="kraftsite">Inspect packet</button></li>
+          <li><span class="pc-top"><i>WEB</i>ongoing</span><b>This portfolio</b><span>Several iterations: React, Magic Patterns, Webflow, ManafOS and now this. The logo is The Signal, an M-shaped oscilloscope waveform.</span><em>JavaScript · WebGL · UI/UX</em><button type="button" class="link js-only" data-inspect-id="portfolio">Inspect packet</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entry reveal" id="c-skills">
+      <h3>Skills</h3>
+      <div class="sheet-body">
+        <p class="lede">A live spectrum of what I work with. <span class="js-only">Hover a channel to see the tools behind it.</span></p>
+        <div class="spec js-only"><canvas class="spec-c" aria-hidden="true"></canvas><div class="spec-tip"></div></div>
+        <ul class="levels">
+          <li><b>Networking</b><i style="--p:85"></i><em>85%</em><span>OSPF · EIGRP · BGP · VLANs · DHCP/DNS · SNMP · syslog · Cisco · Juniper · MikroTik</span></li>
+          <li><b>Security</b><i style="--p:80"></i><em>80%</em><span>Firewalls · ACLs · VPN · Suricata · Snort · nftables · Metasploit</span></li>
+          <li><b>Embedded Systems</b><i style="--p:82"></i><em>82%</em><span>ESP32 · Arduino · Raspberry Pi · IMUs · biosensors · servos · 3D printing</span></li>
+          <li><b>Python / Scripting</b><i style="--p:78"></i><em>78%</em><span>Python · Bash · C++ · Java</span></li>
+          <li><b>Web Development</b><i style="--p:75"></i><em>75%</em><span>React · Three.js · Webflow</span></li>
+          <li><b>IoT &amp; Blynk</b><i style="--p:77"></i><em>77%</em><span>Blynk · sensor integration · real-time data pipelines</span></li>
+          <li><b>Cloud &amp; DevOps</b><i style="--p:60"></i><em>60%</em><span>Linux · VMware · Windows Server · Active Directory</span></li>
+          <li><b>UI/UX Design</b><i style="--p:70"></i><em>70%</em><span>Interface and motion design (this page, for one)</span></li>
+        </ul>
+        <h4 class="sub">Tools and technologies</h4>
+        <ul class="chips">
+          <li>Cisco</li><li>Juniper</li><li>MikroTik</li><li>OSPF · EIGRP · BGP</li><li>Suricata</li><li>Snort</li><li>nftables</li><li>Metasploit</li><li>Arduino</li><li>ESP32</li><li>RPi</li><li>TF Lite</li><li>OpenCV</li><li>React</li><li>Three.js</li><li>Python</li><li>Bash</li><li>C++</li><li>Java</li><li>Linux</li><li>Active Directory</li><li>VMware</li><li>Microsoft 365</li>
+        </ul>
+        <h4 class="sub">From the CV</h4>
+        <dl class="skills">
+          <div><dt>Networking</dt><dd>TCP/IP, OSPF, EIGRP, BGP, VLANs, inter-VLAN routing, DNS, DHCP, SNMP, syslog, LAN/WAN/wireless</dd></div>
+          <div><dt>Security</dt><dd>Firewalls, ACLs, site-to-site and remote-access VPN, network monitoring</dd></div>
+          <div><dt>Systems</dt><dd>Windows, Linux, Active Directory, Microsoft 365, VMware</dd></div>
+          <div><dt>Code</dt><dd>Python, Bash, C++, Java</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="entry reveal" id="c-security">
+      <h3>Security operations</h3>
+      <div class="sheet-body">
+        <p class="lede">Defense-in-depth strategies and hands-on security engineering.</p>
+        <div class="sec-layout">
+          <div class="dd">
+            <svg class="dd-svg" viewBox="0 0 280 280" role="img" aria-label="Defense in depth: perimeter and infrastructure outermost, then IDS and IPS, then SOC and response, around the assets at the centre.">
+              <circle class="dd-ring r0" cx="140" cy="140" r="120"/><circle class="dd-ring r1" cx="140" cy="140" r="90"/><circle class="dd-ring r2" cx="140" cy="140" r="60"/>
+              <circle class="dd-core" cx="140" cy="140" r="16"/>
+              <text class="dd-lbl" x="140" y="16">PERIMETER · INFRA</text><text class="dd-lbl" x="140" y="46">IDS / IPS · DEFENSE</text><text class="dd-lbl" x="140" y="76">SOC · RESPONSE</text>
+              <text class="dd-lbl core" x="140" y="143">ASSETS</text>
+              <g class="dd-pk"></g>
+            </svg>
+            <p class="dd-cap js-only">Simulated probes dropped: <b class="dd-count">0</b></p>
+          </div>
+          <div class="sec-cards">
+            <div class="sec-card" data-ring="0"><h4>Network Infrastructure</h4><p>BGP, OSPF, EIGRP. VLAN segmentation, QoS, ACL hardening. Cisco, Juniper, MikroTik.</p><em>BGP · OSPF · ACL · NAT</em></div>
+            <div class="sec-card" data-ring="1"><h4>Network Defense</h4><p>IDS/IPS: Snort and Suricata. SIEM: Splunk, ELK. WAF, VPN, Zero Trust architecture.</p><em>Snort · Suricata · Splunk · ELK</em></div>
+            <div class="sec-card" data-ring="atk"><h4>Offensive Security</h4><p>Pentesting: Metasploit, Burp Suite. Recon: Nmap, OSINT, Shodan. CTF, red team, WiFi auditing.</p><em>Metasploit · Burp Suite · Nmap</em></div>
+            <div class="sec-card" data-ring="2"><h4>Defensive Security</h4><p>SOC monitoring, IR planning. ISO 27001, NIST. Hardening, forensics, auditing.</p><em>ISO 27001 · NIST · IR</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry reveal" id="c-credentials">
+      <h3>Credentials</h3>
+      <div class="sheet-body">
+        <ol class="creds">
+          <li><b>CCNA</b><span>Cisco Certified Network Associate</span><em class="ok">2021</em></li>
+          <li><b>ISC2 SSCP</b><span>Systems Security Certified Practitioner</span><em>In progress</em></li>
+          <li><b>CCNP SCOR</b><span>350-701, Security Core</span><em>In progress</em></li>
+          <li><b>HTB CDSA</b><span>Certified Defensive Security Analyst</span><em>In progress</em></li>
+          <li><b>B.Sc. Computer Engineering</b><span>Qatar University, College of Engineering</span><em class="ok">2018 – 2024</em></li>
+          <li><b>Outstanding Project Award</b><span>QU Computing Club, Robotics Track</span><em class="ok">Award</em></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="entry reveal js-only" id="c-tools">
+      <h3>Terminal and Packet Inspector</h3>
+      <div class="sheet-body">
+        <p class="lede">My career is also a shell and a packet capture. Type <code>nmap manaf</code>, or filter every job and project like Wireshark.</p>
+        <div class="acts"><button type="button" class="btn solid" data-open="terminal">Open the terminal</button><button type="button" class="btn" data-open="inspector">Open Packet Inspector</button></div>
+      </div>
+    </div>
+
+    <div class="entry reveal" id="c-object">
+      <h3>About the object</h3>
+      <div class="about">
+        <p>There is no such switch, and this is no photograph of one. It was sculpted in code as a distance field, the way glaze softens a casting, down to the jacks, vents and fan blades. A radial fracture from one point of impact then cut it into <span data-pieces>96</span> watertight pieces, each with its own broken face.</p>
+        <p><span class="if-live">Every frame is drawn live in your browser, about <span data-tris>340,000</span> triangles</span><span class="if-print">Normally it is drawn live in the browser; these are stills of it,</span> in low sun through a window, with softboxes to catch the glaze, as a photographer would light porcelain. The maker's mark on the lid is my name. The plaques around it are drawn the same way, and they break the same way.</p>
+      </div>
+    </div>
+
+    <div class="entry reveal" id="c-contact">
+      <h3>Contact</h3>
+      <div class="sheet-body">
+        <p class="lede">Ready to discuss infrastructure, security, or your next project? Let's connect.</p>
+        <a class="mail" href="mailto:man.abduljabbar@gmail.com">man.abduljabbar@<wbr>gmail.com</a><span class="port" aria-hidden="true">:25</span>
+        <ul class="links">
+          <li><a href="https://qa.linkedin.com/in/manaf101" target="_blank" rel="noopener">LinkedIn: linkedin.com/in/manaf101</a><span class="port" aria-hidden="true">:443</span></li>
+          <li><a href="https://github.com/txanonymousxt" target="_blank" rel="noopener">GitHub: github.com/txanonymousxt</a><span class="port" aria-hidden="true">:22</span></li>
+          <li><a href="assets/cv.pdf" download>Download CV</a></li>
+        </ul>
+        <p class="local-note">Doha, Qatar<span class="js-only"> · <span data-doha></span> local</span>. Available for freelance, consulting and full-time.</p>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <p>© 2026 Manaf Abduljabbar</p>
+    </footer>
+  </section>
+</main>
+
+<dialog id="sheet" class="sheet" aria-labelledby="sheet-title">
+  <div class="sheet-frame">
+    <header class="sheet-head"><h2 id="sheet-title"></h2><button type="button" class="sheet-x" aria-label="Close">×</button></header>
+    <div class="sheet-main"></div>
   </div>
-</div>
+  <div class="toasts" aria-live="polite"></div>
+</dialog>
 
-<!-- TASKBAR HINT -->
-<div class="taskbar-hint" id="taskbar-hint">
-  <div class="taskbar-hint-text">Start menu · open apps · live packet counter</div>
-  <div class="taskbar-hint-arrow"></div>
-</div>
-
-<!-- TOASTS -->
-<div class="toast-container" id="toasts"></div>
-
-<!-- CONTEXT MENU -->
-<div class="ctx-menu" id="ctx-menu">
-  <div class="ctx-item" onclick="ctxAction('ping')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="7" opacity=".6"/></svg> Ping the network</div>
-  <div class="ctx-item" onclick="ctxAction('inspector')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg> Open Packet Inspector</div>
-  <div class="ctx-item" onclick="ctxAction('terminal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg> Open Terminal</div>
-  <div class="ctx-item" onclick="ctxAction('theme')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg> <span id="ctx-theme-label">Switch to dark mode</span></div>
-  <div class="ctx-divider"></div>
-  <div class="ctx-item" onclick="ctxAction('refresh')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Refresh Desktop</div>
-  <div class="ctx-item" onclick="ctxAction('about')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg> About ManafOS</div>
-</div>
-
-<script src="fx.js"></script>
+<script src="vendor/meshopt_decoder.js"></script>
+<script src="portrait.js"></script>
+<script src="items.js"></script>
 <script src="inspector.js"></script>
-<script src="script.js"></script>
-<script type="module" src="scene.js"></script>
+<script src="sculpt.js"></script>
+<script src="mended.js"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@ const Inspector = (() => {
   const NOW_YEAR = new Date().getFullYear();
 
   // ---------- career.pcapng ----------
-  // Facts come from Manaf's CV and his own portfolio copy. No phone number, no invented details.
+  // Facts come from Manaf's CV and the live portfolio's copy. No phone number, no invented details.
   const CAREER = [
     { id: 'qu', type: 'education', proto: 'EDU', when: '2018-09', title: 'B.Sc. Computer Engineering', org: 'Qatar University', host: 'qatar-univ',
       period: 'Sep 2018 - May 2024', years: [2018, 2024], status: 'completed', tags: ['education', 'engineering', 'robotics'],
@@ -164,13 +164,13 @@ const Inspector = (() => {
         ['c', 'You did the KraftxLab website too?'],
         ['s', 'I drove the redesign! We rejected the generic templates and built a Three.js interactive workbench full of real 3D electronic components: ESP32 modules, relay boards, capacitors and resistors.'],
       ] },
-    { id: 'portfolio', type: 'project', proto: 'WEB', when: 'live', title: 'ManafOS (this portfolio)', org: 'txanonymousxt.github.io', host: 'github.io',
+    { id: 'portfolio', type: 'project', proto: 'WEB', when: 'live', title: 'Mended (this portfolio)', org: 'txanonymousxt.github.io', host: 'github.io',
       status: 'ongoing', tags: ['web', '3d'],
-      skills: ['JavaScript', 'WebGL', 'Three.js', 'UI/UX'],
-      hl: ['Several iterations: React, Magic Patterns, Webflow and now ManafOS', 'Logo "The Signal": an M-shaped oscilloscope waveform', 'v5: the whole site is a network, and this capture is part of it'],
+      skills: ['JavaScript', 'WebGL', 'UI/UX'],
+      hl: ['Several iterations: React, Magic Patterns, Webflow, ManafOS and now Mended', 'Logo "The Signal": an M-shaped oscilloscope waveform', 'A porcelain switch, broken and mended, drawn live in the browser; this capture is part of it'],
       stream: [
         ['c', 'Wait, is this portfolio a project too?'],
-        ['s', 'Of course! It has been through React, Magic Patterns and Webflow versions. The logo is "The Signal", an M-shaped oscilloscope waveform. And now it\'s a whole OS where everything is a packet, including this conversation.'],
+        ['s', 'Of course! It has been through React, Magic Patterns, Webflow and ManafOS versions. The logo is "The Signal", an M-shaped oscilloscope waveform. And everything here is still a packet, including this conversation.'],
       ] },
     { id: 'sscp', type: 'cert', proto: 'CERT', when: 'now', title: 'ISC2 SSCP', org: 'ISC2', host: 'isc2',
       status: 'in-progress', tags: ['security', 'cert'],
@@ -314,7 +314,7 @@ const Inspector = (() => {
     if (pnode) { shift(pnode); tree.push(pnode); }
     const bytes = Uint8Array.from(b.a);
     tree.unshift(field(`Frame: ${bytes.length} bytes on wire (${bytes.length * 8} bits), ${bytes.length} bytes captured`, 0, bytes.length, [
-      field('Encapsulation type: Ethernet (1)'), field(`Frame Length: ${bytes.length} bytes`), field('[Coloring Rule Name: ManafOS]'),
+      field('Encapsulation type: Ethernet (1)'), field(`Frame Length: ${bytes.length} bytes`), field('[Coloring Rule Name: Mended]'),
     ]));
     return { bytes, tree };
   }
@@ -389,7 +389,7 @@ const Inspector = (() => {
   const LIVE = [];
   const t0 = () => performance.now();
   const YOU_IP = [192, 0, 2, 24];          // documentation range: addresses are placeholders
-  const ipFor = (host) => host === 'manafos.local' ? [10, 24, 0, 1] : host === 'resolver' ? [192, 0, 2, 53] : (() => { const h = fnv(host); return [198, 51, 100, (h % 250) + 2]; })();
+  const ipFor = (host) => host === 'manaf.local' ? [10, 24, 0, 1] : host === 'resolver' ? [192, 0, 2, 53] : (() => { const h = fnv(host); return [198, 51, 100, (h % 250) + 2]; })();
   const ctype = (path, initiator, host = '') => { const e = (path.split('?')[0].split('.').pop() || '').toLowerCase(); if (!/\./.test(path.split('/').pop())) { if (/fonts\.googleapis/.test(host) || initiator === 'link') return 'text/css'; if (/gstatic/.test(host) || initiator === 'css') return 'font/woff2'; if (initiator === 'script') return 'text/javascript'; if (initiator === 'img') return 'image/*'; } return ({ css: 'text/css', js: 'text/javascript', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', svg: 'image/svg+xml', woff2: 'font/woff2', pdf: 'application/pdf', json: 'application/json' })[e] || (path.endsWith('/') ? 'text/html' : 'application/octet-stream'); };
   let seeded = false, ports = 51000;
   const hostPort = new Map(), SRV = new Map();
@@ -397,7 +397,7 @@ const Inspector = (() => {
   const srvPort = (host) => SRV.get(host) || 443;
 
   function liveSummary(ev) {
-    const host = ev.host || 'manafos.local';
+    const host = ev.host || 'manaf.local';
     const fwd = !(ev.dir === 'r' || ev.dir === 'res' || ev.dir === 'rep' || ev.dir === 's' || ev.back);
     const [src, dst] = fwd ? ['you', host] : [host, 'you'];
     let proto = 'TCP', info = '', layers = ['eth', 'ip'];
@@ -452,11 +452,11 @@ const Inspector = (() => {
 
   function liveBuild(F) {
     if (F.bytes) return F;
-    const ev = F.ev, host = ev.host || 'manafos.local';
+    const ev = F.ev, host = ev.host || 'manaf.local';
     const fwd = F.src === 'you';
     const you = { mac: MAC.you, name: 'you', ip: YOU_IP };
-    const peerHost = ev.kind === 'dns' ? 'resolver' : ev.kind === 'icmp' ? 'manafos.local' : host;
-    const peer = { mac: peerHost === 'manafos.local' ? MAC.manaf : MAC.gw, name: peerHost === 'manafos.local' ? 'manaf' : 'gateway', ip: ipFor(peerHost) };
+    const peerHost = ev.kind === 'dns' ? 'resolver' : ev.kind === 'icmp' ? 'manaf.local' : host;
+    const peer = { mac: peerHost === 'manaf.local' ? MAC.manaf : MAC.gw, name: peerHost === 'manaf.local' ? 'manaf' : 'gateway', ip: ipFor(peerHost) };
     const [S, D] = fwd ? [you, peer] : [peer, you];
     const sp = portFor(host), dp = srvPort(host);
     const base = { srcMac: S.mac, dstMac: D.mac, srcName: S.name, dstName: D.name, srcIp: S.ip, dstIp: D.ip };
@@ -514,13 +514,13 @@ const Inspector = (() => {
       case 'http': {
         const req = ev.dir === 'req', h2 = ev.alpn === 'h2' || ev.alpn === 'h3';
         const lines = req
-          ? (h2 ? [':method: GET', `:path: ${ev.path}`, `:authority: ${host}`, ':scheme: https', `accept: ${ev.app ? 'application/x-manafos-app' : '*/*'}`] : [`GET ${ev.path} HTTP/1.1`, `Host: ${host}`, 'Accept: */*'])
+          ? (h2 ? [':method: GET', `:path: ${ev.path}`, `:authority: ${host}`, ':scheme: https', `accept: ${ev.app ? 'application/x-mended-item' : '*/*'}`] : [`GET ${ev.path} HTTP/1.1`, `Host: ${host}`, 'Accept: */*'])
           : (h2 ? [`:status: ${ev.status}`, `content-type: ${ev.type}`, ...(ev.size ? [`content-length: ${ev.size}`] : [])] : [`HTTP/1.1 ${ev.status} OK`, `Content-Type: ${ev.type}`, ...(ev.size ? [`Content-Length: ${ev.size}`] : [])]);
         const gen = [];
         if (!req && ev.dur) gen.push(`[Time since request: ${ev.dur.toFixed(3)} ms]`);
         if (!req) gen.push(ev.size ? `[Transfer size: ${ev.size} bytes]` : ev.tao ? '[Served from browser cache]' : '[Transfer size withheld by server]');
         if (!req && !ev.tao) gen.push('[Detailed timing withheld by server: no Timing-Allow-Origin]');
-        if (ev.app) gen.push(`[ManafOS app: ${ev.app}]`); else gen.push(realNote);
+        if (ev.app) gen.push(`[Item: ${ev.app}]`); else gen.push(realNote);
         const pl = textPayload(h2 ? (ev.alpn === 'h3' ? 'HyperText Transfer Protocol 3' : 'HyperText Transfer Protocol 2') : 'Hypertext Transfer Protocol', [...lines.map((l) => ({ raw: l + '\r\n' })), { raw: '\r\n' }], gen);
         built = ev.alpn === 'h3' ? frame({ ...base, l4: 'udp', sport: fwd ? sp : dp, dport: fwd ? dp : sp, payload: pl })
           : frame({ ...base, l4: 'tcp', sport: fwd ? sp : dp, dport: fwd ? dp : sp, seq: fnv(host + ev.path + F.no), payload: pl });
@@ -536,7 +536,7 @@ const Inspector = (() => {
       case 'icmp': {
         const req = ev.dir === 'req';
         const extra = req ? [] : [`[Response time: ${ev.time.toFixed(3)} ms]`, ev.real ? `[Measured: real HTTP HEAD round trip to ${location.hostname}]` : '[Simulated: page opened without a server]'];
-        built = frame({ ...base, l4: 'icmp', ttl: req ? 64 : ev.ttl, icmp: { type: req ? 8 : 0, id: 0x4d41, seq: ev.seq, extra }, payload: (b) => { b.str(`ManafOS ping -> ${ev.target} `.padEnd(48, '.')); return null; } });
+        built = frame({ ...base, l4: 'icmp', ttl: req ? 64 : ev.ttl, icmp: { type: req ? 8 : 0, id: 0x4d41, seq: ev.seq, extra }, payload: (b) => { b.str(`manaf ping -> ${ev.target} `.padEnd(48, '.')); return null; } });
         break;
       }
     }
@@ -550,7 +550,7 @@ const Inspector = (() => {
     const F = { ev, time: (ev.t / 1000).toFixed(6), ...s, len: 0, no: 0 };
     liveBuild(F);
     F.rec = {
-      proto: s.proto.toLowerCase(), host: (ev.host || (ev.kind === 'icmp' ? ev.target : 'manafos.local')).toLowerCase(), src: s.src.toLowerCase(), dst: s.dst.toLowerCase(),
+      proto: s.proto.toLowerCase(), host: (ev.host || (ev.kind === 'icmp' ? ev.target : 'manaf.local')).toLowerCase(), src: s.src.toLowerCase(), dst: s.dst.toLowerCase(),
       info: s.info.toLowerCase(), len: F.len, time: ev.t / 1000, path: (ev.path || '').toLowerCase(), status: ev.status || null, app: ev.app || null,
       layers: s.layers, frame: [s.src, s.dst, s.proto, s.info, ev.host, ev.path, ev.app, ev.cmd].filter(Boolean).join(' ').toLowerCase(),
     };
@@ -617,18 +617,18 @@ const Inspector = (() => {
     const appName = (id) => (typeof APPS !== 'undefined' && (APPS.find((a) => a.id === id) || {}).name) || id;
     switch (e.kind) {
       case 'open':
-        pushLive({ kind: 'http', dir: 'req', host: 'manafos.local', path: `/apps/${e.app}`, alpn: 'h2', app: appName(e.app) });
-        pushLive({ kind: 'http', dir: 'res', host: 'manafos.local', path: `/apps/${e.app}`, alpn: 'h2', app: appName(e.app), status: 200, type: 'application/x-manafos-app', size: e.size || 0, dur: 0.4 + Math.random(), tao: true, t: t0() + 0.4 });
+        pushLive({ kind: 'http', dir: 'req', host: 'manaf.local', path: `/apps/${e.app}`, alpn: 'h2', app: appName(e.app) });
+        pushLive({ kind: 'http', dir: 'res', host: 'manaf.local', path: `/apps/${e.app}`, alpn: 'h2', app: appName(e.app), status: 200, type: 'application/x-mended-item', size: e.size || 0, dur: 0.4 + Math.random(), tao: true, t: t0() + 0.4 });
         break;
-      case 'close': pushLive({ kind: 'tcp', flags: 'FIN', host: 'manafos.local', app: appName(e.app) }); break;
-      case 'min': pushLive({ kind: 'tcp', flags: 'ACK', host: 'manafos.local', back: true, note: 'zero', app: appName(e.app) }); break;
-      case 'restore': pushLive({ kind: 'tcp', flags: 'ACK', host: 'manafos.local', back: true, note: 'update', win: 64240, what: `${appName(e.app)} restored` }); break;
-      case 'max': pushLive({ kind: 'tcp', flags: 'ACK', host: 'manafos.local', back: true, note: 'update', win: 65535, what: `${appName(e.app)} ${e.on ? 'maximized' : 'unmaximized'}` }); break;
-      case 'move': pushLive({ kind: 'tcp', flags: 'ACK', host: 'manafos.local', back: true, note: 'update', win: 64240, what: `${appName(e.app)} moved to ${e.x},${e.y}` }); break;
+      case 'close': pushLive({ kind: 'tcp', flags: 'FIN', host: 'manaf.local', app: appName(e.app) }); break;
+      case 'min': pushLive({ kind: 'tcp', flags: 'ACK', host: 'manaf.local', back: true, note: 'zero', app: appName(e.app) }); break;
+      case 'restore': pushLive({ kind: 'tcp', flags: 'ACK', host: 'manaf.local', back: true, note: 'update', win: 64240, what: `${appName(e.app)} restored` }); break;
+      case 'max': pushLive({ kind: 'tcp', flags: 'ACK', host: 'manaf.local', back: true, note: 'update', win: 65535, what: `${appName(e.app)} ${e.on ? 'maximized' : 'unmaximized'}` }); break;
+      case 'move': pushLive({ kind: 'tcp', flags: 'ACK', host: 'manaf.local', back: true, note: 'update', win: 64240, what: `${appName(e.app)} moved to ${e.x},${e.y}` }); break;
       case 'ssh': {
         const len = 32 + Math.ceil((e.cmd.length + 5) / 16) * 16;
-        pushLive({ kind: 'ssh', host: 'manafos.local', len, cmd: e.cmd });
-        pushLive({ kind: 'ssh', host: 'manafos.local', back: true, dir: 's', len: len + 48 + Math.floor(Math.random() * 6) * 16, t: t0() + 0.6 });
+        pushLive({ kind: 'ssh', host: 'manaf.local', len, cmd: e.cmd });
+        pushLive({ kind: 'ssh', host: 'manaf.local', back: true, dir: 's', len: len + 48 + Math.floor(Math.random() * 6) * 16, t: t0() + 0.6 });
         break;
       }
       case 'icmp': pushLive({ kind: 'icmp', dir: e.dir, seq: e.seq, target: e.target, ttl: e.ttl, time: e.time, real: e.real, host: e.target }); break;
@@ -640,7 +640,7 @@ const Inspector = (() => {
   // ---------- display filters ----------
   const FIELDS = {
     career: { proto: 'Protocol (EDU, JOB, CERT, NET, SEC, EMB, IOT, ML, WEB, OPT)', type: 'education · job · cert · project', title: 'Role or project title', org: 'Organization', year: 'Any year the item was active', skill: 'An item in the stack', tag: 'networking, security, embedded, ml, web, iot…', status: 'current · completed · ongoing · in-progress', host: 'Destination host', len: 'Frame length', frame: 'Whole frame text' },
-    live: { proto: 'DNS, TCP, TLS, QUIC, HTTP2, HTTP3, ICMP, SSH', host: 'Remote host', src: 'Source', dst: 'Destination', path: 'HTTP path', status: 'HTTP status', len: 'Frame length', time: 'Seconds since page load', info: 'Info column', app: 'ManafOS app', frame: 'Whole frame text' },
+    live: { proto: 'DNS, TCP, TLS, QUIC, HTTP2, HTTP3, ICMP, SSH', host: 'Remote host', src: 'Source', dst: 'Destination', path: 'HTTP path', status: 'HTTP status', len: 'Frame length', time: 'Seconds since page load', info: 'Info column', app: 'Item', frame: 'Whole frame text' },
   };
   const ALIAS = { role: 'title', name: 'title', company: 'org', organization: 'org', skills: 'skill', tags: 'tag', date: 'year', 'frame.len': 'len', 'ip.dst': 'host', 'ip.addr': 'host', 'ip.src': 'src', 'http.request.uri': 'path', 'http.response.code': 'status', 'frame.time_relative': 'time' };
   const LAYERS = {
@@ -721,7 +721,7 @@ const Inspector = (() => {
   }
 
   // Plain-English questions become filters (shown in yellow, like Wireshark's "questionable" state)
-  const STOP = new Set('a an the and or of to in on at for with about your yours you me my i is are was were be been do does did what which who whom how where when why tell show list give all any have has had can could would should will please manaf his he him some more info anything something stuff things thing kind kinds type types ever really most best favourite favorite know like using use used'.split(' '));
+  const STOP = new Set('a an the and or of to in on at for with about your yours you me my i is are was were be been do does did what which who whom how where when why tell show list give all any have has had can could would should will please manaf his he him her she they them their some more info anything something stuff things thing kind kinds type types ever really most best favourite favorite know like using use used'.split(' '));
   const NL_TYPE = [[/^(jobs?|work(ed|s|ing)?|experience|career|compan(y|ies)|employ\w*|roles?|positions?)$/, 'type == "job"'], [/^(projects?|built|build|making|made|hacks?|hackathon)$/, 'type == "project"'], [/^(certs?|certifications?|certified|certificates?|exams?|studying)$/, 'type == "cert"'], [/^(education|stud(y|ied)|university|degree|college|school|uni|graduat\w*)$/, 'type == "education"']];
   const NL_TAG = [[/^(network(ing|s)?|routing|switching|cisco)$/, 'tag == "networking"'], [/^(security|cyber\w*|firewalls?|soc|defen[cs]e|hacking)$/, 'tag == "security"'], [/^(embedded|electronics|hardware|robots?|robotics|firmware|microcontrollers?)$/, 'tag == "embedded" || tag == "robotics"'], [/^(ai|ml|machine|learning|deep|vision)$/, 'tag == "ml"'], [/^(web|websites?|frontend|3d)$/, 'tag == "web"'], [/^(iot|sensors?)$/, 'tag == "iot" || frame contains "sensor"'], [/^(now|current(ly)?|today|latest|recent(ly)?)$/, 'status == "current" || status == "in-progress" || status == "ongoing"'], [/^(health|medical|parkinson'?s?)$/, 'tag == "health"']];
   const NL_CONTACT = /^(contact|email|mail|hire|reach|phone|linkedin|github|call|message)$/;
@@ -763,7 +763,7 @@ const Inspector = (() => {
 
   const CHIPS = {
     career: [['Jobs', 'type == "job"'], ['Projects', 'type == "project"'], ['Certs', 'type == "cert"'], ['Networking', 'tag == "networking"'], ['Security', 'tag == "security"'], ['Embedded', 'tag == "embedded"'], ['Since 2024', 'year >= 2024'], ['Python', 'skill == "python"']],
-    live: [['HTTP', 'http'], ['DNS', 'dns'], ['TLS', 'tls || quic'], ['Handshakes', 'tcp && info contains "syn"'], ['ICMP', 'icmp'], ['SSH', 'ssh'], ['My clicks', 'host == "manafos.local"'], ['Big frames', 'len > 400']],
+    live: [['HTTP', 'http'], ['DNS', 'dns'], ['TLS', 'tls || quic'], ['Handshakes', 'tcp && info contains "syn"'], ['ICMP', 'icmp'], ['SSH', 'ssh'], ['My clicks', 'host == "manaf.local"'], ['Big frames', 'len > 400']],
   };
   const EXAMPLES = ['skill == "python"', 'year >= 2024 && proto == JOB', 'esp32', 'tag == "security" && type == "project"', 'org contains "meeza"', 'what did you build with esp32?'];
 
@@ -994,7 +994,7 @@ const Inspector = (() => {
     if (!F) {
       tree.innerHTML = `<div class="insp-intro"><b>${st.tab === 'career' ? 'My career, as a packet capture.' : 'Your session, captured live.'}</b>${st.tab === 'career'
         ? `Type a Wireshark display filter, or just ask a question.<div class="ex">${EXAMPLES.map((x) => `<button data-ex="${esc(x)}">${esc(x)}</button>`).join('')}</div>Double-click any packet to <em>Follow</em> its stream.`
-        : 'Every DNS lookup, TCP handshake and TLS hello your browser made to load this page, with real timings. Open apps, run terminal commands or click the desktop to ping, and watch them land here.'}</div>`;
+        : 'Every DNS lookup, TCP handshake and TLS hello your browser made to load this page, with real timings. Open items, run terminal commands or click anywhere in the room to ping, and watch them land here.'}</div>`;
       hx.innerHTML = ''; flat = []; hexEls = []; return;
     }
     liveBuild(F);
@@ -1113,7 +1113,7 @@ const Inspector = (() => {
     } else if (F.ev.kind === 'ssh') {
       const gib = (n) => { const r = new Uint8Array(n); crypto.getRandomValues(r); return [...r].map((x) => String.fromCharCode(33 + (x % 90))).join(''); };
       msgs = [['c', gib(48)], ['s', gib(96)], ['c', gib(32)], ['s', '[The content is encrypted. That is the point. Try the Terminal instead.]']];
-      title = 'Follow TCP Stream · ssh manafos.local';
+      title = 'Follow TCP Stream · ssh manaf.local';
     } else if (F.ev.kind === 'http') {
       const req = LIVE.find((x) => x.ev.kind === 'http' && x.ev.dir === 'req' && x.ev.path === F.ev.path && x.ev.host === F.ev.host);
       const res = LIVE.find((x) => x.ev.kind === 'http' && x.ev.dir === 'res' && x.ev.path === F.ev.path && x.ev.host === F.ev.host);
