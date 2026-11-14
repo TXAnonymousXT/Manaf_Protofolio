@@ -18,7 +18,7 @@ const smoother = (t) => { t = clamp(t); return t * t * t * (t * (t * 6 - 15) + 1
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } } };
 
-const SEAL = [131, 22, 10];     // the maker's mark on the lid: the largest area the cracks leave clear
+const SEAL = [0, 201, -14];     // the maker's mark, on the back of the shield, clear of every crack
 const SEAL_SIZE = 70;           // millimetres covered by its texture
 const STEP = 52 * Math.PI / 180;   // how far the ring turns from one plaque to the next
 const PW = 540, PH = 360, PT = 14; // a plaque, in millimetres
@@ -172,10 +172,7 @@ uniform vec3 uEye, uImpact;
 uniform mat4 uLightVP;
 uniform highp sampler2DShadow uShadow;
 uniform sampler2D uNoise, uFront, uSeal;
-uniform float uGold, uHeat, uShadowR, uTime, uGoldGain, uGlow, uMainObj;
-uniform sampler2D uScreen;
-uniform vec4 uScrRect;
-uniform vec3 uScrBase, uScrInk;
+uniform float uGold, uHeat, uShadowR, uTime, uGoldGain, uGlow, uPulse;
 uniform vec3 uGlaze, uGlazeDeep, uFace, uMatte, uMark, uHair, uGoldBase;
 out vec4 o;
 ${ENV_GLSL}
@@ -200,8 +197,7 @@ void main(){
   { float flc = floor(vMisc.z*255.0 + 0.5); if (abs(flc - 1.0) < 0.5) ao = mix(ao, 1.0, 0.82); }
   float sv = vMisc.y*24.0 - 12.0;              // mm along the glaze from the break; negative on a broken face
   float fl = floor(vMisc.z*255.0 + 0.5);
-  bool matte = abs(fl - 1.0) < 0.5, gilded = fl > 1.5 && fl < 2.5, screen = fl > 2.5;
-  vec3 scrGlow = vec3(0.0);
+  bool matte = abs(fl - 1.0) < 0.5, gilded = fl > 1.5;
 
   vec3 rn = vRest;
   vec3 aw = abs(normalize(vRestN)) + 0.001; aw /= aw.x + aw.y + aw.z;
@@ -229,7 +225,11 @@ void main(){
   float faceGold = face*fall(band - 0.5, band + 0.5, -sv + (n2.g - 0.5)*1.3 + (n3.g - 0.5)*0.5);
 
   float goldMask = max(seam, faceGold)*g;
-  if (gilded) goldMask = 1.0;
+  if (gilded) {
+    float ag = arr + 0.42, gg = smoothstep(ag - 0.05, ag, uGold - 0.02);
+    goldMask = gg;
+    hot = max(hot, gg*exp(-max(uGold - ag, 0.0)*7.0));
+  }
   float hair = (sv >= 0.0 && !gilded) ? (1.0 - g)*fall(0.12, 0.55 + aa, sv) : 0.0;
 
   // base layers
@@ -257,26 +257,13 @@ void main(){
     Nb = normalize(N + wob);
     // underglaze ink: the markings on the front plate and lid, in Royal Indigo
     float cb = 0.0;
-    if (uMainObj < 0.5) cb = 0.0;
-    else if (vRestN.z > 0.7 && vRest.z > 139.0) cb = texture(uFront, vec2((vRest.x + 220.0)/440.0, (22.0 - vRest.y)/44.0)).r;
-    else if (vRestN.y > 0.7 && vRest.y > 20.0) {
-      vec2 su = (vRest.xz - vec2(${SEAL[0].toFixed(1)}, ${SEAL[2].toFixed(1)}))/${SEAL_SIZE.toFixed(1)} + 0.5;
+    if (vRestN.z > 0.7 && vRest.z > 139.0) cb = texture(uFront, vec2((vRest.x + 220.0)/440.0, (22.0 - vRest.y)/44.0)).r;
+    else if (vRestN.z < -0.7 && vRest.z < ${(SEAL[2] + 1.5).toFixed(1)}) {
+      vec2 su = vec2(${SEAL[0].toFixed(1)} - vRest.x, ${SEAL[1].toFixed(1)} - vRest.y)/${SEAL_SIZE.toFixed(1)} + 0.5;
       if (all(greaterThan(su, vec2(0.0))) && all(lessThan(su, vec2(1.0)))) cb = texture(uSeal, su).r;
     }
     alb = mix(alb, uMark*(0.8 + 0.4*n3.b), pow(cb, 0.72)*(0.88 + 0.12*n2.a));
     alb = mix(alb, uHair, hair*0.85);
-    if (screen) {
-      // a picture tube: deep indigo glass, with the text lit from inside it
-      vec2 su = (vRest.xy - uScrRect.xy)/uScrRect.zw;
-      vec4 txt = texture(uScreen, vec2(su.x, 1.0 - su.y));
-      float edge = smoothstep(0.0, 0.05, su.x)*smoothstep(0.0, 0.05, su.y)*smoothstep(0.0, 0.05, 1.0 - su.x)*smoothstep(0.0, 0.05, 1.0 - su.y);
-      float scan = 0.86 + 0.14*sin(su.y*420.0);
-      alb = uScrBase;
-      rough = 0.07;
-      F0 = vec3(0.05);
-      Nb = normalize(N + wob*0.5);
-      scrGlow = uScrInk*txt.r*scan*edge + uScrInk*0.05*edge*(1.0 - length(su - 0.5));
-    }
   }
 
   { vec3 fn = fwidth(N); rough = clamp(sqrt(rough*rough + min(dot(fn, fn)*0.5, 0.22)), rough, 1.0); }
@@ -293,7 +280,6 @@ void main(){
   vec3 col = alb*irradiance(Nb, sh)*aoD*(1.0 - F*coat*0.8) + envAll(R, rough, sh)*F*so;
   // a touch of light carried through the body at grazing angles
   col += alb*vec3(1.0, 0.86, 0.72)*0.035*pow(max(1.0 - NdV, 0.0), 2.0)*(1.0 - face);
-  col += scrGlow;
 
   // gold
   if (goldMask > 0.001) {
@@ -328,6 +314,14 @@ void main(){
     // molten at the front of the pour, and for a moment when the seams are rejoined
     float glow = max(hot, uHeat)*goldMask;
     col += vec3(2.1, 0.72, 0.09)*glow*(0.55 + 0.45*n2.r);
+    if (gilded && uPulse > 0.001) {
+      float rr = length(vRest.xy - vec2(0.0, 186.0));
+      float ph = fract(uTime/5.5);
+      float pk = exp(-pow((rr - (150.0 + ph*330.0))/12.0, 2.0))*step(152.0, rr)*smoothstep(0.0, 0.1, ph)*(1.0 - smoothstep(0.85, 1.0, ph));
+      float sw = (vRest.x + vRest.y - 186.0)*0.7071, ph2 = fract(uTime/7.0 + 0.35);
+      float shine = exp(-pow((sw - (-260.0 + ph2*640.0))/16.0, 2.0))*(1.0 - step(152.0, rr));
+      col += (vec3(2.6, 1.8, 0.7)*pk + vec3(1.4, 1.15, 0.75)*shine*0.55)*uPulse*goldMask;
+    }
   }
   if (any(isnan(col)) || any(isinf(col))) col = vec3(0.7);
   col = min(col, vec3(30.0));
@@ -352,7 +346,7 @@ uniform vec3 uEye;
 uniform mat4 uLightVP;
 uniform highp sampler2DShadow uShadow;
 uniform sampler2D uNoise, uCard;
-uniform float uShadowR, uGoldGain, uGlow, uFill;
+uniform float uShadowR, uGoldGain, uGlow, uFill, uInkOn;
 uniform vec3 uGlaze, uMark, uGoldBase;
 out vec4 o;
 ${ENV_GLSL}
@@ -375,7 +369,7 @@ vec3 shadePlaque(vec3 world, vec3 N0, vec2 uv, float front, float gilt){
   vec2 q = uv*vec2(1.5, 1.0);
   vec4 n2 = texture(uNoise, q*1.7), n3 = texture(uNoise, q*11.0);
   vec4 card = texture(uCard, uv);
-  float ink = card.r*front;
+  float ink = card.r*front*((uv.x > 0.54 && uv.y > 0.36) ? uInkOn : 1.0);
   vec3 alb = uGlaze*(1.0 - 0.02*n2.g);
   alb = mix(alb, uMark*(0.8 + 0.4*n3.b), ink*(0.92 + 0.08*n2.a));
   float rough = 0.13 + 0.05*n2.r;
@@ -540,7 +534,7 @@ precision highp float;
 in vec2 vUv; out vec4 o;
 uniform vec3 uEye;
 uniform mat4 uInvVP;
-uniform float uFloor, uExtent, uLime, uBarLine, uBeamGlow, uTitleA;
+uniform float uFloor, uExtent, uLime, uBarLine, uBeamGlow, uTitleA, uTitleWipe;
 uniform sampler2D uTitle;
 uniform vec4 uTitleRect;
 uniform vec3 uTitleInk;
@@ -582,7 +576,11 @@ void main(){
   }
   if (uTitleA > 0.001) {
     vec2 tq = (gl_FragCoord.xy/uRes - uTitleRect.xy)/uTitleRect.zw;
-    if (all(greaterThan(tq, vec2(0.0))) && all(lessThan(tq, vec2(1.0)))) col = mix(col, uTitleInk, texture(uTitle, vec2(tq.x, 1.0 - tq.y)).a*uTitleA);
+    if (all(greaterThan(tq, vec2(0.0))) && all(lessThan(tq, vec2(1.0)))) {
+      float a = texture(uTitle, vec2(tq.x, 1.0 - tq.y)).a*uTitleA*(1.0 - smoothstep(uTitleWipe - 0.10, uTitleWipe, tq.x));
+      vec3 ink = mix(uTitleInk, vec3(1.6, 1.1, 0.42), exp(-pow((tq.x - uTitleWipe + 0.06)/0.045, 2.0))*step(uTitleWipe, 1.08));
+      col = mix(col, ink, a);
+    }
   }
   o = vec4(col/(1.0 + max(col.r, max(col.g, col.b))), 1.0);
 }`;
@@ -683,11 +681,18 @@ void main(){
   o = vec4(sum/9.0, c.a);
 }`;
 
+const BRIGHT_FS = `#version 300 es
+precision highp float; in vec2 vUv; out vec4 o; uniform sampler2D uT; uniform float uThresh;
+void main(){ vec3 c = texture(uT, vUv).rgb; c /= max(1.0 - max(c.r, max(c.g, c.b)), 0.03); float l = max(c.r, max(c.g, c.b)); float k = max(l - uThresh, 0.0); k = k*k/(k + 0.5); o = vec4(c*(k/max(l, 1e-4)), 1.0); }`;
+const BBLUR_FS = `#version 300 es
+precision highp float; in vec2 vUv; out vec4 o; uniform sampler2D uT; uniform vec2 uDir;
+void main(){ vec3 s = texture(uT, vUv).rgb*0.2270270270; s += (texture(uT, vUv + uDir*1.3846153846).rgb + texture(uT, vUv - uDir*1.3846153846).rgb)*0.3162162162; s += (texture(uT, vUv + uDir*3.2307692308).rgb + texture(uT, vUv - uDir*3.2307692308).rgb)*0.0702702703; o = vec4(s, 1.0); }`;
+
 const FINAL_FS = `#version 300 es
 precision highp float;
 in vec2 vUv; out vec4 o;
-uniform sampler2D uHdr, uDof;
-uniform float uDofOn, uGrain, uTime, uVig, uExposure;
+uniform sampler2D uHdr, uDof, uBloom;
+uniform float uDofOn, uGrain, uTime, uVig, uExposure, uBloomAmt, uCA;
 uniform vec2 uHalfTexel;
 vec3 neutral(vec3 c){
   const float start = 0.76, desat = 0.15;
@@ -703,15 +708,22 @@ vec3 neutral(vec3 c){
   return mix(c, vec3(np), g);
 }
 float grain(vec2 p){ vec3 q = fract(vec3(p.xyx)*0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y)*q.z); }
-void main(){
-  vec3 c = texture(uHdr, vUv).rgb;
+vec3 fetch(vec2 uv){
+  vec3 c = texture(uHdr, uv).rgb;
   c /= max(1.0 - max(c.r, max(c.g, c.b)), 0.03);
   if (uDofOn > 0.5) {
     vec2 h = uHalfTexel;
-    vec4 d = texture(uDof, vUv)*0.36 + (texture(uDof, vUv + vec2(h.x, h.y)) + texture(uDof, vUv + vec2(-h.x, h.y)) + texture(uDof, vUv + vec2(h.x, -h.y)) + texture(uDof, vUv + vec2(-h.x, -h.y)))*0.16;
+    vec4 d = texture(uDof, uv)*0.36 + (texture(uDof, uv + vec2(h.x, h.y)) + texture(uDof, uv + vec2(-h.x, h.y)) + texture(uDof, uv + vec2(h.x, -h.y)) + texture(uDof, uv + vec2(-h.x, -h.y)))*0.16;
     c = mix(c, d.rgb, d.a);
   }
+  return c;
+}
+void main(){
   vec2 q = vUv - 0.5;
+  // a real lens: the colours part a little toward the corners, and what shines bleeds softly
+  vec2 off = q*dot(q, q)*uCA*4.0;
+  vec3 c = vec3(fetch(vUv + off).r, fetch(vUv).g, fetch(vUv - off).b);
+  c += texture(uBloom, vUv).rgb*uBloomAmt;
   c *= 1.0 - uVig*dot(q, q);
   c = neutral(max(c, 0.0)*uExposure);
   c = mix(12.92*c, 1.055*pow(max(c, vec3(0.0031)), vec3(1.0/2.4)) - 0.055, step(0.0031308, c));
@@ -723,7 +735,8 @@ const FLECK_VS = `#version 300 es
 precision highp float;
 layout(location=0) in vec4 aP;
 layout(location=1) in vec3 aR;
-uniform mat4 uVP; uniform float uTime, uPx, uAmt, uSwirl;
+layout(location=2) in vec3 aT;
+uniform mat4 uVP, uCard; uniform float uTime, uPx, uAmt, uSwirl, uForm, uSink;
 uniform vec3 uEye, uFwd;
 out vec3 vC; out float vD;
 void main(){
@@ -732,14 +745,23 @@ void main(){
   float rise = rr < 190.0 ? 15.0 + 22.0*aR.x : 1.2*aR.x;
   vec3 b = vec3(cs*aP.x - sn*aP.z, mod(aP.y + 40.0 + uTime*rise, 1240.0) - 40.0, sn*aP.x + cs*aP.z);
   vec3 p = b + vec3(sin(uTime*0.11 + aR.x*6.28)*9.0, sin(uTime*0.09 + aR.y*6.28)*7.0, cos(uTime*0.10 + aR.z*6.28)*9.0);
+  // each fleck has a place in the portrait: they gather into it, hold, and settle into the glaze
+  float f = uForm > 0.001 ? smoothstep(0.0, 1.0, clamp((uForm - fract(aR.x*7.0)*0.35)/0.65, 0.0, 1.0)) : 0.0;
+  if (f > 0.0) {
+    vec3 tp = (uCard*vec4(aT.x, aT.y, aT.z*(1.0 - uSink), 1.0)).xyz;
+    vec3 arc = vec3(sin(aR.y*6.28), 0.6 + aR.z, cos(aR.x*6.28))*120.0*sin(f*3.14159);
+    p = mix(p, tp, f) + arc*(1.0 - uSink);
+  }
   float tw = uTime*(0.4 + aR.y*1.2) + aR.x*40.0;
   vec3 n = normalize(vec3(sin(tw), cos(tw*0.77 + 1.0), sin(tw*0.61 + 2.0)));
   vec3 v = normalize(uEye - p);
   float sp = pow(max(0.0, dot(n, normalize(v + vec3(-0.2, 0.9, 0.35)))), 30.0);
   vC = mix(vec3(0.46, 0.30, 0.07), vec3(0.86, 0.60, 0.20), aR.z) + vec3(5.0, 3.8, 1.7)*sp;
+  vC = mix(vC, vec3(0.40, 0.25, 0.06) + vec3(2.2, 1.6, 0.6)*sp, f);
   vD = dot(p - uEye, uFwd);
   gl_Position = uVP*vec4(p, 1.0);
-  gl_PointSize = clamp(aP.w*1.35*uPx/gl_Position.w, 1.0, uPx/260.0)*step(0.002, uAmt)*smoothstep(fract(aR.y*13.0) - 0.05, fract(aR.y*13.0) + 0.05, uAmt)*smoothstep(180.0, 340.0, vD);
+  float show = max(step(0.002, uAmt)*smoothstep(fract(aR.y*13.0) - 0.05, fract(aR.y*13.0) + 0.05, uAmt), f);
+  gl_PointSize = mix(clamp(aP.w*1.35*uPx/gl_Position.w, 1.0, uPx/260.0), clamp(2.3*uPx/gl_Position.w, 1.0, 5.0), f)*show*smoothstep(180.0, 340.0, vD)*(1.0 - uSink*f);
 }`;
 const FLECK_FS = `#version 300 es
 precision highp float;
@@ -1093,6 +1115,8 @@ class Scene {
     this.dof = program(gl, QUAD_VS, DOF_FS);
     this.fill = program(gl, QUAD_VS, FILL_FS);
     this.final = program(gl, QUAD_VS, FINAL_FS);
+    this.bright = program(gl, QUAD_VS, BRIGHT_FS);
+    this.bblur = program(gl, QUAD_VS, BBLUR_FS);
     this.key = program(gl, QUAD_VS, KEY_FS);
     this.fleck = program(gl, FLECK_VS, FLECK_FS);
     this.plaque = program(gl, PLAQUE_VS, PLAQUE_FS);
@@ -1164,6 +1188,10 @@ class Scene {
     gl.bufferData(gl.ARRAY_BUFFER, F, gl.STATIC_DRAW);
     gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 28, 0);
     gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 28, 16);
+    this.faceBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.faceBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(5000 * 3), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 12, 0);
     gl.bindVertexArray(null);
 
     // the plaque: a rounded slab with a soft edge, gilded around its rim
@@ -1253,63 +1281,26 @@ class Scene {
     this.dirty = true;
   }
 
-  // the objects: a second mesh with its own transforms, drawn only while one is in the room
-  setSculpt(raw, objects) {
-    const gl = this.gl;
-    const vb = new Uint8Array(raw.nv * 16), ib = new Uint8Array(raw.ni * 4);
-    MeshoptDecoder.decodeVertexBuffer(vb, raw.nv, 16, b64(raw.v));
-    MeshoptDecoder.decodeIndexBuffer(ib, raw.ni, 4, b64(raw.i));
-    const vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, vb, gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, true, 16, 0);
-    gl.enableVertexAttribArray(1); gl.vertexAttribIPointer(1, 1, gl.UNSIGNED_SHORT, 16, 6);
-    gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2, 2, gl.BYTE, true, 16, 8);
-    gl.enableVertexAttribArray(3); gl.vertexAttribPointer(3, 3, gl.UNSIGNED_BYTE, true, 16, 10);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(ib.buffer), gl.STATIC_DRAW);
-    gl.bindVertexArray(null);
-    const N = raw.shards.length, xf = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, xf);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 3, N, 0, gl.RGBA, gl.FLOAT, null);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    // the triangles of each object are one run in the index buffer
-    const ranges = {};
-    let off = 0;
-    raw.shards.forEach((s) => { const n = s.nt * 3; const r = ranges[s.kind] = ranges[s.kind] || [off, 0]; r[1] += n; off += n; });
-    this.sc = { vao, xf, N, ni: raw.ni, lo: raw.lo, hi: raw.hi, ranges, xfData: new Float32Array(N * 12), objects };
-    this.dirty = true;
-  }
-
-  setScreen(c) {
-    const gl = this.gl;
-    if (!this.screenTex) this.screenTex = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.screenTex);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, c);
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  }
-
-  // draw the objects that are in the room, with whatever program is current
-  drawSculpt(prog, list, perObject) {
-    const gl = this.gl, m = this.sc;
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, m.xf);
-    gl.uniform1i(prog.u.uXf, 0);
-    gl.uniform3fv(prog.u.uLo, m.lo);
-    gl.uniform3fv(prog.u.uHi, m.hi);
-    gl.bindVertexArray(m.vao);
-    for (const o of list) {
-      if (perObject) perObject(o);
-      const r = m.ranges[o.kind];
-      gl.drawElements(gl.TRIANGLES, r[1], gl.UNSIGNED_INT, r[0] * 4);
+  // where each of the 5,000 flecks goes to make the portrait, in the card's own coordinates
+  setFace(img) {
+    const gl = this.gl, S = 165, c = document.createElement('canvas'); c.width = c.height = S;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.drawImage(img, 0, 0, S, S);
+    const px = g.getImageData(0, 0, S, S).data, cand = [], wts = [];
+    let total = 0;
+    for (let i = 0; i < S * S; i++) { const v = px[i * 4]; if (v > 60) { cand.push(i); total += v; wts.push(total); } }
+    if (cand.length < 50) return;
+    let seed = 1234; const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
+    const T = new Float32Array(5000 * 3), P = 226, px0 = PW - 20 - P, py0 = PH - 16 - P;
+    for (let k = 0; k < 5000; k++) {
+      const r = rnd() * total; let lo = 0, hi = wts.length - 1;
+      while (lo < hi) { const m = (lo + hi) >> 1; if (wts[m] < r) lo = m + 1; else hi = m; }
+      const i = cand[lo], u = ((i % S) + rnd()) / S, v = (Math.floor(i / S) + rnd()) / S;
+      T[k * 3] = px0 + u * P - PW / 2; T[k * 3 + 1] = PH / 2 - (py0 + v * P); T[k * 3 + 2] = PT / 2 + 1.5 + rnd() * 2.5;
     }
-    gl.bindVertexArray(this.vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.faceBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, T, gl.STATIC_DRAW);
+    this.hasFace = true;
   }
 
   setTitle(c) {
@@ -1386,6 +1377,9 @@ class Scene {
     this.hdr = this.colorTarget(W, H, gl.RGBA16F, true);
     this.half = this.colorTarget(Math.ceil(W / 2), Math.ceil(H / 2), gl.RGBA16F, true);
     this.half2 = this.colorTarget(Math.ceil(W / 2), Math.ceil(H / 2), gl.RGBA16F, true);
+    if (this.bloomA) { del(this.bloomA); del(this.bloomB); }
+    this.bloomA = this.colorTarget(Math.ceil(W / 4), Math.ceil(H / 4), gl.RGBA16F, true);
+    this.bloomB = this.colorTarget(Math.ceil(W / 4), Math.ceil(H / 4), gl.RGBA16F, true);
     this.depthTex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.depthTex);
     gl.texStorage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT24, W, H);
@@ -1412,11 +1406,6 @@ class Scene {
     const gl = this.gl, W = this.W, H = this.H;
     gl.bindTexture(gl.TEXTURE_2D, this.xf);
     gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 3, this.N, gl.RGBA, gl.FLOAT, this.xfData);
-    const sculpt = s.sculpt || [];
-    if (sculpt.length) {
-      gl.bindTexture(gl.TEXTURE_2D, this.sc.xf);
-      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 3, this.sc.N, gl.RGBA, gl.FLOAT, this.sc.xfData);
-    }
 
     // 1. shadow map, from the key light
     const L = s.env.BC[0];
@@ -1442,7 +1431,6 @@ class Scene {
     gl.uniformMatrix4fv(this.depth.u.uVP, false, lightVP);
     gl.bindVertexArray(this.vao);
     gl.drawElements(gl.TRIANGLES, this.ni, gl.UNSIGNED_INT, 0);
-    if (sculpt.length) { this.drawSculpt(this.depth, sculpt); this.bindXf(this.depth); }
     if (s.plaques.length) {
       gl.disable(gl.CULL_FACE);
       gl.useProgram(this.plaqueDepth.p);
@@ -1467,7 +1455,6 @@ class Scene {
     gl.uniformMatrix4fv(this.fsObj.u.uVP, false, top);
     gl.uniform1f(this.fsObj.u.uFloor, this.d.floor);
     gl.drawElements(gl.TRIANGLES, this.ni, gl.UNSIGNED_INT, 0);
-    if (sculpt.length) { this.drawSculpt(this.fsObj, sculpt); this.bindXf(this.fsObj); }
     gl.disable(gl.BLEND); gl.blendEquation(gl.FUNC_ADD);
     gl.bindVertexArray(this.quadVao);
     gl.useProgram(this.blur.p);
@@ -1529,6 +1516,7 @@ class Scene {
     gl.uniformMatrix4fv(O.u.uLightVP, false, lightVP);
     gl.uniform1f(O.u.uGold, s.gold);
     gl.uniform1f(O.u.uHeat, s.heat);
+    gl.uniform1f(O.u.uPulse, s.pulse || 0);
     gl.uniform1f(O.u.uTime, s.time);
     gl.uniform1f(O.u.uShadowR, 3.8 / 1800);
     gl.uniform1f(O.u.uGoldGain, s.env.goldGain);
@@ -1542,18 +1530,7 @@ class Scene {
     gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.frontTex); gl.uniform1i(O.u.uFront, 3);
     gl.activeTexture(gl.TEXTURE4); gl.bindTexture(gl.TEXTURE_2D, this.sealTex); gl.uniform1i(O.u.uSeal, 4);
     gl.bindVertexArray(this.vao);
-    gl.uniform1f(O.u.uMainObj, 1);
     gl.drawElements(gl.TRIANGLES, this.ni, gl.UNSIGNED_INT, 0);
-    if (sculpt.length) {
-      gl.uniform1f(O.u.uMainObj, 0);
-      gl.uniform1f(O.u.uGold, 2);
-      gl.activeTexture(gl.TEXTURE6); gl.bindTexture(gl.TEXTURE_2D, this.screenTex); gl.uniform1i(O.u.uScreen, 6);
-      gl.uniform4fv(O.u.uScrRect, SCREEN_RECT);
-      gl.uniform3fv(O.u.uScrBase, s.env.scrBase);
-      gl.uniform3fv(O.u.uScrInk, s.env.scrInk);
-      this.drawSculpt(O, sculpt, (o) => gl.uniform1f(O.u.uHeat, o.heat));
-      this.bindXf(O);
-    }
     gl.disable(gl.CULL_FACE);
 
     const px = H / (2 * Math.tan(s.fov / 2));
@@ -1568,6 +1545,7 @@ class Scene {
         gl.uniform1f(Pq.u.uGoldGain, s.env.goldGain);
         gl.uniform1f(Pq.u.uGlow, s.env.glow);
         gl.uniform1f(Pq.u.uFill, s.env.plaqueFill);
+        gl.uniform1f(Pq.u.uInkOn, 1);
         gl.uniform3fv(Pq.u.uGlaze, s.env.glaze);
         gl.uniform3fv(Pq.u.uMark, s.env.mark);
         gl.uniform3fv(Pq.u.uGoldBase, s.env.goldBase);
@@ -1585,6 +1563,7 @@ class Scene {
         for (const q of s.plaques) {
           if (q.d > 0.001) continue;
           gl.uniformMatrix4fv(this.plaque.u.uModel, false, q.model);
+          gl.uniform1f(this.plaque.u.uInkOn, q.ink === undefined ? 1 : q.ink);
           gl.activeTexture(gl.TEXTURE5); gl.bindTexture(gl.TEXTURE_2D, this.cards[q.i]);
           gl.drawElements(gl.TRIANGLES, this.pCount, gl.UNSIGNED_SHORT, 0);
         }
@@ -1648,6 +1627,10 @@ class Scene {
       gl.uniform1f(this.fleck.u.uPx, H / (2 * Math.tan(s.fov / 2)));
       gl.uniform3fv(this.fleck.u.uEye, s.eye);
       gl.uniform3fv(this.fleck.u.uFwd, fwd);
+      const fc = s.face || { form: 0, sink: 0 };
+      gl.uniform1f(this.fleck.u.uForm, this.hasFace ? fc.form : 0);
+      gl.uniform1f(this.fleck.u.uSink, fc.sink);
+      if (fc.model) gl.uniformMatrix4fv(this.fleck.u.uCard, false, fc.model);
       gl.bindVertexArray(this.fleckVao);
       gl.drawArrays(gl.POINTS, 0, 5000);
     }
@@ -1672,6 +1655,7 @@ class Scene {
     gl.uniform3fv(this.bg.u.uBounce, s.env.bounce);
     gl.uniform2f(this.bg.u.uRes, W, H);
     gl.uniform1f(this.bg.u.uTitleA, this.titleTex ? s.titleA : 0);
+    gl.uniform1f(this.bg.u.uTitleWipe, s.titleWipe === undefined ? 2 : s.titleWipe);
     gl.uniform4fv(this.bg.u.uTitleRect, s.titleRect);
     gl.uniform3fv(this.bg.u.uTitleInk, s.env.titleInk);
     gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.titleTex); gl.uniform1i(this.bg.u.uTitle, 3);
@@ -1720,6 +1704,22 @@ class Scene {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
+    // 5b. bloom: what shines, spread softly
+    {
+      const A = this.bloomA, Bq = this.bloomB;
+      gl.bindVertexArray(this.quadVao);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, A.fb); gl.viewport(0, 0, A.w, A.h);
+      gl.useProgram(this.bright.p);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.hdr.tex); gl.uniform1i(this.bright.u.uT, 0);
+      gl.uniform1f(this.bright.u.uThresh, 1.15);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.useProgram(this.bblur.p); gl.uniform1i(this.bblur.u.uT, 0);
+      for (const step of [1, 2.2]) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, Bq.fb); gl.bindTexture(gl.TEXTURE_2D, A.tex); gl.uniform2f(this.bblur.u.uDir, step / A.w, 0); gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, A.fb); gl.bindTexture(gl.TEXTURE_2D, Bq.tex); gl.uniform2f(this.bblur.u.uDir, 0, step / A.h); gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+    }
+
     // 6. to the screen
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, W, H);
@@ -1733,6 +1733,9 @@ class Scene {
     gl.uniform1f(F.u.uTime, s.time);
     gl.uniform1f(F.u.uVig, s.env.vig);
     gl.uniform1f(F.u.uExposure, s.env.exposure);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.bloomA.tex); gl.uniform1i(F.u.uBloom, 2);
+    gl.uniform1f(F.u.uBloomAmt, s.env.bloom);
+    gl.uniform1f(F.u.uCA, s.env.ca);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindVertexArray(null);
     gl.activeTexture(gl.TEXTURE0);
@@ -1790,10 +1793,9 @@ const DAY = {
   soft: 22, barLine: 1, beamGlow: 0,
   room: [0.585, 0.545, 0.485], shTint: [0.34, 0.31, 0.27],
   floorBeam: [0.80, 0.70, 0.55], lime: 0.03, sheen: [0, 0, 0], fringe: [0, 0, 0], bounce: [0, 0, 0],
-  exposure: 1, grain: 0.012, vig: 0.16, goldGain: 1, glow: 0, goldBase: [0.10, 0.075, 0.04],
+  exposure: 1, grain: 0.012, vig: 0.16, goldGain: 1, glow: 0, bloom: 0.5, ca: 0.0028, goldBase: [0.10, 0.075, 0.04],
   glaze: [0.925, 0.905, 0.862], glazeDeep: [0.70, 0.745, 0.79],
   face: [0.835, 0.795, 0.725], matte: [0.86, 0.835, 0.785], mark: [0.0176, 0.0027, 0.0844], hair: [0.20, 0.17, 0.15],   // mark: Royal Indigo, #240952
-  scrBase: [0.016, 0.005, 0.06], scrInk: [1.9, 1.26, 0.46],
   plaqueFill: 0, titleInk: hold('#240952'), dustA: [0.80, 0.77, 0.70], dustB: [0.84, 0.80, 0.70],
 };
 const NIGHT = {
@@ -1808,8 +1810,7 @@ const NIGHT = {
   ],
   sky: [0.030, 0.031, 0.036], wall: [0.024, 0.024, 0.026], ground: [0.018, 0.017, 0.016],
   room: [0.0135, 0.0128, 0.0122], shTint: [0.22, 0.21, 0.20], floorBeam: [0.085, 0.083, 0.09], lime: 0.05,
-  vig: 0.5, goldGain: 2.7, glow: 1,
-  scrBase: [0.010, 0.005, 0.04], scrInk: [1.7, 1.12, 0.42],
+  vig: 0.5, goldGain: 2.7, glow: 1, bloom: 0.9, ca: 0.004,
   plaqueFill: 0.5, titleInk: hold('#EFECE5'), dustA: [0.42, 0.42, 0.44], dustB: [0.30, 0.28, 0.40],
 };
 function buildEnv(k) {
@@ -1837,74 +1838,43 @@ function plan(data) {
   const N = data.shards.length;
   let seed = 4242;
   const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-  const FRONT = 141.8;
   const I = data.impact;
-  // where the parts that come out whole hang, relative to the middle of the room
-  const hang = { heatsink: [[-20, 212, 30]], fan: [[-262, 300, 36], [128, 300, -96]], toroid: [[-204, 190, 150]], capacitor: [[78, 118, -12], [-40, 118, 128], [34, 318, 92]] };
-  const seen = {};
   const out = [];
   for (let i = 0; i < N; i++) {
     const s = data.shards[i], c = s.c, ext = s.ext;
     const size = Math.hypot(ext[0], ext[1], ext[2]);
     const r1 = rnd(), r2 = rnd(), r3 = rnd(), r4 = rnd(), r5 = rnd();
-    const d = V.sub(c, I);
-    const dist = V.len(d);
-    let T, delay = clamp(dist / 560) * 0.40 + r1 * 0.05, spin;
+    const d = V.sub(c, I), dist = V.len(d);
     const axis = V.norm([r2 - 0.5, r3 - 0.5, r4 - 0.5]);
-    if (s.kind !== 'shard') {
-      const k = seen[s.kind] = (seen[s.kind] || 0);
-      seen[s.kind]++;
-      T = hang[s.kind][k % hang[s.kind].length];
-      delay = 0.30 + r1 * 0.14;
-      spin = (s.kind === 'heatsink' ? 0.5 : 0.8) * (r5 > 0.5 ? 1 : -1);
+    let T, delay = clamp(dist / 520) * 0.40 + r1 * 0.05, spin;
+    if (s.kind === 'm') {
+      // the M comes out whole, and hangs in the middle of it all
+      T = [16, 330, 150]; delay = 0.26; spin = 0.38;
     } else {
-      const flatLid = c[1] > 13;
-      const cable = c[2] > FRONT + 4;
-      const low = c[1] < -13;
-      const frontBlock = c[2] > 112 && !cable;
-      const sideways = Math.abs(c[0]) > 205;
-      const radial = V.norm([d[0], 0, d[2]]);
-      const push = (120 + 170 * Math.pow(1 - clamp(dist / 520), 1.4)) * (0.72 + 0.56 * r2);
-      let y;
-      if (cable) y = 44 + r3 * 90;
-      else if (flatLid) y = 300 + r3 * 110 - clamp(dist / 500) * 50;
-      else if (low) y = 34 + r3 * 34;
-      else if (frontBlock) y = 96 + r3 * 90;
-      else y = 118 + r3 * 90;
-      let x = c[0] * 1.16 + radial[0] * push;
-      let z = c[2] * 1.12 + radial[2] * push;
-      if (frontBlock) z += 150 + r4 * 80;
-      if (cable) { z = c[2] + 130 + r4 * 60; x = c[0] * 1.34; }
-      if (sideways) x += Math.sign(c[0]) * (60 + r4 * 60);
-      if (!flatLid && !cable) {
-        const rr = Math.hypot(x, z - 20), minR = 350 * (0.86 + 0.34 * r3);
-        if (rr < minR) { const f = minR / (rr || 1); x *= f; z = 20 + (z - 20) * f; }
-      }
-      T = [x, y + c[1] * 0.4, z];
-      const small = clamp(1 - size / 150);
-      spin = lerp(0.42, 2.1, small) * (r5 > 0.5 ? 1 : -1) * (0.7 + 0.6 * r2);
+      const away = V.norm([d[0] + (r2 - 0.5) * 80, d[1] + (r3 - 0.5) * 80, 0.001]);
+      const push = s.kind === 'trace' ? 120 + 120 * r3 : (140 + 200 * Math.pow(1 - clamp(dist / 440), 1.3)) * (0.72 + 0.56 * r2);
+      T = [c[0] * 1.3 + away[0] * push, 205 + (c[1] - 190) * 1.2 + away[1] * push * 0.75, (r4 - 0.45) * (s.kind === 'trace' ? 380 : 560)];
+      T[1] = clamp(T[1], 48, 480);
+      spin = lerp(0.42, 2.1, clamp(1 - size / 150)) * (r5 > 0.5 ? 1 : -1) * (0.7 + 0.6 * r2);
     }
-    out.push({
-      c, size, T, delay, axis, spin, kind: s.kind,
-      wob: [r1 * 6.28, r2 * 6.28, r3 * 6.28], wf: 0.12 + r4 * 0.16, amp: lerp(9, 3, clamp(size / 200)),
-      push: [0, 0, 0], vel: [0, 0, 0], p: 0,
-      out: s.kind === 'shard' ? Q.axis(V.norm([r3 - 0.5, r4 - 0.5, r1 - 0.5]), 0.0026 + r5 * 0.0056) : [0, 0, 0, 1],
-    });
+    const C0 = [0, 186, 0], o0 = V.norm(V.add(V.sub(c, C0), [(r3 - 0.5) * 120, (r4 - 0.5) * 120, 90 + r5 * 140]));
+    const io = V.mul(o0, s.kind === 'm' ? 520 : s.kind === 'trace' ? 260 + 200 * r2 : 240 + 320 * r1);
+    const tl = s.kind === 'm' ? 2.15 : s.kind === 'trace' ? 2.35 + 0.35 * r3 : 0.3 + 1.55 * clamp(dist / 480) + 0.12 * r5;
+    out.push({ io, tl, dur: s.kind === 'm' ? 0.9 : 1.05, ia: V.norm([r5 - 0.5, r1 - 0.5, r2 - 0.5]), iang: (1.6 + 2.4 * r4) * (r3 > 0.5 ? 1 : -1), c, size, T, delay, axis, spin, kind: s.kind, wob: [r1 * 6.28, r2 * 6.28, r3 * 6.28], wf: 0.12 + r4 * 0.16, amp: lerp(9, 3, clamp(size / 200)),
+      push: [0, 0, 0], vel: [0, 0, 0], p: 0, out: s.kind === 'shard' ? Q.axis(V.norm([r3 - 0.5, r4 - 0.5, r1 - 0.5]), 0.0026 + r5 * 0.0056) : [0, 0, 0, 1] });
   }
-  // the piece of the front plate with the most ports on it, and the piece of the lid carrying the maker's mark
-  let ports = null, seal = null, bestP = -1, bestS = 1e9;
+  // the one piece with the name: the piece of the back that carries the mark
+  let seal = null, best = 1e9;
   out.forEach((s, i) => {
     const d = data.shards[i];
-    if (d.kind !== 'shard') return;
-    const front = d.c[2] + d.ext[2] / 2;
-    if (front > 135 && front < 150 && d.ext[2] > 40 && d.c[0] > -140 && d.c[0] < 60 && d.ext[0] * d.ext[1] > bestP) { bestP = d.ext[0] * d.ext[1]; ports = s; }
-    if (d.c[1] + d.ext[1] / 2 > 20 && Math.abs(d.c[0] - SEAL[0]) < d.ext[0] / 2 && Math.abs(d.c[2] - SEAL[2]) < d.ext[2] / 2) {
-      const dist = Math.hypot(d.c[0] - SEAL[0], d.c[2] - SEAL[2]);
-      if (dist < bestS) { bestS = dist; seal = s; }
-    }
+    if (d.kind !== 'shard' || Math.abs(d.c[0] - SEAL[0]) > d.ext[0] / 2 || Math.abs(d.c[1] - SEAL[1]) > d.ext[1] / 2) return;
+    const dd = Math.hypot(d.c[0] - SEAL[0], d.c[1] - SEAL[1]);
+    if (dd < best) { best = dd; seal = s; }
   });
-  if (ports) { ports.hero = 'ports'; ports.spin = -0.14; ports.axis = V.norm([0.06, 1, 0.02]); ports.T = [-130, 190, 36]; ports.amp = 3; }
-  if (seal) { seal.hero = 'seal'; seal.spin = 0; seal.T = [-130, 430, 140]; seal.amp = 2.5; }
+  if (seal) {
+    seal.hero = 'seal'; seal.spin = 0; seal.amp = 2.5; seal.T = [40, 360, -60];
+    seal.anchor = { c: 2, off: [-214, -70, 100], scale: 1.15, q: Q.mul(Q.axis([1, 0, 0], 0.18), Q.axis([0, 1, 0], Math.PI - 0.3)), pivot: V.sub(SEAL, seal.c) };
+  }
   // the column: everything stacked in a slow spiral around the middle of the room
   out.forEach((s, k) => {
     const r1 = rnd(), r2 = rnd();
@@ -1912,84 +1882,7 @@ function plan(data) {
     s.spY = 40 + 1160 * ((k * 0.61803 + r1 * 0.04) % 1);
     s.spR = 22 + 62 * Math.sqrt(r2) + Math.min(s.size * 0.12, 36);
   });
-  // some pieces leave the column to stand in front of a plaque for a while
-  const X = [1, 0, 0], Y = [0, 1, 0];
-  const heroFor = (s, c, off, scale, q) => { if (s) s.anchor = { c, off, scale, q }; };
-  heroFor(ports, 3, [-226, -92, 116], 2.35, Q.mul(Q.axis(X, 0.36), Q.axis(Y, 0.30)));
-  heroFor(seal, 8, [-214, -70, 100], 1.7, Q.mul(Q.axis(X, 1.12), Q.axis(Y, 0.1)));
-  if (seal) seal.anchor.pivot = V.sub(SEAL, seal.c);
-  heroFor(out.find((s) => s.kind === 'toroid'), 5, [-214, -84, 120], 2.3, Q.mul(Q.axis(X, 0.95), Q.axis(Y, 0.2)));
-  const fans = out.filter((s) => s.kind === 'fan'), caps = out.filter((s) => s.kind === 'capacitor');
-  heroFor(fans[0], 5, [225, 128, 90], 1.8, Q.mul(Q.axis(X, 0.5), Q.axis(Y, -0.5)));
-  heroFor(caps[0], 6, [-214, -96, 130], 2.6, Q.mul(Q.axis(X, 0.5), Q.axis(Y, 0.2)));
-  heroFor(caps[1], 6, [-150, -128, 120], 2.2, Q.mul(Q.axis(X, 0.6), Q.axis(Y, -0.2)));
-  // the block carrying the console port, and a length of patch cable with its plug
-  heroFor(out[88], 10, [-268, -92, 110], 1.3, Q.mul(Q.axis(X, 0.3), Q.axis(Y, 1.15)));
   return out;
-}
-
-// the objects the pieces get mended into
-const SCREEN_RECT = new Float32Array([-128, -35, 256, 194]);
-const OBJECTS = [
-  { kind: 'fort', c: 7, scale: 0.90, y: 400, pitch: 0.86, yaw: 0.42, spin: 1.5, centre: [0, 10, 0], strike: [118, 20, 86] },
-  { kind: 'terminal', c: 9, scale: 1.10, y: 436, pitch: 0.05, yaw: -0.5, spin: 1.05, centre: [30, -8, 30], strike: [132, 168, 80] },
-];
-function planSculpt(raw) {
-  let seed = 4711;
-  const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-  OBJECTS.forEach((o) => { o.pieces = []; });
-  raw.shards.forEach((s, i) => {
-    const o = OBJECTS.find((q) => q.kind === s.kind);
-    if (!o) return;
-    const d = V.len(V.sub(s.c, o.strike));
-    o.pieces.push({ i, c: s.c, size: Math.hypot(s.ext[0], s.ext[1], s.ext[2]), d, r1: rnd(), r2: rnd(), r3: rnd(), axis: V.norm([rnd() - 0.5, rnd() - 0.5, rnd() - 0.5]), spin: (1.2 + rnd() * 2.2) * (rnd() > 0.5 ? 1 : -1), a: i * 2.39996 });
-  });
-  OBJECTS.forEach((o) => {
-    const far = Math.max(...o.pieces.map((p) => p.d));
-    o.pieces.forEach((p) => { p.order = p.d / far; });
-  });
-}
-function objectFrame(o, sc) {
-  const rest = wide ? REST : 0, Rr = wide ? 560 : 400;
-  const phi = rest + (o.c - sc) * STEP;
-  const yaw = o.yaw + (o.c - sc) * o.spin + state.smx * 0.09 + (reduced ? 0 : Math.sin(state.time * 0.2 + o.c) * 0.03);
-  const pitch = o.pitch + state.smy * 0.05;
-  const q = Q.mul(Q.axis([1, 0, 0], pitch), Q.axis([0, 1, 0], yaw));
-  const bob = reduced ? 0 : Math.sin(state.time * 0.3 + o.c) * 4;
-  return { p: [Rr * Math.sin(phi), o.y + bob, Rr * Math.cos(phi)], q, s: o.scale * (wide ? 1 : 0.72) };
-}
-// each piece, from the column to its place in the object: gone 0 is whole, gone 1 is back in the column
-function placeSculpt(o, sc, gone, turn, xf) {
-  const F = objectFrame(o, sc);
-  for (const p of o.pieces) {
-    const a = clamp((gone - (0.04 + 0.5 * p.order + 0.06 * p.r1)) / 0.4);
-    const e = a * a * (3 - 2 * a);
-    const lc = V.mul(V.sub(p.c, o.centre), F.s);
-    const start = V.add(F.p, Q.rot(F.q, lc));
-    const th = p.a + turn + e * 2.6, rr = 26 + p.r2 * 96;
-    const end = [Math.cos(th) * rr, 40 + 1160 * ((p.i * 0.61803 + p.r1 * 0.04) % 1), Math.sin(th) * rr];
-    const k = Math.sin(e * Math.PI);
-    const x = lerp(start[0], end[0], e) + p.axis[0] * 60 * k, y = lerp(start[1], end[1], e) + p.axis[1] * 60 * k, z = lerp(start[2], end[2], e) + p.axis[2] * 60 * k;
-    const q = e > 0 ? Q.mul(Q.axis(p.axis, e * p.spin), F.q) : F.q;
-    const sc2 = F.s * (1 - e * 0.74) * (a >= 0.999 ? 0 : 1);
-    const b = p.i * 12;
-    xf[b] = x; xf[b + 1] = y; xf[b + 2] = z; xf[b + 3] = 0;
-    xf[b + 4] = q[0]; xf[b + 5] = q[1]; xf[b + 6] = q[2]; xf[b + 7] = q[3];
-    xf[b + 8] = p.c[0]; xf[b + 9] = p.c[1]; xf[b + 10] = p.c[2]; xf[b + 11] = sc2;
-  }
-}
-// what the terminal says
-function paintScreen() {
-  const c = document.createElement('canvas'); c.width = 1024; c.height = 776;
-  const g = c.getContext('2d');
-  g.fillStyle = '#000'; g.fillRect(0, 0, c.width, c.height);
-  g.fillStyle = '#fff';
-  g.shadowColor = '#fff'; g.shadowBlur = 7;
-  const lines = [['manaf@os:~$ nmap manaf', 1], ['Starting Nmap 7.95 . scanning manaf (10.24.0.1)'], ['Host is up (0.0004s latency).'], [''], ['PORT      STATE    SERVICE    VERSION', 1]];
-  (typeof NMAP_PORTS !== 'undefined' ? NMAP_PORTS : []).forEach(([a, b, c0, d]) => lines.push([(a.padEnd(10) + b.padEnd(9) + c0.padEnd(11) + d).slice(0, 56)]));
-  lines.push(['']); lines.push(['manaf@os:~$ _', 1]);
-  lines.forEach(([t, bold], i) => { g.font = (bold ? '700 ' : '400 ') + '29px Consolas, "Cascadia Mono", monospace'; g.fillText(t, 62, 92 + i * 39); });
-  return c;
 }
 
 // where a plaque is, for a given place along the walk
@@ -2029,9 +1922,9 @@ function shots(P) {
     : { eye: [dx * 0.4, 520 + dy * 0.5, 1560], tgt: [0, 420, 0], fov: 24, shift: sh(i, 0, 0), ap: 0.008, focus: 1160, e: 1, flecks, dust, win: [80, 240, 596, 842] });
   return [
     // whole, mended
-    { eye: [-470, 330, 1250], tgt: [6, -8, 24], fov: 20.5, shift: sh(0, 0, -0.07), ap: 0, focus: 1300, e: 0, flecks: 0.05, dust: 0.1 },
+    { eye: wide ? [-648, 639, 2292] : [-376, 486, 1330], tgt: wide ? [0, 351, 0] : [0, 300, 0], fov: 21, shift: sh(0, 0, -0.07), ap: 0, focus: wide ? 2400 : 1400, e: 0, flecks: 0.05, dust: 0.1 },
     // it comes apart
-    { eye: [-520, 600, 1860], tgt: [10, 150, 40], fov: 25, shift: sh(1, 0, 0.10), ap: 0.014, focus: 1880, e: 1, flecks: 0.3, dust: 0.4 },
+    { eye: [-520, 600, 1860], tgt: [0, 205, 0], fov: 25, shift: sh(1, 0, 0.10), ap: 0.014, focus: 1880, e: 1, flecks: 0.3, dust: 0.4 },
     ring(2, -36, 10, 0.5, 0.5),
     ring(3, -40, 0, 0.5, 0.5),
     ring(4, 30, 26, 1, 0.5),
@@ -2042,12 +1935,12 @@ function shots(P) {
     ring(9, -30, -10, 0.5, 0.5),
     ring(10, 24, 12, 0.5, 0.5),
     // mended again, from low and close
-    { eye: [470, 150, 1180], tgt: [8, -8, 30], fov: 21, shift: sh(11, 0, -0.40), ap: 0.006, focus: 1240, e: 0, flecks: 0, dust: 0.1 },
+    { eye: [520, 360, 1700], tgt: [0, 196, 0], fov: 21, shift: sh(11, 0, -0.40), ap: 0.006, focus: 1800, e: 0, flecks: 0, dust: 0.1 },
   ];
 }
 
 /* ---------- start ---------- */
-const state = { y: scrollY, gold: reduced ? 2 : 0, intro: !reduced, mx: 0, my: 0, smx: 0, smy: 0, time: 0, room: root.dataset.theme === 'night' ? 1 : 0 };
+const state = { y: scrollY, build: reduced ? 99 : -0.7, gold: reduced ? 2 : -0.2, intro: !reduced, mx: 0, my: 0, smx: 0, smy: 0, time: 0, room: root.dataset.theme === 'night' ? 1 : 0 };
 let scene = null, P = null, SHOTS = null, envCache = null, envK = -1;
 let fps = { acc: 0, n: 0, tier: 0 };
 
@@ -2129,6 +2022,7 @@ function frame(now) {
   state.room += (wantRoom - state.room) * (1 - Math.exp(-dt * 4.5));
   if (Math.abs(wantRoom - state.room) < 0.002) state.room = wantRoom;
   if (state.intro) { state.gold += dt / 2.9; if (state.gold > 1.4) { state.gold = 1.4; state.intro = false; } }
+  if (!state.frozen && state.build < 99) state.build += dt;
 
   const w = solveWalk(state.y);
   const S = SHOTS, a = S[Math.max(0, w.i - 1)], b = S[w.i], c = S[w.j], d = S[Math.min(S.length - 1, w.j + 1)];
@@ -2153,19 +2047,18 @@ function frame(now) {
     const ch = i + FIRST, gone = plaqueGone(ch, sc);
     const model = plaqueFrame(ch, sc);
     frames[ch] = model;
-    if (gone < 0.999 && !OBJECTS.some((o) => o.c === ch)) plaques.push({ i, model, d: gone });
-  }
-  const sculptNow = [];
-  if (scene.sc) for (const o of OBJECTS) {
-    const gone = plaqueGone(o.c, sc);
-    if (gone >= 0.999) continue;
-    placeSculpt(o, sc, gone, turn, scene.sc.xfData);
-    // the seams are molten as the pieces meet, and cool as it settles
-    sculptNow.push({ kind: o.kind, heat: (sc < o.c ? 0.9 : 0.3) * smooth(gone / 0.3) });
+    if (gone < 0.999) plaques.push({ i, model, d: gone });
   }
   const wa = b.win || WIN0, wb = c.win || WIN0, win = wa.map((v, i) => lerp(v, wb[i], smooth(t)));
   // the seams glow only in the last moment before the pieces meet, and then cool
-  const heat = (w.i !== w.j && c === S[S.length - 1] && !reduced) ? smooth((0.34 - E) / 0.2) * (1 - smooth((t - 0.8) / 0.2)) * 0.34 : 0;
+  let heat = (w.i !== w.j && c === S[S.length - 1] && !reduced) ? smooth((0.34 - E) / 0.2) * (1 - smooth((t - 0.8) / 0.2)) * 0.34 : 0;
+
+  if (w.i === 0 && w.j === 1 && !reduced) heat = Math.max(heat, Math.sin(Math.PI * clamp(E / 0.16)) * 0.42);
+
+  // the portrait: the flecks gather into the face as the first card arrives, then sink into its glaze
+  const face = reduced || !scene.hasFace ? { form: 0, sink: 1 } : { form: smooth((sc - 1.0) / 0.55) * (1 - smooth((sc - 2.1) / 0.3)), sink: smooth((sc - 1.62) / 0.18) * (1 - smooth((sc - 2.1) / 0.25)) };
+  face.model = plaqueFrame(2, sc);
+  for (const q of plaques) if (q.i === 0) q.ink = face.sink;
 
   // a small sway of the camera with the hand
   if (!reduced) {
@@ -2178,6 +2071,9 @@ function frame(now) {
 
   // pieces
   const xf = scene.xfData;
+  const building = state.build < 3.6 && !reduced;
+  const idle = reduced ? 0 : (1 - smooth(E / 0.12)) * smooth((state.build - 2.6) / 1.4);
+  const fy = Math.sin(state.time * 0.55) * 5 * idle, fq = Q.axis([0, 1, 0], (Math.sin(state.time * 0.33) * 0.07 + Math.sin(state.time * 0.17 + 1.3) * 0.03) * idle);
   let maxP = 0;
   const hover = state.hoverRay;
   for (let i = 0; i < P.length; i++) {
@@ -2234,7 +2130,20 @@ function frame(now) {
         x -= pv[0]; y -= pv[1]; z -= pv[2];
       }
     }
-    xf[i * 12 + 0] = x; xf[i * 12 + 1] = y; xf[i * 12 + 2] = z; xf[i * 12 + 3] = 0;
+    if (building && s.tl !== undefined) {
+      // each piece flies home, slowing as it lands
+      const a = Math.pow(1 - clamp((state.build - (s.tl - s.dur)) / s.dur), 3);
+      if (a > 0.0001) {
+        x += s.io[0] * a + Math.sin(state.time * 0.7 + s.wob[0]) * 6 * a; y += s.io[1] * a; z += s.io[2] * a;
+        q = Q.mul(Q.axis(s.ia, s.iang * a), q);
+      }
+    }
+    if (idle > 0.0001) {
+      const r = Q.rot(fq, [x, y - 186, z]);
+      x = r[0]; y = 186 + r[1] + fy; z = r[2];
+      q = Q.mul(fq, q);
+    }
+    xf[i * 12 + 0] = x; xf[i * 12 + 1] = y; xf[i * 12 + 2] = z; xf[i * 12 + 3] = heroOn;
     xf[i * 12 + 4] = q[0]; xf[i * 12 + 5] = q[1]; xf[i * 12 + 6] = q[2]; xf[i * 12 + 7] = q[3];
     xf[i * 12 + 8] = s.c[0]; xf[i * 12 + 9] = s.c[1]; xf[i * 12 + 10] = s.c[2]; xf[i * 12 + 11] = scale;
   }
@@ -2250,10 +2159,11 @@ function frame(now) {
   const past = Math.max(0, state.y - lastY - vh * 0.42);
   if (envK !== state.room) { envCache = buildEnv(state.room); envK = state.room; scene.dirty = true; }
 
-  const moving = maxP > 0.001 || state.intro || heat > 0.001 || flecks > 0.002 || dust > 0.002;
+  const moving = maxP > 0.001 || state.intro || building || idle > 0.0001 || heat > 0.001 || flecks > 0.002 || dust > 0.002;
   // the name fades and lifts away with its chapter
   const heroO = w.i === 0 ? 1 - clamp(w.e / 0.18) : 0;
-  const titleA = title.on ? heroO : 0;
+  const titleA = title.on ? heroO * (reduced ? 1 : smooth((state.build - 1.3) / 0.3)) : 0;
+  const titleWipe = reduced ? 2 : clamp((state.build - 1.3) / 1.7) * 1.15;
   const titleRect = title.on ? [title.rect[0], title.rect[1] + (1 - heroO) * 0.03, title.rect[2], title.rect[3]] : title.rect;
   const sig = [eye, tgt, fov, shift, E, state.gold, heat, ap, focus, flecks, dust, sc, titleA, state.room, win, moving && !reduced ? state.time : 0].join();
   const offscreen = state.y > lastY + vh * 1.05;
@@ -2263,7 +2173,7 @@ function frame(now) {
   const breathing = maxP <= 0.001 && !state.intro && eye.join() === state.lastEyeS;
   state.lastEyeS = eye.join();
   if ((sig !== state.lastSig || scene.dirty) && !offscreen && (!covered || scene.dirty) && (!breathing || scene.dirty || state.tick % 2 === 0)) {
-    scene.draw({ eye, tgt, fov, shift, ap, focus, gold: state.gold, heat, flecks, dust, swirl, plaques, sculpt: sculptNow, titleA, titleRect, time: state.time, env: envCache, win, still: maxP <= 0.001 && !plaques.length && !sculptNow.length });
+    scene.draw({ eye, tgt, fov, shift, ap, focus, gold: state.gold, heat, flecks, dust, swirl, plaques, titleA, titleWipe, titleRect, face, time: state.time, env: envCache, win, still: maxP <= 0.001 && !building && idle <= 0.0001 && !plaques.length, pulse: idle });
     state.lastSig = sig;
     pace(dt);
   }
@@ -2313,6 +2223,7 @@ function paintPanels(w, past) {
     const drift = (1 - o) * (i === w.j && w.j !== w.i ? 28 : -28);
     p.style.transform = `translateY(${(drift - lift).toFixed(1)}px)`;
     p.classList.toggle('off', o < 0.02);
+    p.classList.toggle('on', o > 0.5);
   });
   const bar = $('#seam');
   if (bar) {
@@ -2380,6 +2291,7 @@ const reveal = new IntersectionObserver((list) => {
 $$('.reveal').forEach((el) => reveal.observe(el));
 
 function printed() {
+  if (window.__loaderDone) window.__loaderDone();
   scene = null;
   root.classList.remove('live');
   root.classList.add('no-gl');
@@ -2411,9 +2323,7 @@ async function start() {
     const portrait = await new Promise((res) => { if (!window.__PORTRAIT) { res(null); return; } const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = window.__PORTRAIT; });
     delete window.__PORTRAIT;
     scene.setCards(PLAQUES.map((d) => paintPlaque(d, k, portrait)));
-    if (window.__SCULPT) { planSculpt(window.__SCULPT); scene.setSculpt(window.__SCULPT, OBJECTS); delete window.__SCULPT; }
-    await document.fonts.ready;
-    scene.setScreen(paintScreen());
+    if (portrait) scene.setFace(portrait);
     P = plan(raw);
     SHOTS = shots(P);
   } catch (err) {
@@ -2423,6 +2333,7 @@ async function start() {
   }
   canvas.addEventListener('webglcontextlost', printed);
   root.classList.add('live');
+  if (window.__loaderDone) window.__loaderDone();
   // the views are drawn on a canvas, so their descriptions reach screen readers another way
   $$('.still').forEach((img) => { const p = document.createElement('p'); p.className = 'sr'; p.textContent = img.alt; img.after(p); });
   const tris = $('[data-tris]'), pieces = $('[data-pieces]');
@@ -2430,21 +2341,29 @@ async function start() {
   if (pieces) pieces.textContent = raw.shards.length;
   metrics();
   state.y = scrollY;
+  if (scrollY > 40) { state.build = 99; state.gold = 2; state.intro = false; }
   requestAnimationFrame(frame);
 }
 
 const hasGL = (() => { try { const c = document.createElement('canvas').getContext('webgl2'); return !!(c && c.getExtension('EXT_color_buffer_float')); } catch (e) { return false; } })();
 metrics();
+const tell = (p) => { if (window.__loaderProgress) window.__loaderProgress(p); };
+function loadObject(name) {
+  // read the file in pieces, so the loader can count; from disk the browser refuses, and a script tag does it instead
+  const viaScript = () => new Promise((res, rej) => { const s = document.createElement('script'); s.src = name; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+  if (!/^https?:/.test(location.protocol)) return viaScript();
+  return fetch(name).then(async (r) => {
+    if (!r.ok || !r.body) throw new Error('no body');
+    const total = +r.headers.get('content-length') || 0, reader = r.body.getReader(), chunks = [];
+    let got = 0;
+    for (;;) { const { done, value } = await reader.read(); if (done) break; chunks.push(value); got += value.length; tell(total ? got / total : Math.min(0.9, got / 2.6e6)); }
+    const all = new Uint8Array(got); let o = 0; for (const ch of chunks) { all.set(ch, o); o += ch.length; }
+    (0, eval)(new TextDecoder().decode(all));
+  }).catch(viaScript);
+}
 if (hasGL) {
   const small = innerWidth < 900 || (navigator.deviceMemory && navigator.deviceMemory < 4);
-  const s = document.createElement('script');
-  s.src = small ? 'object-lite.js' : 'object.js';
-  s.onload = start;
-  s.onerror = () => {
-    if (!small) { printed(); return; }
-    const f = document.createElement('script'); f.src = 'object.js'; f.onload = start; f.onerror = printed; document.head.appendChild(f);
-  };
-  document.head.appendChild(s);
+  loadObject(small ? 'object-lite.js' : 'object.js').then(start, () => (small ? loadObject('object.js').then(start, printed) : printed()));
 } else {
   printed();
 }

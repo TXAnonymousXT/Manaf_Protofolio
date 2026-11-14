@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Manaf Abduljabbar — Mended</title>
-<meta name="description" content="Manaf Abduljabbar, network engineer in Doha, Qatar. Computer engineering, network security and embedded systems. A network switch in porcelain, broken once and rejoined with gold, because what matters is the repair.">
+<meta name="description" content="Manaf Abduljabbar, network engineer in Doha, Qatar. Computer engineering, network security and embedded systems. My logo in porcelain, broken once and rejoined with gold, because what matters is the repair.">
 <meta name="author" content="Manaf Abduljabbar">
 <meta name="theme-color" content="#D3CCBE">
 <meta name="color-scheme" content="light dark">
@@ -12,17 +12,18 @@
   // day or night, saved, before first paint; day is the default
   (function () { var t = 'day'; try { t = localStorage.getItem('manaf-mended-room') === 'night' ? 'night' : 'day'; } catch (e) {} document.documentElement.dataset.theme = t; document.documentElement.classList.add('js'); })();
 </script>
-<link rel="icon" href="logo.webp" type="image/webp">
+<link rel="icon" href="assets/logo.webp" type="image/webp">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <a class="skip" href="#catalogue">Skip to the catalogue</a>
+<div id="loader" aria-hidden="true"><div class="ld-mark">Manaf <em>Abduljabbar</em></div><div class="ld-bar"><i></i></div><p class="ld-pct">0%</p><p class="ld-what">Casting the porcelain</p></div>
 
 <canvas id="scene" aria-hidden="true"></canvas>
 <i id="seam" aria-hidden="true"></i>
 
 <header class="nav">
-  <a class="brand" href="#top"><img class="brand-logo" src="logo.webp" width="30" height="30" alt=""><span>Manaf<span class="brand-last"> Abduljabbar</span></span></a>
+  <a class="brand" href="#top"><img class="brand-logo" src="assets/logo.webp" width="30" height="30" alt=""><span>Manaf<span class="brand-last"> Abduljabbar</span></span></a>
   <nav aria-label="Page">
     <button type="button" class="js-only" data-open="menu">Menu</button>
     <a class="nav-wide" href="#talk">Contact</a>
@@ -52,20 +53,20 @@
 
   <section class="chapter first" id="top" aria-labelledby="h1">
     <div class="panel">
-      <img class="still" src="assets/still-0.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A 24-port network switch made of white porcelain, its lid and front crossed by seams of gold where it was broken and repaired, with three patch cables curling across a plaster floor in low window light.">
+      <img class="still" src="assets/still-0.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A shield cast in white porcelain, the logo of Manaf, crossed by seams of gold where it was broken and repaired, with a raised M in gold and gold circuit traces running out from its sides, floating above a plaster floor in low window light.">
       <h1 id="h1">Manaf Abduljabbar</h1>
       <div class="intro">
         <p class="role">Network engineer. Doha, Qatar.</p>
         <p class="thesis">Everything breaks. What matters is the repair.</p>
       </div>
-      <p class="wall wall-hero"><b>Mended.</b> A 24-port switch in porcelain, broken once and rejoined with gold. The Japanese call the craft kintsugi: the seams stay visible, on purpose.</p>
+      <p class="wall wall-hero"><b>Mended.</b> My mark, cast in porcelain, broken once and rejoined with gold. The Japanese call the craft kintsugi: the seams stay visible, on purpose.</p>
       <p class="hint" id="hint">Scroll, and it comes apart.<span class="js-only"> Click anywhere to ping it.</span></p>
     </div>
   </section>
 
   <section class="chapter wide" id="break" aria-labelledby="h-break">
     <div class="panel center">
-      <img class="still" src="assets/still-1.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The same switch broken apart in mid-air: dozens of porcelain pieces with gold-edged breaks, two small fans, a gold heatsink and lengths of cable, hanging over a sunlit floor.">
+      <img class="still" src="assets/still-1.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The same shield broken apart in mid-air: dozens of porcelain pieces with gold-edged breaks, the gold M still whole among them, and the gold traces, hanging over a sunlit floor.">
       <h2 id="h-break">Every network is waiting to fail.</h2>
       <p class="body">A cable gets pulled. A power supply goes. Someone pushes the wrong config at 2 a.m. The work is what happens next.</p>
     </div>
@@ -83,6 +84,7 @@
           <div><dt>University</dt><dd>Qatar University '24</dd></div>
           <div><dt>Location</dt><dd>Doha, Qatar</dd></div>
         </dl>
+        <p class="wall">That's the maker's mark: my name, in Arabic, under the glaze.</p>
         <div class="acts"><button type="button" class="btn solid js-only" data-open="about">About me</button><a class="btn" href="assets/cv.pdf" download>Download CV</a></div>
       </div>
     </div>
@@ -158,14 +160,13 @@
 
   <section class="chapter" id="credentials" aria-labelledby="h-c">
     <div class="panel left">
-      <img class="still" src="assets/still-8.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A broken piece of the white lid, edged in gold, carrying a Royal Indigo maker's mark: the name Manaf in Arabic and Latin script, ringed by the words Porcelain, handle with care, Doha 2026.">
+      <img class="still" src="assets/still-8.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="A broken piece from the back of the shield, edged in gold, carrying a Royal Indigo maker's mark: the name Manaf in Arabic and Latin script, ringed by the words Porcelain, handle with care, Doha 2026.">
       <div class="col">
         <h2 id="h-c">Fired, and still in the kiln.</h2>
         <dl class="kiln">
           <div><dt>Fired</dt><dd>CCNA, 2021</dd><dd>B.Sc. Computer Engineering, Qatar University, 2018 – 2024</dd><dd>Outstanding Project Award, QU Computing Club, Robotics Track</dd></div>
           <div><dt>In the kiln</dt><dd>ISC2 SSCP</dd><dd>CCNP SCOR, 350-701</dd><dd>HTB CDSA</dd></div>
         </dl>
-        <p class="wall">That's the maker's mark: my name, in Arabic, under the glaze.</p>
         <div class="acts"><button type="button" class="btn js-only" data-inspect='type == "cert"'>Inspect the certificates</button></div>
       </div>
     </div>
@@ -196,7 +197,7 @@
 
   <section class="chapter" id="talk" aria-labelledby="h-t">
     <div class="panel top">
-      <img class="still" src="assets/still-11.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The switch back in one piece on the plaster floor, its gold seams catching the low sun.">
+      <img class="still" src="assets/still-11.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="The shield back in one piece above the plaster floor, its gold seams catching the low sun.">
       <div class="col">
         <h2 id="h-t">Bring me what broke.</h2>
         <div class="reach">
@@ -392,8 +393,8 @@
     <div class="entry reveal" id="c-object">
       <h3>About the object</h3>
       <div class="about">
-        <p>There is no such switch, and this is no photograph of one. It was sculpted in code as a distance field, the way glaze softens a casting, down to the jacks, vents and fan blades. A radial fracture from one point of impact then cut it into <span data-pieces>96</span> watertight pieces, each with its own broken face.</p>
-        <p><span class="if-live">Every frame is drawn live in your browser, about <span data-tris>340,000</span> triangles</span><span class="if-print">Normally it is drawn live in the browser; these are stills of it,</span> in low sun through a window, with softboxes to catch the glaze, as a photographer would light porcelain. The maker's mark on the lid is my name. The plaques around it are drawn the same way, and they break the same way.</p>
+        <p>This is my logo, and no photograph of it. It was sculpted in code as a distance field, the way glaze softens a casting: the shield, the M in gold, and the traces running out from it. A radial fracture from one point of impact then cut it into <span data-pieces>96</span> watertight pieces, each with its own broken face.</p>
+        <p><span class="if-live">Every frame is drawn live in your browser, about <span data-tris>340,000</span> triangles</span><span class="if-print">Normally it is drawn live in the browser; these are stills of it,</span> in low sun through a window, with softboxes to catch the glaze, as a photographer would light porcelain. The maker's mark on the back is my name. The plaques around it are drawn the same way, and they break the same way.</p>
       </div>
     </div>
 
@@ -429,7 +430,7 @@
 <script src="portrait.js"></script>
 <script src="items.js"></script>
 <script src="inspector.js"></script>
-<script src="sculpt.js"></script>
+<script src="polish.js"></script>
 <script src="mended.js"></script>
 </body>
 </html>
